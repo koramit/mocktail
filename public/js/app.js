@@ -646,6 +646,30 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var map = {
+	"./Prototypes/AdmissionNote": [
+		"./resources/js/Pages/Prototypes/AdmissionNote.vue",
+		"resources_js_Pages_Prototypes_AdmissionNote_vue"
+	],
+	"./Prototypes/AdmissionNote.vue": [
+		"./resources/js/Pages/Prototypes/AdmissionNote.vue",
+		"resources_js_Pages_Prototypes_AdmissionNote_vue"
+	],
+	"./Prototypes/DischargeSummary": [
+		"./resources/js/Pages/Prototypes/DischargeSummary.vue",
+		"resources_js_Pages_Prototypes_DischargeSummary_vue"
+	],
+	"./Prototypes/DischargeSummary.vue": [
+		"./resources/js/Pages/Prototypes/DischargeSummary.vue",
+		"resources_js_Pages_Prototypes_DischargeSummary_vue"
+	],
+	"./Prototypes/TransferNote": [
+		"./resources/js/Pages/Prototypes/TransferNote.vue",
+		"resources_js_Pages_Prototypes_TransferNote_vue"
+	],
+	"./Prototypes/TransferNote.vue": [
+		"./resources/js/Pages/Prototypes/TransferNote.vue",
+		"resources_js_Pages_Prototypes_TransferNote_vue"
+	],
 	"./Welcome": [
 		"./resources/js/Pages/Welcome.vue",
 		"resources_js_Pages_Welcome_vue"
@@ -749,6 +773,18 @@ module.exports = webpackAsyncContext;
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -779,7 +815,7 @@ module.exports = webpackAsyncContext;
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "js/" + chunkId + ".js?id=" + "144aa69db4e93c2483d7" + "";
+/******/ 			return "js/" + chunkId + ".js?id=" + {"resources_js_Pages_Prototypes_AdmissionNote_vue":"46c202f1aeed3dde445f","resources_js_Pages_Prototypes_DischargeSummary_vue":"c6ba7d1bcc7c14bd32db","resources_js_Pages_Prototypes_TransferNote_vue":"c932a7e16125ea070dcc","resources_js_Pages_Welcome_vue":"144aa69db4e93c2483d7"}[chunkId] + "";
 /******/ 		};
 /******/ 	})();
 /******/ 	
