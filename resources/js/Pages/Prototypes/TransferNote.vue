@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4">
+    <div class="p-4 sm:p-8 md:p-16 lg:py-16 lg:max-w-3xl lg:mx-auto">
         <h1 class="font-semibold text-lg underline text-center">
             แบบบันทึกการส่งต่อผู้ป่วยไป Hospitel
         </h1>
