@@ -100,6 +100,12 @@ export default {
         change () {
             this.$emit('update:modelValue', this.$refs.input.value);
             this.$emit('autosave');
+        },
+        setOther (val) {
+            this.$nextTick(() => {
+                this.$refs.input.value = val;
+                this.change();
+            });
         }
     }
 };
