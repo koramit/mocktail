@@ -1,0 +1,12 @@
+<template>
+    <div>
+        <h1>Preferences</h1>
+        <inertia-link
+            method="post"
+            href="/logout"
+            as="button"
+        >
+            Logout
+        </inertia-link>
+    </div>
+</template>
