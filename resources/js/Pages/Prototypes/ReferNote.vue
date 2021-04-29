@@ -117,7 +117,7 @@
 
         <div class="bg-white rounded shadow-sm p-4 mt-4">
             <h2 class="font-semibold">
-                Presenting Symptoms
+                บันทึกอาการแสดง
             </h2>
 
             <form-checkbox
