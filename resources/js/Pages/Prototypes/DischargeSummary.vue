@@ -48,7 +48,7 @@
 
         <div class="bg-white rounded shadow-sm p-4 mt-4">
             <h2 class="font-semibold">
-                ผลวินิจฉัย
+                วินิจฉัย
             </h2>
 
             <form-checkbox
@@ -91,6 +91,13 @@
                     class="mt-2"
                     v-model="diagnosis.gastroenteritis"
                     label="COVID 19 with Gastroenteritis"
+                />
+
+                <form-input
+                    class="mt-2"
+                    name="diagnosis_others"
+                    label="วินิจฉัยอื่นๆ"
+                    v-model="diagnosis.others"
                 />
             </div>
         </div>
@@ -253,6 +260,13 @@
                     v-model="symptoms.others"
                 />
             </div>
+            <form-select
+                v-else
+                class="mt-2"
+                v-model="symptoms.asymptomatic_detail"
+                name="asymptomatic_detail"
+                :options="['ไม่มีอาการตั้งแต่ต้น', 'อาการดีขึ้นแล้ว']"
+            />
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4">
@@ -298,16 +312,44 @@
 
             <form-checkbox
                 class="mt-2"
-                v-model="appointment.none"
-                label="ไม่มี"
+                v-model="appointment.followup"
+                label="ไม่นัด"
                 :toggler="true"
             />
 
-            <div v-if="!appointment.none">
+            <div v-if="!appointment.followup">
                 <form-datetime
                     class="mt-2"
                     label="วันที่"
-                    v-model="appointment.date"
+                    v-model="appointment.date_followup"
+                    name="date"
+                />
+                <form-input
+                    class="mt-2"
+                    label="สถานที่นัด"
+                    name="place_followup"
+                    v-model="appointment.place_followup"
+                />
+            </div>
+        </div>
+
+        <div class="bg-white rounded shadow-sm p-4 mt-4">
+            <h2 class="font-semibold">
+                นัดมาทำ NP swab ซ้ำ
+            </h2>
+
+            <form-checkbox
+                class="mt-2"
+                v-model="appointment.repeat_NP_swap"
+                label="ไม่นัด"
+                :toggler="true"
+            />
+
+            <div v-if="!appointment.repeat_NP_swap">
+                <form-datetime
+                    class="mt-2"
+                    label="วันที่"
+                    v-model="appointment.date_repeat_NP_swap"
                     name="date"
                 />
             </div>
@@ -323,11 +365,13 @@
 import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
+import FormSelect from '@/Components/Controls/FormSelect';
 export default {
     components: {
         FormCheckbox,
         FormDatetime,
         FormInput,
+        FormSelect,
     },
     data () {
         return {
@@ -340,12 +384,13 @@ export default {
                 sat_code: '',
             },
             diagnosis: {
-                asymptomatic: false,
+                asymptomatic: true,
                 uri: false,
                 date_uri: '',
                 pneumonia: false,
                 date_pneumonia: '',
                 gastroenteritis: false,
+                others: '',
             },
             comorbid: {
                 none: false,
@@ -371,6 +416,7 @@ export default {
             },
             symptoms: {
                 asymptomatic: false,
+                asymptomatic_detail: '',
                 fever: false,
                 cough: false,
                 sore_throat: false,
@@ -404,8 +450,11 @@ export default {
                 others: ''
             },
             appointment: {
-                none: false,
-                date: '',
+                followup: false,
+                date_followup: '',
+                place_followup: '',
+                repeat_NP_swap: false,
+                date_repeat_NP_swap: '',
             },
         };
     },

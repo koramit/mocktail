@@ -662,6 +662,22 @@ var map = {
 		"./resources/js/Pages/Prototypes/DischargeSummary.vue",
 		"resources_js_Pages_Prototypes_DischargeSummary_vue"
 	],
+	"./Prototypes/ReferNote": [
+		"./resources/js/Pages/Prototypes/ReferNote.vue",
+		"resources_js_Pages_Prototypes_ReferNote_vue"
+	],
+	"./Prototypes/ReferNote.vue": [
+		"./resources/js/Pages/Prototypes/ReferNote.vue",
+		"resources_js_Pages_Prototypes_ReferNote_vue"
+	],
+	"./Prototypes/TransferCriteriaForm": [
+		"./resources/js/Pages/Prototypes/TransferCriteriaForm.vue",
+		"resources_js_Pages_Prototypes_TransferCriteriaForm_vue"
+	],
+	"./Prototypes/TransferCriteriaForm.vue": [
+		"./resources/js/Pages/Prototypes/TransferCriteriaForm.vue",
+		"resources_js_Pages_Prototypes_TransferCriteriaForm_vue"
+	],
 	"./Prototypes/TransferNote": [
 		"./resources/js/Pages/Prototypes/TransferNote.vue",
 		"resources_js_Pages_Prototypes_TransferNote_vue"
@@ -815,7 +831,7 @@ module.exports = webpackAsyncContext;
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "js/" + chunkId + ".js?id=" + {"resources_js_Pages_Prototypes_AdmissionNote_vue":"46c202f1aeed3dde445f","resources_js_Pages_Prototypes_DischargeSummary_vue":"c6ba7d1bcc7c14bd32db","resources_js_Pages_Prototypes_TransferNote_vue":"c932a7e16125ea070dcc","resources_js_Pages_Welcome_vue":"144aa69db4e93c2483d7"}[chunkId] + "";
+/******/ 			return "js/" + chunkId + ".js?id=" + {"resources_js_Pages_Prototypes_AdmissionNote_vue":"dc3fe80dd09ffe82a8b7","resources_js_Pages_Prototypes_DischargeSummary_vue":"8d8c3e694d6644a8ad46","resources_js_Pages_Prototypes_ReferNote_vue":"a1d0152fd1338ace7a6f","resources_js_Pages_Prototypes_TransferCriteriaForm_vue":"8e19322d5100c42a01f4","resources_js_Pages_Prototypes_TransferNote_vue":"c6d4a8afd0d2555eea8a","resources_js_Pages_Welcome_vue":"144aa69db4e93c2483d7"}[chunkId] + "";
 /******/ 		};
 /******/ 	})();
 /******/ 	

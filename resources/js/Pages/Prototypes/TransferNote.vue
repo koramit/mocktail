@@ -23,13 +23,13 @@
             <form-input
                 class="mt-2"
                 name="hn"
-                label="HN"
+                label="HN (ศิริราช)"
                 v-model="patient.hn"
             />
             <form-input
                 class="mt-2"
                 name="an"
-                label="AN"
+                label="AN (ใบหยก)"
                 v-model="patient.an"
             />
             <form-select

@@ -1,7 +1,7 @@
 <template>
     <div class="p-4">
         <h1 class="font-semibold text-lg underline text-center">
-            Admission note โรงพยาบาลสนามใบหยก
+            แบบบันทึกการส่งต่อผู้ป่วยไป Hospitel
         </h1>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4">
@@ -13,12 +13,6 @@
                 name="sat_code"
                 label="sat code"
                 v-model="patient.sat_code"
-            />
-            <form-input
-                class="mt-2"
-                name="an"
-                label="AN"
-                v-model="patient.an"
             />
             <form-input
                 class="mt-2"
@@ -43,9 +37,15 @@
             />
             <form-datetime
                 class="mt-2"
-                label="วันที่รับไว้ใน Hospitel"
+                label="วันที่รับไว้ในโรงพยาบาล"
                 v-model="patient.date_admit"
                 name="date_admit"
+            />
+            <form-datetime
+                class="mt-2"
+                label="วันที่ส่งผู้ป่วยไป Hospitel"
+                v-model="patient.date_refer"
+                name="date_refer"
             />
             <form-datetime
                 class="mt-2"
@@ -63,7 +63,7 @@
 
         <div class="bg-white rounded shadow-sm p-4 mt-4">
             <h2 class="font-semibold">
-                Vital Signs แรกรับ
+                Vital Signs ล่าสุด
             </h2>
 
             <form-input
@@ -319,6 +319,34 @@
                 name="date_repeat_NP_swap"
             />
         </div>
+
+        <div class="bg-white rounded shadow-sm p-4 mt-4">
+            <h2 class="font-semibold">
+                เอกสารแนบ
+            </h2>
+
+            <label class="form-label">1. รูปถ่ายหน้าบัตรประชาชน</label>
+            <input
+                type="file"
+                id="imageFile"
+                capture="environment"
+                accept="image/*"
+            >
+            <label class="form-label mt-2">2. ใบรายงานผล COVID</label>
+            <input
+                type="file"
+                id="imageFile"
+                capture="environment"
+                accept="image/*"
+            >
+            <label class="form-label mt-2">3. Film Chest ล่าสุด</label>
+            <input
+                type="file"
+                id="imageFile"
+                capture="environment"
+                accept="image/*"
+            >
+        </div>
         <button class="btn btn-dark w-full my-4">
             SUBMIT
         </button>
@@ -459,6 +487,7 @@ export default {
                 an: '',
                 insurance: '',
                 date_admit: '',
+                date_refer: '',
                 date_covid_infected: '',
                 date_quarantine_end: '',
                 meal: '',
@@ -533,7 +562,7 @@ export default {
         };
     },
     created () {
-        document.title = 'Admission note';
+        document.title = 'Refer note';
     },
     mounted() {
         this.$nextTick(function () {
