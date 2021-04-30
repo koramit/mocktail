@@ -20,8 +20,6 @@ class AuthenticatedSessionController extends Controller
      */
     public function index()
     {
-        Session::forget('profile');
-
         return Inertia::render('Auth/Login');
     }
 

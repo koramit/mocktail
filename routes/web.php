@@ -3,10 +3,11 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UserPreferencesController;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return Inertia\Inertia::render('Welcome');
+    return Redirect::route('login'); //Inertia\Inertia::render('Welcome');
 });
 
 Route::get('/preferences', function () {
@@ -28,6 +29,5 @@ Route::middleware('guest')->get('/login', [AuthenticatedSessionController::class
 Route::middleware('guest')->post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::middleware('auth')->post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-
 // User
-Route::middleware('auth')->get('/preferences', UserPreferencesController::class,)->name('preferences');
+Route::middleware('auth')->get('/preferences', UserPreferencesController::class, )->name('preferences');

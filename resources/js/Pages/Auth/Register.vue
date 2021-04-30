@@ -12,6 +12,12 @@
         </div>
         <div class="mt-4 px-4 py-8 w-80 lg:w-96 bg-white rounded shadow transform -translate-y-20">
             <span class="block font-semibold text-xl text-thick-theme-light mt-12 text-center">ลงทะเบียน</span>
+            <span
+                v-if="form.errors.login"
+                class="block font-semibold text-sm text-red-400 mt-6 text-center"
+            >
+                {{ profile.org_id === undefined ? 'อีเมล์นี้ถูกใช้เป็นชื่อบัญชีแล้ว โปรดเลือกใหม่' : 'ชื่อบัญชีนี้ถูกใช้แล้ว โปรดติดต่อผู้ดูแลระบบ' }}
+            </span>
             <div
                 class="mt-6"
                 v-if="profile.org_id === undefined"
@@ -61,6 +67,7 @@
                 placeholder="คำนำหน้า ชื่อ สกุล"
                 v-model="form.full_name"
                 :error="form.errors.full_name"
+                :readonly="profile.org_id !== undefined"
             />
             <form-input
                 class="mt-2"
@@ -149,6 +156,7 @@ export default {
             this.form
                 .transform(data => ({
                     ...data,
+                    login: this.profile.org_id !== undefined ? this.profile.username : data.email,
                     remember: data.remember ? 'on' : '',
                 }))
                 .post(`${this.baseUrl}/register`, {
