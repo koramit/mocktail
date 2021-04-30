@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
         if (Session::has('profile')) {
             // AD
             Request::validate($baseRules);
-            $data = Request::only(['login', 'name', 'full_name', 'tel_no']);
+            $data = Request::only(['login', 'name', 'full_name', 'pln', 'tel_no']);
             $data['center_id'] = 1;
             $data['password'] = Hash::make(Str::random(64));
             $profile = [];
@@ -55,13 +55,14 @@ class RegisteredUserController extends Controller
                 'email' => 'required|email',
                 'password' => 'required|string',
             ]);
-            $data = Request::only(['login', 'center', 'name', 'full_name', 'tel_no', 'email', 'password']);
+            $data = Request::only(['login', 'center', 'name', 'full_name', 'pln', 'tel_no', 'email', 'password']);
             $data['center_id'] = Center::findByName($data['center'])->id; // need error handle
             $data['password'] = Hash::make($data['password']);
             $profile = [];
             $user = new User();
         }
         $profile['full_name'] = $data['full_name'];
+        $profile['pln'] = $data['pln'];
         $profile['tel_no'] = $data['tel_no'];
         $profile['home_page'] = 'preferences';
         $user->login = $data['login'];

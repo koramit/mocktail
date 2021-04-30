@@ -5,6 +5,7 @@ namespace App\APIs;
 use App\Contracts\AuthenticationAPI;
 use App\Contracts\PatientAPI;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Http;
 
 class ToothpasteAPI implements PatientAPI, AuthenticationAPI
@@ -19,7 +20,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         $data = $this->brushing($this->pasteLoad('authenticate', ['login' => $login, 'password' => $password]));
         if (! $data['ok'] || ! $data['found']) {
             $data['found'] = false;
-            $data['message'] = __('auth.failed');
+            $data['message'] = $data['message'] ?? __('auth.failed');
             unset($data['UserInfo']);
             unset($data['body']);
 
@@ -88,20 +89,20 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
 
     protected function brushing($data)
     {
-        $response = Http::timeout(5)
-                    ->withOptions(['verify' => false])
-                    ->asForm()
-                    ->post(config('services.toothpaste.url'), ['payload' => $data]);
-
-        if ($response->ok()) {
-            return $response->json();
+        try {
+            $response = Http::timeout(5)
+                        ->withOptions(['verify' => false])
+                        ->asForm()
+                        ->post(config('services.toothpaste.url'), ['payload' => $data]);
+        } catch (Exception $e) {
+            return [
+                'ok' => false,
+                'found' => false,
+                'message' => __('service.failed'),
+            ];
         }
 
-        return [
-            'ok' => false,
-            'found' => false,
-            'message' => $response->json()['message'] ?? 'not available',
-        ];
+        return $response->json();
     }
 
     protected function pasteLoad($service, $data)
