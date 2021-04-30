@@ -112,6 +112,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
             'endpoint' => $config['endpoint'],
             'data' => $data,
             'callgate_token' => config('services.toothpaste.token'),
+            'callgate_appname' => 'mocktail',
         ];
 
         if ($config['auth'] === 'token_secret') {
