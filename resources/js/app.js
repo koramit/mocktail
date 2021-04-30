@@ -5,10 +5,11 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 import { createApp, h } from 'vue';
 import { App, plugin } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
+import mitt from 'mitt';
 
 InertiaProgress.init({
     delay: 200,
-    color: '#94af76'
+    color: '#afc2cb'
 });
 
 const el = document.getElementById('app');
@@ -19,5 +20,8 @@ const app = createApp({
         resolveComponent: name => import(`@/Pages/${name}`).then(module => module.default),
     })
 }).use(plugin);
+
+const eventBus = mitt();
+app.config.globalProperties.eventBus = eventBus;
 
 app.mount(el);
