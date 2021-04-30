@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Preferences</h1>
+        <h1>Home</h1>
         <inertia-link
             method="post"
             href="/logout"

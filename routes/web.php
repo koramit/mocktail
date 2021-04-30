@@ -2,17 +2,13 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\UserPreferencesController;
+use App\Http\Controllers\PagesController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return Redirect::route('login'); //Inertia\Inertia::render('Welcome');
 });
-
-Route::get('/preferences', function () {
-    return Inertia\Inertia::render('Welcome');
-})->name('preferences');
 
 Route::get('/prototypes/{page}', function ($page) {
     return Inertia\Inertia::render('Prototypes/'.$page);
@@ -30,4 +26,4 @@ Route::middleware('guest')->post('/login', [AuthenticatedSessionController::clas
 Route::middleware('auth')->post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 // User
-Route::middleware('auth')->get('/preferences', UserPreferencesController::class, )->name('preferences');
+Route::middleware('auth')->get('/home', [PagesController::class, 'home'])->name('home');

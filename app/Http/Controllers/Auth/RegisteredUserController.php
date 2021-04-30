@@ -64,7 +64,7 @@ class RegisteredUserController extends Controller
         $profile['full_name'] = $data['full_name'];
         $profile['pln'] = $data['pln'];
         $profile['tel_no'] = $data['tel_no'];
-        $profile['home_page'] = 'preferences';
+        $profile['home_page'] = 'home';
         $user->login = $data['login'];
         $user->name = $data['name'];
         $user->center_id = $data['center_id'];
@@ -77,6 +77,6 @@ class RegisteredUserController extends Controller
         Auth::login($user);
         Session::forget('profile');
 
-        return Redirect::route('preferences');
+        return Redirect::route('home');
     }
 }
