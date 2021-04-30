@@ -57,6 +57,26 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         return $data;
     }
 
+    public function getAdmission($an)
+    {
+        $data = $this->brushing($this->pasteLoad('admission', ['an' => $an]));
+
+        if ($data['found']) {
+            $data['patient']['found'] = true;
+            $data['attending_name'] = $data['attending'];
+            $data['discharge_type_name'] = $data['discharge_type'];
+            $data['discharge_status_name'] = $data['discharge_status'];
+            $data['encountered_at'] = $data['admitted_at'] ? Carbon::parse($data['admitted_at'], 'asia/bangkok')->tz('UTC') : null;
+            $data['dismissed_at'] = $data['discharged_at'] ? Carbon::parse($data['discharged_at'], 'asia/bangkok')->tz('UTC') : null;
+            $data['patient']['marital_status_name'] = $data['patient']['marital_status'];
+            $data['patient']['location'] = $data['patient']['postcode'];
+
+            return $data;
+        }
+
+        return $data;
+    }
+
     public function recentlyAdmission($hn)
     {
         $data = $this->brushing($this->pasteLoad('recently_admit', ['hn' => $hn]));

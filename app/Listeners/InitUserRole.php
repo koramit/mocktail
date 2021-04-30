@@ -31,20 +31,19 @@ class InitUserRole
             // non SI User
             $initRole = json_decode(file_get_contents(storage_path('app/init/role.json')), true);
             $userCenter = strtolower($event->user->center->name_short);
-            if (isset($initRole['center'][$userCenter])) {
-                if ($profile['pln'] === $initRole['center'][$userCenter]['pln'] &&
+            if (! isset($initRole['center'][$userCenter])) {
+                Log::notice($event->user->center->name.' '.$profile['full_name'].' ไม่สามารถกำหนด role ได้');
+
+                return;
+            }
+            if ($profile['pln'] === $initRole['center'][$userCenter]['pln'] &&
                 $profile['tel_no'] === $initRole['center'][$userCenter]['tel_no']
-                ) {
-                    $event->user->assignRole('referer');
-                }
+            ) {
+                $event->user->assignRole('referer');
                 $event->user->assignRole('center');
 
                 return;
             }
-
-            Log::notice($event->user->center->name.' '.$profile['full_name'].' ไม่สามารถกำหนด role ได้');
-
-            return;
         }
 
         if (strpos($profile['full_name'], ' พญ. ') !== false ||

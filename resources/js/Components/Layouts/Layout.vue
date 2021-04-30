@@ -53,7 +53,7 @@
                             </div>
                         </template>
                         <template #dropdown>
-                            <div class="mt-2 py-2 shadow-xl bg-thick-theme-light text-white cursor-pointer rounded text-sm">
+                            <div class="mt-2 py-2 shadow-xl min-w-max bg-thick-theme-light text-white cursor-pointer rounded text-sm">
                                 <template v-if="hasRoles">
                                     <inertia-link
                                         class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
@@ -153,10 +153,32 @@
                 />
                 <!-- this is main page -->
                 <div
-                    class="w-full p-4 md:overflow-y-auto md:py-12 lg:px-8 xl:px-10"
+                    class="w-full p-4 md:overflow-y-auto sm:p-8 md:p-16"
                     scroll-region
                 >
                     <!-- <flash-messages /> -->
+                    <div
+                        v-if="$page.props.flash.messages"
+                        class="flex items-center rounded-tl-lg rounded-tr-lg border-8 border-t-0 border-l-0 border-r-0 shadow text-xs text-thick-theme-light p-4"
+                        :class="{
+                            'border-alt-theme-light': $page.props.flash.messages.status === 'info'
+                        }"
+                    >
+                        <icon
+                            class="block w-12 h-12 text-alt-theme-light"
+                            name="info-circle"
+                            v-if="$page.props.flash.messages.status === 'info'"
+                        />
+                        <div class="ml-4">
+                            <p
+                                class="p-2"
+                                v-for="(message, key) in $page.props.flash.messages.messages"
+                                :key="key"
+                                v-html="message"
+                            />
+                        </div>
+                    </div>
+
                     <slot />
                 </div>
             </div>

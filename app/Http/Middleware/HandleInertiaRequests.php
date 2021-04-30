@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'flash' => [
                 'title' => fn () => $request->session()->get('page-title', 'MISSING'),
-                'message' => fn () => $request->session()->get('message'),
+                'messages' => fn () => $request->session()->get('messages'),
                 'mainMenuLinks' => fn () => $request->session()->get('main-menu-links', []),
                 'actionMenu' => fn () => $request->session()->get('action-menu', []),
             ],

@@ -1,37 +1,37 @@
 <template>
-    <div class="p-4 sm:p-8 md:p-16 lg:py-16 lg:max-w-3xl lg:mx-auto">
+    <div class="">
         <div class="bg-white rounded shadow-sm p-4 mt-4">
             <h2 class="font-semibold pb-2 border-b border-dashed text-thick-theme-light">
                 รายการหลัก
             </h2>
             <div class="mt-4">
-                <inertia-link
-                    class="btn btn-bitter block text-center"
-                    href="/logout"
-                    v-if="abilities.includes('refer_case')"
+                <button
+                    class="btn btn-bitter block w-full text-center"
+                    v-if="abilities.includes('refer_case') || abilities.includes('grant_user')"
+                    @click="$refs.createCase.open()"
                 >
-                    เพิ่มเคส
-                </inertia-link>
+                    เพิ่มเคสใหม่
+                </button>
                 <inertia-link
                     class="btn btn-bitter block text-center"
-                    href="/logout"
+                    :href="`${baseUrl}/refer-cases`"
                     v-if="abilities.includes('view_cases')"
                 >
                     รายการเคส
                 </inertia-link>
                 <inertia-link
                     class="btn btn-bitter block text-center"
-                    href="/logout"
+                    :href="`${baseUrl}/users`"
                     v-if="abilities.includes('grant_user')"
                 >
-                    รายการผู้ใช้งาน
+                    เปิดสิทธิ์ผู้ใช้งาน
                 </inertia-link>
                 <inertia-link
                     class="btn btn-bitter block text-center"
-                    href="/logout"
+                    :href="`${baseUrl}/users`"
                     v-if="abilities.includes('grant_teammate')"
                 >
-                    รายการเพื่อนร่วมงาน
+                    เปิดสิทธิ์เพื่อนร่วมงาน
                 </inertia-link>
             </div>
         </div>
@@ -53,14 +53,23 @@
                 แจ้งปัญหา
             </h2>
         </div>
+
+        <create-case ref="createCase" />
     </div>
 </template>
 
 <script>
 import Layout from '@/Components/Layouts/Layout';
+import CreateCase from '@/Components/Forms/CreateCase';
 export default {
     layout: Layout,
-    created () {
+    components: { CreateCase },
+    data () {
+        return {
+            baseUrl: this.$page.props.app.baseUrl,
+        };
+    },
+    created() {
         this.abilities = this.$page.props.user.abilities;
     }
 };

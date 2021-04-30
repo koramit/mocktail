@@ -49,6 +49,16 @@ class User extends Authenticatable
         return $this->belongsTo(Center::class);
     }
 
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
+
+    public function referCases()
+    {
+        return $this->hasMany(ReferCase::class);
+    }
+
     /**
      * A user may be assigned many roles.
      *
@@ -72,8 +82,14 @@ class User extends Authenticatable
 
         $this->roles()->syncWithoutDetaching($role);
 
+        unset($this->roles); // reload for new role
         Cache::put("uid-{$this->id}-abilities", $this->roles->map->abilities->flatten()->pluck('name')->unique(), config('session.lifetime') * 60);
         Cache::put("uid-{$this->id}-role-names", $this->roles->pluck('name'), config('session.lifetime') * 60);
+    }
+
+    public function getTimezoneAttribute()
+    {
+        return 'asia/bangkok';
     }
 
     public function getHomePageAttribute()
@@ -84,7 +100,7 @@ class User extends Authenticatable
     public function getAbilitiesAttribute()
     {
         return Cache::remember("uid-{$this->id}-abilities", config('session.lifetime') * 60, function () {
-            unset($this->roles);
+            unset($this->roles); // reload for new role
 
             return $this->roles->map->abilities->flatten()->pluck('name')->unique();
         });

@@ -45,6 +45,12 @@ return [
             'app' => env('HANNAH_APP'),
             'token' => env('HANNAH_TOKEN'),
         ],
+        'admission' => [
+            'endpoint' => env('HANNAH_URL').'admission',
+            'auth' => 'token_secret',
+            'app' => env('HANNAH_APP'),
+            'token' => env('HANNAH_TOKEN'),
+        ],
         'recently_admit' => [
             'endpoint' => env('HANNAH_URL').'patient-recently-admit',
             'auth' => 'token_secret',

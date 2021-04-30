@@ -14,6 +14,12 @@
             :value="modelValue"
             class="appearance-none form-input"
         >
+        <div
+            v-if="error"
+            class="text-red-700 mt-2 text-sm"
+        >
+            {{ error }}
+        </div>
     </div>
 </template>
 
@@ -30,6 +36,7 @@ export default {
         placeholder: { type: String, default: '' },
         format: { type: String, default: 'F j, Y' }, // format for display date
         options: { type: Object, default: () => {} },
+        error: { type: String, default: '' },
     },
     created () {
         const onChange = (selectedDates, dateStr, fp) => {

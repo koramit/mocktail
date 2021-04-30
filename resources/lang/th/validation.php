@@ -19,7 +19,7 @@ return [
     'after_or_equal' => 'The :attribute must be a date after or equal to :date.',
     'alpha' => 'The :attribute must only contain letters.',
     'alpha_dash' => 'The :attribute must only contain letters, numbers, dashes and underscores.',
-    'alpha_num' => 'The :attribute must only contain letters and numbers.',
+    'alpha_num' => ':attribute ต้องประกอบไปด้วยตัวเลขและตัวอักษรภาษาอังกฤษเท่านั้น',
     'array' => 'The :attribute must be an array.',
     'before' => 'The :attribute must be a date before :date.',
     'before_or_equal' => 'The :attribute must be a date before or equal to :date.',
@@ -35,7 +35,7 @@ return [
     'date_equals' => 'The :attribute must be a date equal to :date.',
     'date_format' => 'The :attribute does not match the format :format.',
     'different' => 'The :attribute and :other must be different.',
-    'digits' => 'The :attribute must be :digits digits.',
+    'digits' => ':attribute ต้องเป็นเลข :digits หลัก',
     'digits_between' => ':attribute ต้องมีจำนวน :min ถึง :max ตัวเลข',
     'dimensions' => 'The :attribute has invalid image dimensions.',
     'distinct' => 'The :attribute field has a duplicate value.',
@@ -111,7 +111,7 @@ return [
     'size' => [
         'numeric' => 'The :attribute must be :size.',
         'file' => 'The :attribute must be :size kilobytes.',
-        'string' => 'The :attribute must be :size characters.',
+        'string' => ':attribute ต้องมีขนาด :size ตัวอักษร',
         'array' => 'The :attribute must contain :size items.',
     ],
     'starts_with' => 'The :attribute must start with one of the following: :values.',
@@ -158,6 +158,9 @@ return [
         'full_name' => 'ชื่อเต็ม',
         'tel_no' => 'หมายเลขโทรศัพท์',
         'center' => 'ศูนย์',
+        'sat_code' => 'SAT CODE',
+        'date_admit_origin' => 'วันที่รับไว้ในโรงพยาบาล',
+        'hn' => 'HN',
     ],
 
 ];

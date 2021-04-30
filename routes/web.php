@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\ReferCasesController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
@@ -27,3 +29,11 @@ Route::middleware('auth')->post('/logout', [AuthenticatedSessionController::clas
 
 // User
 Route::middleware('auth')->get('/home', [PagesController::class, 'home'])->name('home');
+Route::middleware('auth')->get('/users', [PagesController::class, 'users']);
+
+// refer cases
+Route::middleware('auth')->get('/refer-cases', [ReferCasesController::class, 'index']);
+Route::middleware('auth')->post('/refer-cases', [ReferCasesController::class, 'store']);
+
+// form
+Route::middleware('auth')->get('/forms/{note:slug}/edit', [NotesController::class, 'edit']);

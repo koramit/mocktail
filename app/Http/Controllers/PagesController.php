@@ -7,10 +7,17 @@ use Inertia\Inertia;
 
 class PagesController extends Controller
 {
+    public function users()
+    {
+        Request::session()->flash('page-title', 'จัดการผู้ใช้งาน');
+        return Inertia::render('Users');
+    }
+
     public function home()
     {
         // title and menu
         Request::session()->flash('page-title', 'หน้าหลัก');
+        Request::session()->flash('messages', null);
         Request::session()->flash('main-menu-links', [
             // ['icon' => 'patient', 'label' => 'Patients', 'route' => 'prototypes/PatientsIndex'],
             // ['icon' => 'clinic', 'label' => 'Clinics', 'route' => 'prototypes/ClinicsIndex'],
