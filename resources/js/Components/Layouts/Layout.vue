@@ -8,13 +8,13 @@
                 <div class="bg-dark-theme-light text-white md:flex-shrink-0 md:w-56 xl:w-64 px-4 py-2 flex items-center justify-between md:justify-center">
                     <!-- the logo -->
                     <inertia-link
-                        class=" inline-block"
+                        class="inline-block"
                         :href="`${baseUrl}/home`"
                     >
                         <span class="font-bold text-lg md:text-4xl italic">Mocktail</span>
                     </inertia-link>
                     <!-- title display on mobile -->
-                    <div class="text-soft-theme-light text-sm md:hidden">
+                    <div class="text-soft-theme-light text-sm truncate mx-1 md:hidden">
                         {{ $page.props.flash.title }}
                     </div>
                     <!-- hotel menu on mobile -->

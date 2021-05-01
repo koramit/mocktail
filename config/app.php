@@ -242,4 +242,7 @@ return [
     'mini_hash_start_at' => env('MINI_HASH_START_AT'),
     'mini_hash_length' => env('MINI_HASH_LENGTH'),
 
+    'main_center_id' => 1,
+    'main_center' => 'ศิริราช',
+
 ];

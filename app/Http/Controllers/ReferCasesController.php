@@ -17,7 +17,7 @@ class ReferCasesController extends Controller
 {
     public function index()
     {
-        Request::session()->flash('page-title', 'รายการเคส'.(Session::get('center')->name === 'ศิริราช' ? '' : (' '.Session::get('center')->name)));
+        Request::session()->flash('page-title', 'รายการเคส'.(Session::get('center')->name === config('app.main_center') ? '' : (' '.Session::get('center')->name)));
         Request::session()->flash('messages', null);
         Request::session()->flash('main-menu-links', []);
         Request::session()->flash('action-menu', [
@@ -58,7 +58,7 @@ class ReferCasesController extends Controller
                         $fail('ไม่พบ HN นี้ในระบบ');
                     }
                 } else {
-                    if (Session::get('center')->name === 'ศิริราช') {
+                    if (Session::get('center')->name === config('app.main_center')) {
                         $fail('จำเป็นต้องลง HN');
                     }
                 }

@@ -567,10 +567,11 @@ export default {
         autosave (field) {
             let form = {};
             form['contents->' + (field.split('.').join('->'))] = lodashGet(this.form, field);
-            form = useForm(form);
-            form.patch(this.patchEndpoint, {
-                preserveScroll: true,
-            });
+            axios.patch(this.patchEndpoint, form);
+            // form = useForm(form);
+            // form.patch(this.patchEndpoint, {
+            //     preserveScroll: true,
+            // });
         }
     }
 };
