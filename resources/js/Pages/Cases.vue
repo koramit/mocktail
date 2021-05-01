@@ -46,13 +46,21 @@ export default {
         cases: { type: Array, required: true },
     },
     created () {
-        this.eventBus.on('action-clicked', this.handleAction);
+        this.eventBus.on('action-clicked', (action) => {
+            if (action === 'create-new-case') {
+                // in prod, code run too fast so, it run on the layout then
+                // this.$refs.createCase is not available at the time
+                // so, we wait until the component has switched
+                // this is 100% speculation 🤣
+                setTimeout(() => this.$refs.createCase.open(), 300);
+            }
+        });
     },
     methods: {
         handleAction (action) {
             switch (action) {
             case 'create-new-case':
-                this.$refs.createCase.open();
+                this.$nextTick(() => this.$nextTick(() => this.$refs.createCase.open()));
                 break;
 
             default:
