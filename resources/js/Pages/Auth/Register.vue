@@ -94,7 +94,7 @@
                 :toggler="true"
             />
             <a
-                :href="`${baseUrl}/policies`"
+                :href="`${baseUrl}/terms-and-policies`"
                 class="mt-2 block text-bitter-theme-light"
                 target="_blank"
             >อ่านนโยบายและข้อตกลง</a>

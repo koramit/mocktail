@@ -10,6 +10,7 @@ class PagesController extends Controller
     public function users()
     {
         Request::session()->flash('page-title', 'จัดการผู้ใช้งาน');
+
         return Inertia::render('Users');
     }
 
@@ -30,5 +31,10 @@ class PagesController extends Controller
         ]);
 
         return Inertia::render('Home');
+    }
+
+    public function terms()
+    {
+        return Inertia::render('TermsAndPolicies');
     }
 }
