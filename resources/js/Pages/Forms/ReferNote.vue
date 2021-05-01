@@ -1,5 +1,6 @@
 <template>
     <div class="lg:max-w-3xl lg:mx-auto">
+        <!-- preliminary data -->
         <div class="bg-white rounded shadow-sm p-4  mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 ข้อมูลเบื้องต้น
@@ -9,18 +10,21 @@
                 name="sat_code"
                 label="sat code"
                 v-model="form.patient.sat_code"
+                @autosave="autosave('patient.sat_code')"
             />
             <form-input
                 class="mt-2"
                 name="hn"
                 label="HN ศิริราช"
                 v-model="form.patient.hn"
+                @autosave="autosave('patient.hn')"
             />
             <form-input
                 class="mt-2"
                 name="name"
                 label="ชื่อผู้ป่วย"
                 v-model="form.patient.name"
+                @autosave="autosave('patient.name')"
             />
             <form-select
                 class="mt-2"
@@ -30,111 +34,119 @@
                 :options="configs.insurances"
                 :allow-other="true"
                 ref="insurance"
+                @autosave="autosave('patient.insurance')"
             />
             <form-datetime
                 class="mt-2"
                 label="วันแรกที่มีอาการ"
                 v-model="form.patient.date_symptom_start"
                 name="date_symptom_start"
+                @autosave="autosave('patient.date_symptom_start')"
             />
             <form-datetime
                 class="mt-2"
                 label="วันที่ตรวจพบเชื้อ"
                 v-model="form.patient.date_covid_infected"
                 name="date_covid_infected"
+                @autosave="autosave('patient.date_covid_infected')"
             />
             <form-datetime
                 class="mt-2"
                 label="วันที่รับไว้ในโรงพยาบาล"
                 v-model="form.patient.date_admit_origin"
                 name="date_admit_origin"
+                @autosave="autosave('patient.date_admit_origin')"
             />
             <form-datetime
                 class="mt-2"
                 label="วันที่ส่งผู้ป่วยไป Hospitel"
                 v-model="form.patient.date_refer"
                 name="date_refer"
+                @autosave="autosave('patient.date_refer')"
             />
             <form-datetime
                 class="mt-2"
                 label="วันที่ครบกำหนดนอนใน hospitel"
                 v-model="form.patient.date_expect_discharge"
                 name="date_quarantine_end"
+                @autosave="autosave('patient.date_expect_discharge')"
             />
             <form-datetime
                 class="mt-2"
                 label="วันที่ครบกำหนดกำหนดกักตัวต่อที่บ้าน"
                 v-model="form.patient.date_quarantine_end"
                 name="date_quarantine_end"
+                @autosave="autosave('patient.date_quarantine_end')"
             />
         </div>
 
+        <!-- vital signs -->
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 Vital Signs ล่าสุด
             </h2>
-
             <form-input
                 class="mt-2"
                 label="Temp (℃)"
                 type="number"
                 name="temperature_celsius"
                 v-model="form.vital_signs.temperature_celsius"
+                @autosave="autosave('vital_signs.temperature_celsius')"
             />
-
             <form-input
                 class="mt-2"
                 label="Pulse (min)"
                 type="tel"
                 name="pulse_per_minute"
                 v-model="form.vital_signs.pulse_per_minute"
+                @autosave="autosave('vital_signs.pulse_per_minute')"
             />
-
             <form-input
                 class="mt-2"
                 label="RR (min)"
                 type="tel"
                 name="respiration_rate_per_minute"
                 v-model="form.vital_signs.respiration_rate_per_minute"
+                @autosave="autosave('vital_signs.respiration_rate_per_minute')"
             />
-
             <form-input
                 class="mt-2"
                 label="SBP (mmHg)"
                 name="sbp"
                 type="tel"
                 v-model="form.vital_signs.sbp"
+                @autosave="autosave('vital_signs.sbp')"
             />
-
             <form-input
                 class="mt-2"
                 label="DBP (mmHg)"
                 name="dbp"
                 type="tel"
                 v-model="form.vital_signs.dbp"
+                @autosave="autosave('vital_signs.dbp')"
             />
-
             <form-input
                 class="mt-2"
                 label="O₂ sat (% RA)"
                 type="tel"
                 name="o2_sat"
                 v-model="form.vital_signs.o2_sat"
+                @autosave="autosave('vital_signs.o2_sat')"
             />
         </div>
 
+        <!-- symptoms -->
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 บันทึกอาการแสดง
             </h2>
-
             <form-checkbox
                 class="mt-2"
                 v-model="form.symptoms.asymptomatic"
                 label="Asymptomatic"
                 :toggler="true"
+                @autosave="autosave('symptoms.asymptomatic')"
             />
-
             <div v-if="!form.symptoms.asymptomatic">
                 <form-checkbox
                     v-for="(symptom, key) in configs.symptoms"
@@ -142,13 +154,14 @@
                     class="mt-2"
                     v-model="form.symptoms[symptom.name]"
                     :label="symptom.label"
+                    @autosave="autosave('symptoms.' + symptom.name)"
                 />
-
                 <form-input
                     class="mt-2"
                     placeholder="อาการอื่นๆ คือ"
                     name="symptoms_others"
                     v-model="form.symptoms.others"
+                    @autosave="autosave('symptoms.others')"
                 />
             </div>
             <form-select
@@ -157,120 +170,125 @@
                 v-model="form.symptoms.asymptomatic_detail"
                 name="asymptomatic_detail"
                 :options="['ไม่มีอาการตั้งแต่ต้น', 'อาการดีขึ้นแล้ว']"
+                @autosave="autosave('symptoms.asymptomatic_detail')"
             />
         </div>
 
+        <!-- diagnosis -->
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 วินิจฉัย
             </h2>
-
             <form-checkbox
                 class="mt-2"
                 v-model="form.diagnosis.asymptomatic"
                 label="Asymptomatic COVID 19 infection"
                 :toggler="true"
+                @autosave="autosave('diagnosis.asymptomatic')"
             />
-
             <div v-if="!form.diagnosis.asymptomatic">
                 <form-checkbox
                     class="mt-2"
                     v-model="form.diagnosis.uri"
                     label="COVID 19 with URI"
+                    @autosave="autosave('diagnosis.uri')"
                 />
-
                 <form-datetime
                     v-if="form.diagnosis.uri"
                     class="mt-2"
                     label="วันที่เริ่มมีอาการ uri"
                     v-model="form.diagnosis.date_uri"
                     name="date_uri"
+                    @autosave="autosave('diagnosis.date_uri')"
                 />
-
                 <form-checkbox
                     class="mt-2"
                     v-model="form.diagnosis.pneumonia"
                     label="COVID 19 with Pneumonia"
+                    @autosave="autosave('diagnosis.pneumonia')"
                 />
-
                 <form-datetime
                     v-if="form.diagnosis.pneumonia"
                     class="mt-2"
                     label="วันที่เริ่มมีอาการ pneumonia"
                     v-model="form.diagnosis.date_pneumonia"
                     name="date_pneumonia"
+                    @autosave="autosave('diagnosis.date_pneumonia')"
                 />
-
                 <form-checkbox
                     class="mt-2"
                     v-model="form.diagnosis.gastroenteritis"
                     label="COVID 19 with Gastroenteritis"
+                    @autosave="autosave('diagnosis.gastroenteritis')"
                 />
-
                 <form-input
                     class="mt-2"
                     name="diagnosis_others"
                     placeholder="วินิจฉัยอื่นๆ"
                     v-model="form.diagnosis.others"
+                    @autosave="autosave('diagnosis.others')"
                 />
             </div>
         </div>
 
+        <!-- ADR -->
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 ประวัติแพ้ยา/อาหาร
             </h2>
-
             <form-checkbox
                 class="mt-2"
                 v-model="form.adr.none"
                 label="ไม่แพ้"
                 :toggler="true"
+                @autosave="autosave('adr.none')"
             />
-
             <form-input
                 v-if="!form.adr.none"
                 class="mt-2"
                 placeholder="ระบุชนิดของยา/อาหารที่แพ้"
                 name="adr_detail"
                 v-model="form.adr.detail"
+                @autosave="autosave('adr.detail')"
             />
         </div>
 
+        <!-- comorbids -->
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 โรคประจำตัว
             </h2>
-
             <form-checkbox
                 class="mt-2"
                 v-model="form.comorbids.none"
                 label="ไม่มี"
                 :toggler="true"
+                @autosave="autosave('comorbids.none')"
             />
-
             <div v-if="!form.comorbids.none">
                 <form-checkbox
                     class="mt-2"
                     v-model="form.comorbids.dm"
                     label="เบาหวาน"
+                    @autosave="autosave('comorbids.dm')"
                 />
-
                 <form-checkbox
                     class="mt-2"
                     v-model="form.comorbids.ht"
                     label="ความดันโลหิตสูง"
+                    @autosave="autosave('comorbids.ht')"
                 />
-
                 <form-input
                     class="mt-2"
                     placeholder="ระบุโรคประจำตัวอื่นๆ"
                     name="comorbids_others"
                     v-model="form.comorbids.others"
+                    @autosave="autosave('comorbids.others')"
                 />
             </div>
         </div>
 
+        <!-- meal -->
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 อาหาร
@@ -282,60 +300,62 @@
                 :options="configs.meals"
                 :allow-other="true"
                 ref="meal"
+                @autosave="autosave('patient.meal')"
             />
         </div>
 
+        <!-- treatments -->
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
                 คำสั่งการรักษา
             </h2>
-
             <form-select
                 class="mt-2"
                 label="Temperature"
                 name="temperature_per_day"
                 v-model="form.treatments.temperature_per_day"
                 :options="['วันละครั้ง', 'วันละสองครั้งเช้าเย็น']"
+                @autosave="autosave('treatments.temperature_per_day')"
             />
-
             <form-select
                 class="mt-2"
                 label="Oxygen sat RA"
                 name="oxygen_sat_RA"
                 v-model="form.treatments.oxygen_sat_RA"
                 :options="['วันละครั้ง', 'วันละสองครั้งเช้าเย็น']"
+                @autosave="autosave('treatments.oxygen_sat_RA')"
             />
-
             <form-checkbox
                 class="mt-4"
                 v-model="form.treatments.favipiravir"
                 label="FAVIPIRAVIR"
                 :toggler="true"
+                @autosave="autosave('treatments.favipiravir')"
             />
-
             <template v-if="form.treatments.favipiravir">
                 <form-datetime
                     class="mt-2"
                     label="Favipiravir (วันที่เริ่มยา)"
                     v-model="form.treatments.date_start_favipiravir"
                     name="date_start_favipiravir"
+                    @autosave="autosave('treatments.date_start_favipiravir')"
                 />
-
                 <form-datetime
                     class="mt-2"
                     label="Favipiravir (กำหนดครบวันที่)"
                     v-model="form.treatments.date_stop_favipiravir"
                     name="date_stop_favipiravir"
+                    @autosave="autosave('treatments.date_stop_favipiravir')"
                 />
             </template>
-
             <form-datetime
                 class="mt-2"
                 label="นัดมาทำ NP swab ซ้ำ วันที่"
                 v-model="form.treatments.date_repeat_NP_swap"
                 name="date_repeat_NP_swap"
+                @autosave="autosave('treatments.date_repeat_NP_swap')"
             />
-            <small class="text-md text-yellow-300">* กรณีบุคลากรทางการแพทย์ศิริราช</small>
+            <small class="text-md text-thick-theme-light italic">๏ กรณีบุคลากรทางการแพทย์ศิริราช</small>
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
@@ -366,10 +386,6 @@
             >
         </div>
 
-        <button class="btn btn-bitter w-full mt-4 sm:mt-6 md:mt-12">
-            บันทึกร่าง
-        </button>
-
         <button class="btn btn-dark w-full mt-4 sm:mt-6 md:mt-12">
             ยืนยันการส่งต่อผู้ป่วย
         </button>
@@ -384,6 +400,7 @@
 
 <script>
 import { useForm } from '@inertiajs/inertia-vue3';
+import lodashGet from 'lodash/get';
 import Layout from '@/Components/Layouts/Layout';
 import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import FormDatetime from '@/Components/Controls/FormDatetime';
@@ -400,6 +417,7 @@ export default {
         FormSelectOther,
     },
     props: {
+        patchEndpoint: { type: String, required: true },
         contents: { type: Object, required: true },
         formConfigs: { type: Object, required: true }
     },
@@ -535,6 +553,14 @@ export default {
             this.configs[this.configsRef].push(val);
             this.$refs[this.formSelectRef].setOther(val);
         },
+        autosave (field) {
+            let form = {};
+            form['contents->' + (field.split('.').join('->'))] = lodashGet(this.form, field);
+            form = useForm(form);
+            form.patch(this.patchEndpoint, {
+                preserveScroll: true,
+            });
+        }
     }
 };
 </script>

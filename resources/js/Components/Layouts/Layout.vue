@@ -170,12 +170,17 @@
                             v-if="$page.props.flash.messages.status === 'info'"
                         />
                         <div class="ml-4">
-                            <p
-                                class="p-2"
+                            <div
+                                class="flex my-1 text-thick-theme-light"
                                 v-for="(message, key) in $page.props.flash.messages.messages"
                                 :key="key"
-                                v-html="message"
-                            />
+                            >
+                                <p>๏</p>
+                                <p
+                                    class="px-2"
+                                    v-html="message"
+                                />
+                            </div>
                         </div>
                     </div>
 
