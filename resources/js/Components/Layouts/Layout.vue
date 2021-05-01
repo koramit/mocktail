@@ -19,7 +19,7 @@
                     </div>
                     <!-- hotel menu on mobile -->
                     <button
-                        class="md:hidden text-alt-theme-light"
+                        class="md:hidden text-soft-theme-light"
                         @click="mobileMenuVisible = !mobileMenuVisible"
                     >
                         <svg

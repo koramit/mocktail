@@ -20,6 +20,11 @@ class Patient extends Model
         'profile',
     ];
 
+    public function referCases()
+    {
+        return $this->hasMany(ReferCase::class);
+    }
+
     public function admissions()
     {
         return $this->hasMany(Admission::class);
