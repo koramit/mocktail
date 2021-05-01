@@ -11,7 +11,7 @@ class NotesController extends Controller
     public function edit(Note $note)
     {
         // title and menu
-        Request::session()->flash('page-title', 'สร้างเคสใหม่');
+        Request::session()->flash('page-title', 'แก้ไขใบส่งตัว: '.($note->referCase->patient_name ?? 'ยังไม่มีชื่อ'));
         Request::session()->flash('messages', [
             'status' => 'info',
             'messages' => [
@@ -20,7 +20,7 @@ class NotesController extends Controller
             ],
         ]);
         Request::session()->flash('main-menu-links', [
-            // ['icon' => 'patient', 'label' => 'Patients', 'route' => 'prototypes/PatientsIndex'],
+            ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
             // ['icon' => 'clinic', 'label' => 'Clinics', 'route' => 'prototypes/ClinicsIndex'],
             // ['icon' => 'procedure', 'label' => 'Procedures', 'route' => 'prototypes/ProceduresIndex'],
         ]);

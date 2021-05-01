@@ -57,7 +57,13 @@
             />
             <form-datetime
                 class="mt-2"
-                label="วันที่ครบกำหนดกักตัว"
+                label="วันที่ครบกำหนดนอนใน hospitel"
+                v-model="form.patient.date_expect_discharge"
+                name="date_quarantine_end"
+            />
+            <form-datetime
+                class="mt-2"
+                label="วันที่ครบกำหนดกำหนดกักตัวต่อที่บ้าน"
                 v-model="form.patient.date_quarantine_end"
                 name="date_quarantine_end"
             />
@@ -253,7 +259,7 @@
                 <form-checkbox
                     class="mt-2"
                     v-model="form.comorbids.ht"
-                    label="ความดัน"
+                    label="ความดันโลหิตสูง"
                 />
 
                 <form-input
@@ -300,19 +306,28 @@
                 :options="['วันละครั้ง', 'วันละสองครั้งเช้าเย็น']"
             />
 
-            <form-datetime
-                class="mt-2"
-                label="Favipiravir (วันที่เริ่มยา)"
-                v-model="form.treatments.date_start_favipiravir"
-                name="date_start_favipiravir"
+            <form-checkbox
+                class="mt-4"
+                v-model="form.treatments.favipiravir"
+                label="FAVIPIRAVIR"
+                :toggler="true"
             />
 
-            <form-datetime
-                class="mt-2"
-                label="Favipiravir (กำหนดครบวันที่)"
-                v-model="form.treatments.date_stop_favipiravir"
-                name="date_stop_favipiravir"
-            />
+            <template v-if="form.treatments.favipiravir">
+                <form-datetime
+                    class="mt-2"
+                    label="Favipiravir (วันที่เริ่มยา)"
+                    v-model="form.treatments.date_start_favipiravir"
+                    name="date_start_favipiravir"
+                />
+
+                <form-datetime
+                    class="mt-2"
+                    label="Favipiravir (กำหนดครบวันที่)"
+                    v-model="form.treatments.date_stop_favipiravir"
+                    name="date_stop_favipiravir"
+                />
+            </template>
 
             <form-datetime
                 class="mt-2"
@@ -320,6 +335,7 @@
                 v-model="form.treatments.date_repeat_NP_swap"
                 name="date_repeat_NP_swap"
             />
+            <small class="text-md text-yellow-300">* กรณีบุคลากรทางการแพทย์ศิริราช</small>
         </div>
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
@@ -500,9 +516,6 @@ export default {
             otherItem: '',
             otherItemAdded: false,
         };
-    },
-    created () {
-        document.title = 'Refer note';
     },
     mounted() {
         this.$nextTick(function () {

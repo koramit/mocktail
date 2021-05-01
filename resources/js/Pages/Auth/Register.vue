@@ -124,13 +124,13 @@ export default {
     data () {
         return {
             form: useForm({
-                name: '',
-                full_name: '',
-                tel_no: '',
-                pln: '',
-                center: '',
-                email: '',
-                password: '',
+                name: null,
+                full_name: null,
+                tel_no: null,
+                pln: null,
+                center: null,
+                email: null,
+                password: null,
                 agreement_accepted: false,
                 remember: true
             }),

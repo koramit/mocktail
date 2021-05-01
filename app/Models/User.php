@@ -115,11 +115,10 @@ class User extends Authenticatable
         });
     }
 
-    public function getCenterNameAttribute()
-    {
-        return Cache::remember("uid-{$this->id}-center-name", config('session.lifetime') * 60, function () {
-            return $this->center->name;
-        });
-    }
-
+    // public function getCenterNameAttribute()
+    // {
+    //     return Cache::remember("uid-{$this->id}-center-name", config('session.lifetime') * 60, function () {
+    //         return $this->center->name;
+    //     });
+    // }
 }
