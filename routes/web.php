@@ -16,6 +16,9 @@ Route::get('/prototypes/{page}', function ($page) {
     return Inertia\Inertia::render('Prototypes/'.$page);
 });
 
+// Page
+Route::get('/terms-and-policies', [PagesController::class, 'terms'])->name('terms-and-policies');
+
 // register
 Route::middleware('guest')->get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::middleware('guest')->post('/register', [RegisteredUserController::class, 'store']);

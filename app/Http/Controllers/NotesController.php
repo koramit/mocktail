@@ -49,6 +49,7 @@ class NotesController extends Controller
 
         $contents = $note->contents;
         $contents['patient']['name'] = $note->referCase->patient_name;
+        $contents['patient']['hn'] = $note->referCase->patient ? $note->referCase->patient->hn : null;
 
         return Inertia::render('Forms/ReferNote', [
             'contents' => $contents,

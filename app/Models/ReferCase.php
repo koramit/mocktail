@@ -13,6 +13,11 @@ class ReferCase extends Model
 
     protected $guarded = [];
 
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
+
     public function referer()
     {
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
