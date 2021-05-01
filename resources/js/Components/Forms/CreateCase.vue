@@ -31,7 +31,7 @@
                         v-model="form.hn"
                         name="hn"
                         type="tel"
-                        label="hn ศิริราช (ถ้ามี)"
+                        :label="'hn' + (($page.props.user.center === 'ศิริราช') ? '':' ศิริราช (ถ้ามี)')"
                         :error="form.errors.hn"
                     />
                     <small class="mt-2 text-sm font-semibold text-dark-theme-light">{{ form.errors.confirmed }}</small>
@@ -61,9 +61,6 @@ import Modal from '@/Components/Helpers/Modal';
 export default {
     emits: ['closed'],
     components: { FormDatetime, FormInput, Modal, SpinnerButton },
-    props: {
-        placeholder: { type: String, default: 'โปรดระบุ' },
-    },
     data () {
         return {
             form: useForm({

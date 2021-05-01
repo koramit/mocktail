@@ -35,6 +35,10 @@ class ReferCasesController extends Controller
                     if (! $result['found']) {
                         $fail('ไม่พบ HN นี้ในระบบ');
                     }
+                } else {
+                    if (Auth::user()->center_name === 'ศิริราช') {
+                        $fail('จำเป็นต้องลง HN');
+                    }
                 }
             }],
         ]);

@@ -114,4 +114,12 @@ class User extends Authenticatable
             return $this->roles->pluck('name');
         });
     }
+
+    public function getCenterNameAttribute()
+    {
+        return Cache::remember("uid-{$this->id}-center-name", config('session.lifetime') * 60, function () {
+            return $this->center->name;
+        });
+    }
+
 }
