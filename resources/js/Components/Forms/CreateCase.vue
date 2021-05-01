@@ -64,9 +64,9 @@ export default {
     data () {
         return {
             form: useForm({
-                sat_code: '',
-                date_admit_origin: '',
-                hn: '',
+                sat_code: null,
+                date_admit_origin: null,
+                hn: null,
             }),
             busy: false,
             needConfirm: false,

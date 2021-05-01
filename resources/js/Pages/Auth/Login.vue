@@ -62,8 +62,8 @@ export default {
     data () {
         return {
             form: useForm({
-                login: '',
-                password: '',
+                login: null,
+                password: null,
                 remember: true
             }),
             baseUrl: this.$page.props.app.baseUrl,

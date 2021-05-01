@@ -11,16 +11,17 @@ class NotesController extends Controller
     public function edit(Note $note)
     {
         // title and menu
-        Request::session()->flash('page-title', 'สร้างเคสใหม่');
+        Request::session()->flash('page-title', 'แก้ไขใบส่งตัว: '.($note->referCase->patient_name ?? 'ยังไม่มีชื่อ'));
         Request::session()->flash('messages', [
             'status' => 'info',
             'messages' => [
-                'สามารถทำการ <span class="font-semibold">บันทึกร่าง</span> เพื่อกลับมาลงข้อมูลภายหลังได้ แต่เคสจะยังไม่ถูกส่งจนกว่าจะทำการ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย<span>',
+                'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
+                'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> ท้ายฟอร์ม',
                 'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้อยู่จนกว่าเคสจะแอดมิด',
             ],
         ]);
-        Request::session()->flash('main-menu-links', [
-            // ['icon' => 'patient', 'label' => 'Patients', 'route' => 'prototypes/PatientsIndex'],
+        Request::session()->flash('main-menu-links', [ // need check abilities
+            ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
             // ['icon' => 'clinic', 'label' => 'Clinics', 'route' => 'prototypes/ClinicsIndex'],
             // ['icon' => 'procedure', 'label' => 'Procedures', 'route' => 'prototypes/ProceduresIndex'],
         ]);
@@ -52,8 +53,17 @@ class NotesController extends Controller
         $contents['patient']['hn'] = $note->referCase->patient ? $note->referCase->patient->hn : null;
 
         return Inertia::render('Forms/ReferNote', [
+            'patchEndpoint' => url('/forms/'.$note->id),
             'contents' => $contents,
             'formConfigs' => $configs,
         ]);
+    }
+
+    public function update(Note $note)
+    {
+        $note->forceFill(Request::all());
+        $note->save();
+
+        return back();
     }
 }

@@ -40,3 +40,4 @@ Route::middleware('auth')->post('/refer-cases', [ReferCasesController::class, 's
 
 // form
 Route::middleware('auth')->get('/forms/{note:slug}/edit', [NotesController::class, 'edit']);
+Route::middleware('auth')->patch('/forms/{note}', [NotesController::class, 'update']);
