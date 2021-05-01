@@ -27,7 +27,7 @@
                         @click="$refs.modal.close()"
                         :disabled="!otherItem"
                     >
-                        ADD
+                        เพิ่ม
                     </button>
                 </div>
             </template>

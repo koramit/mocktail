@@ -159,7 +159,7 @@
                     <!-- <flash-messages /> -->
                     <div
                         v-if="$page.props.flash.messages"
-                        class="flex items-center rounded-tl-lg rounded-tr-lg border-8 border-t-0 border-l-0 border-r-0 shadow text-xs text-thick-theme-light p-4"
+                        class="flex items-center rounded-tl-lg rounded-tr-lg border-8 border-t-0 border-l-0 border-r-0 shadow p-4"
                         :class="{
                             'border-alt-theme-light': $page.props.flash.messages.status === 'info'
                         }"
@@ -171,7 +171,7 @@
                         />
                         <div class="ml-4">
                             <div
-                                class="flex my-1 text-thick-theme-light"
+                                class="flex my-1 text-dark-theme-light text-xs"
                                 v-for="(message, key) in $page.props.flash.messages.messages"
                                 :key="key"
                             >
