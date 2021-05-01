@@ -44,6 +44,8 @@ class InitUserRole
 
                 return;
             }
+
+            return;
         }
 
         if (strpos($profile['full_name'], ' พญ. ') !== false ||

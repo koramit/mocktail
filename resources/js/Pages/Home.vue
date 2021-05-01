@@ -4,7 +4,16 @@
             <h2 class="font-semibold pb-2 border-b border-dashed text-thick-theme-light">
                 รายการหลัก
             </h2>
-            <div class="mt-4">
+            <div
+                class="mt-4"
+                v-if="abilities.length === 0"
+            >
+                กรุณาติดต่อผู้แทนศูนย์หรือผู้ดูแลระบบเพื่อเปิดสิทธิ์การใช้งาน
+            </div>
+            <div
+                class="mt-4"
+                v-else
+            >
                 <button
                     class="btn btn-bitter block w-full text-center"
                     v-if="abilities.includes('refer_case') || abilities.includes('grant_user')"
