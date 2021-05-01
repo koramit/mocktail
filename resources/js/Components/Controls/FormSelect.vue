@@ -21,13 +21,13 @@
                     disabled
                     value=""
                 >
-                    Please select
+                    โปรดเลือก
                 </option>
                 <option
                     class="italic text-yellow-500"
                     v-if="modelValue"
                 >
-                    Remove
+                    ยกเลิก
                 </option>
                 <option
                     v-for="(option, key) in itemOptions"
@@ -47,7 +47,7 @@
                     value="other"
                     v-if="allowOther"
                 >
-                    Other
+                    อื่นๆ
                 </option>
             </select>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">

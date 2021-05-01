@@ -22,7 +22,7 @@
                 </p>
                 <p class="p-2 flex justify-end">
                     <inertia-link
-                        class="underline italic text-yellow-200"
+                        class="underline italic text-yellow-300"
                         v-if="referCase.referer === $page.props.user.name"
                         :href="`${$page.props.app.baseUrl}/forms/${referCase.note_slug}/edit`"
                     >

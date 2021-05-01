@@ -15,6 +15,7 @@
             <form-input
                 class="mt-2"
                 name="hn"
+                type="tel"
                 label="HN ศิริราช"
                 v-model="form.patient.hn"
                 @autosave="autosave('patient.hn')"
@@ -534,6 +535,16 @@ export default {
             otherItem: '',
             otherItemAdded: false,
         };
+    },
+    created () {
+        console.log(this.configs);
+        if (this.form.patient.insurance && !this.configs.insurances.includes(this.form.patient.insurance)) {
+            this.configs.insurances.push(this.form.patient.insurance);
+        }
+
+        if (this.form.patient.meal && !this.configs.meals.includes(this.form.patient.meal)) {
+            this.configs.meals.push(this.form.patient.meal);
+        }
     },
     mounted() {
         this.$nextTick(function () {
