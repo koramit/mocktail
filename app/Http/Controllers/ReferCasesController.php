@@ -17,8 +17,8 @@ class ReferCasesController extends Controller
 {
     public function index()
     {
-        Request::session()->flash('page-title', 'รายการเคส'.(Session::get('center')->name === 'ศิริราช' ? '' : (' '.Session::get('center')->name)));
-        Request::session()->flash('messages', null);
+        Request::session()->flash('page-title', 'รายการเคส'.(Session::get('center')->name === config('app.main_center') ? '' : (' '.Session::get('center')->name)));
+        Request::session()->flash('messages', []);
         Request::session()->flash('main-menu-links', []);
         Request::session()->flash('action-menu', [
             ['icon' => 'ambulance', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-new-case'],
@@ -58,7 +58,7 @@ class ReferCasesController extends Controller
                         $fail('ไม่พบ HN นี้ในระบบ');
                     }
                 } else {
-                    if (Session::get('center')->name === 'ศิริราช') {
+                    if (Session::get('center')->name === config('app.main_center')) {
                         $fail('จำเป็นต้องลง HN');
                     }
                 }
@@ -72,7 +72,7 @@ class ReferCasesController extends Controller
         }
 
         $user = Auth::user();
-        $contents = (new ReferNoteManager())->initNote();
+        $contents = ReferNoteManager::initNote();
         $contents['patient']['sat_code'] = Request::input('sat_code');
         $contents['patient']['date_admit_origin'] = Request::input('date_admit_origin');
 
@@ -97,5 +97,16 @@ class ReferCasesController extends Controller
         $case = $user->referCases()->create($case);
 
         return Redirect::to(url('forms/'.$note->slug.'/edit'));
+    }
+
+    public function update(Note $note)
+    {
+        $errors = ReferNoteManager::validate($note);
+
+        if ($errors) {
+            return back()->withErrors($errors);
+        }
+
+        return 'OK 😇';
     }
 }

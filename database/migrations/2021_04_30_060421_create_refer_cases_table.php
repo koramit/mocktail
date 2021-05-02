@@ -16,6 +16,7 @@ class CreateReferCasesTable extends Migration
         Schema::create('refer_cases', function (Blueprint $table) {
             $table->id();
             $table->uuid('slug');
+            $table->string('hn')->nullable();
             $table->string('patient_name', 1024)->nullable();
             $table->unsignedBigInteger('patient_id')->nullable()->constrained('patients')->onDelete('cascade');
             $table->unsignedBigInteger('admission_id')->nullable()->constrained('admissions')->onDelete('cascade');

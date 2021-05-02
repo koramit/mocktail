@@ -59,7 +59,7 @@ return [
     'image' => 'The :attribute must be an image.',
     'in' => 'The selected :attribute is invalid.',
     'in_array' => 'The :attribute field does not exist in :other.',
-    'integer' => 'The :attribute must be an integer.',
+    'integer' => ':attribute ต้องเป็นเลขจำนวนเต็ม',
     'ip' => 'The :attribute must be a valid IP address.',
     'ipv4' => 'The :attribute must be a valid IPv4 address.',
     'ipv6' => 'The :attribute must be a valid IPv6 address.',
@@ -161,6 +161,24 @@ return [
         'sat_code' => 'SAT CODE',
         'date_admit_origin' => 'วันที่รับไว้ในโรงพยาบาล',
         'hn' => 'HN',
+        'insurance' => 'สิทธิ์การรักษา',
+        'date_symptom_start' => 'วันแรกที่มีอาการ',
+        'date_covid_infected' => 'วันที่ตรวจพบเชื้อ',
+        'date_admit_origin' => 'วันที่รับไว้ในโรงพยาบาล',
+        'date_refer' => 'วันที่ส่งผู้ป่วยไป Hospitel',
+        'date_expect_discharge' => 'วันที่ครบกำหนดนอนใน hospitel',
+        'date_quarantine_end' => 'วันที่ครบกำหนดกำหนดกักตัวต่อที่บ้าน',
+        'meal' => 'อาหาร',
+
+        'temperature_celsius' => 'Temp (℃)',
+        'pulse_per_minute' => 'Pulse (min)',
+        'respiration_rate_per_minute' => 'RR (min)',
+        'sbp' => 'SBP (mmHg)',
+        'dbp' => 'DBP (mmHg)',
+        'o2_sat' => 'O₂ sat (% RA)',
+
+        'temperature_per_day' => 'คำสั่งการรักษา Temperature',
+        'oxygen_sat_RA_per_day' => 'คำสั่งการรักษา Oxygen sat RA',
     ],
 
 ];

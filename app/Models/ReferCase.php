@@ -77,7 +77,7 @@ class ReferCase extends Model
 
     public function scopeWithFilterUserCenter($query, $userCenterId)
     {
-        if ($userCenterId !== 1) {
+        if ($userCenterId !== config('app.main_center_id')) {
             $query->whereHas('center', function ($query) use ($userCenterId) {
                 $query->where('centers.id', $userCenterId);
             });

@@ -8,13 +8,13 @@
                 <div class="bg-dark-theme-light text-white md:flex-shrink-0 md:w-56 xl:w-64 px-4 py-2 flex items-center justify-between md:justify-center">
                     <!-- the logo -->
                     <inertia-link
-                        class=" inline-block"
+                        class="inline-block"
                         :href="`${baseUrl}/home`"
                     >
                         <span class="font-bold text-lg md:text-4xl italic">Mocktail</span>
                     </inertia-link>
                     <!-- title display on mobile -->
-                    <div class="text-soft-theme-light text-sm md:hidden">
+                    <div class="text-soft-theme-light text-sm truncate mx-1 md:hidden">
                         {{ $page.props.flash.title }}
                     </div>
                     <!-- hotel menu on mobile -->
@@ -126,22 +126,6 @@
                         />
                         <action-menu @action-clicked="actionClicked" />
                     </div>
-                    <!-- cookie-bite menu on mobile -->
-                    <!-- <div class="sticky bottom-0 px-4 py-2 flex justify-items-center bg-dark-theme-light">
-                        <button
-                            class="block mx-auto text-bitter-theme-light"
-                            @click="mobileMenuVisible = !mobileMenuVisible"
-                        >
-                            <svg
-                                class="w-6 h-6"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 512 512"
-                            ><path
-                                fill="currentColor"
-                                d="M510.52 255.82c-69.97-.85-126.47-57.69-126.47-127.86-70.17 0-127-56.49-127.86-126.45-27.26-4.14-55.13.3-79.72 12.82l-69.13 35.22a132.221 132.221 0 0 0-57.79 57.81l-35.1 68.88a132.645 132.645 0 0 0-12.82 80.95l12.08 76.27a132.521 132.521 0 0 0 37.16 72.96l54.77 54.76a132.036 132.036 0 0 0 72.71 37.06l76.71 12.15c27.51 4.36 55.7-.11 80.53-12.76l69.13-35.21a132.273 132.273 0 0 0 57.79-57.81l35.1-68.88c12.56-24.64 17.01-52.58 12.91-79.91zM176 368c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm32-160c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32zm160 128c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"
-                            /></svg>
-                        </button>
-                    </div> -->
                 </div>
             </div>
             <!-- this is content -->
@@ -158,7 +142,27 @@
                 >
                     <!-- <flash-messages /> -->
                     <div
-                        v-if="$page.props.flash.messages"
+                        v-if="Object.keys($page.props.errors).length"
+                        class="flex items-center rounded-tl-lg rounded-tr-lg border-red-400 border-8 border-t-0 border-l-0 border-r-0 shadow p-4"
+                    >
+                        <icon
+                            class="block w-12 h-12 text-red-400"
+                            name="exclamation-circle"
+                            v-if="$page.props.flash.messages.status === 'info'"
+                        />
+                        <div class="ml-4">
+                            <div
+                                class="flex my-1 text-dark-theme-light text-xs"
+                            >
+                                <p>๏</p>
+                                <p class="px-2">
+                                    ข้อมูลไม่ถูกต้อง <span class="font-semibold">{{ Object.keys($page.props.errors).length }} รายการ</span> กรุณาตรวจสอบ
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        v-else-if="$page.props.flash.messages && !Object.keys($page.props.errors).length"
                         class="flex items-center rounded-tl-lg rounded-tr-lg border-8 border-t-0 border-l-0 border-r-0 shadow p-4"
                         :class="{
                             'border-alt-theme-light': $page.props.flash.messages.status === 'info'
@@ -196,8 +200,6 @@ import Dropdown from '@/Components/Helpers/Dropdown';
 import Icon from '@/Components/Helpers/Icon';
 import MainMenu from '@/Components/Helpers/MainMenu';
 import ActionMenu from '@/Components/Helpers/ActionMenu';
-// import { onMounted } from 'vue';
-// import axios from 'axios';
 export default {
     components: { Dropdown, Icon, MainMenu, ActionMenu },
     computed: {
@@ -248,26 +250,6 @@ export default {
             }
         });
     },
-    // setup () {
-    //     var lastTimeCheckSessionTimeout = Date.now();
-    //     const endpoint = document.querySelector('meta[name=base-url]').content + '/session-timeout';
-    //     const sessionLifetimeSeconds = parseInt(document.querySelector('meta[name=session-lifetime-seconds]').content);
-    //     window.addEventListener('focus', () => {
-    //         let timeDiff = Date.now() - lastTimeCheckSessionTimeout;
-    //         if ( (timeDiff) > (sessionLifetimeSeconds) ) {
-    //             axios.post(endpoint)
-    //                 .then(() => lastTimeCheckSessionTimeout = Date.now())
-    //                 .catch(() => location.reload());
-    //         }
-    //     });
-
-    //     onMounted (() => {
-    //         const pageLoadingIndicator = document.getElementById('page-loading-indicator');
-    //         if (pageLoadingIndicator) {
-    //             pageLoadingIndicator.remove();
-    //         }
-    //     });
-    // },
     methods: {
         url() {
             return location.pathname.substr(1);
