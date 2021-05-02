@@ -7,10 +7,17 @@ use Illuminate\Support\Facades\Request;
 
 class ReferNoteManager
 {
-    public function setFlashData(Note $note)
+    protected $note;
+
+    public function __construct(Note $note)
+    {
+        $this->note = $note;
+    }
+
+    public function setFlashData()
     {
         // title and menu
-        Request::session()->flash('page-title', 'เขียนใบส่งตัว: '.($note->referCase->patient_name ?? 'ยังไม่มีชื่อ'));
+        Request::session()->flash('page-title', 'เขียนใบส่งตัว: '.($this->note->referCase->patient_name ?? 'ยังไม่มีชื่อ'));
         Request::session()->flash('messages', [
             'status' => 'info',
             'messages' => [
@@ -31,11 +38,11 @@ class ReferNoteManager
         ]);
     }
 
-    public function getContents(Note $note)
+    public function getContents()
     {
-        $contents = $note->contents;
-        $contents['patient']['name'] = $note->referCase->patient_name;
-        $contents['patient']['hn'] = $note->referCase->patient ? $note->referCase->patient->hn : null;
+        $contents = $this->note->contents;
+        $contents['patient']['name'] = $this->note->referCase->patient_name;
+        $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
 
         return $contents;
     }
@@ -57,16 +64,16 @@ class ReferNoteManager
                 ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
                 ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
             ],
+            'patchEndpoint' => url('/forms/'.$this->note->id),
+            'note_id' => $this->note->id,
         ];
     }
 
-    public function initNote()
+    public static function initNote()
     {
         return [
             'patient' => [
                 'sat_code' => null,
-                'hn' => null,
-                'an' => null,
                 'insurance' => null,
                 'date_symptom_start' => null,
                 'date_covid_infected' => null,
@@ -125,6 +132,26 @@ class ReferNoteManager
                 'gastroenteritis' => false,
                 'others' => null,
             ],
+            'uploads' => [
+                'film' => null,
+                'lab' => null,
+                'id_document' => null,
+            ],
         ];
+    }
+
+    public static function validate()
+    {
+        Request::validate([
+            'sat_code' => 'required',
+            'insurance' => 'required',
+            'date_symptom_start' => 'required',
+            'date_covid_infected' => 'required',
+            'date_admit_origin' => 'required',
+            'date_refer' => 'required',
+            'date_expect_discharge' => 'required',
+            'date_quarantine_end' => 'required',
+            'meal' => 'required',
+        ]);
     }
 }

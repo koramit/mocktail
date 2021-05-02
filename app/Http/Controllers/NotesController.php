@@ -12,13 +12,13 @@ class NotesController extends Controller
     public function edit(Note $note)
     {
         if ($note->type === 'refer note') {
-            $manager = new ReferNoteManager();
+            $manager = new ReferNoteManager($note);
         }
-        $manager->setFlashData($note);
+        $manager->setFlashData();
 
         return Inertia::render('Forms/ReferNote', [
-            'patchEndpoint' => url('/forms/'.$note->id),
-            'contents' => $manager->getContents($note),
+
+            'contents' => $manager->getContents(),
             'formConfigs' => $manager->getConfigs(),
         ]);
     }

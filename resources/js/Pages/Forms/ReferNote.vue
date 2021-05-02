@@ -361,33 +361,39 @@
 
         <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
-                เอกสารแนบ
+                แนบรูปถ่าย
             </h2>
-
-            <label class="form-label">1. รูปถ่ายหน้าบัตรประชาชน</label>
-            <input
-                type="file"
-                id="imageFile"
-                capture="environment"
-                accept="image/*"
-            >
-            <label class="form-label mt-2">2. ใบรายงานผล COVID</label>
-            <input
-                type="file"
-                id="imageFile"
-                capture="environment"
-                accept="image/*"
-            >
-            <label class="form-label mt-2">3. Film Chest ล่าสุด</label>
-            <input
-                type="file"
-                id="imageFile"
-                capture="environment"
-                accept="image/*"
-            >
+            <image-uploader
+                class="mt-2"
+                label="1. Film Chest ล่าสุด"
+                :filename="form.uploads.film"
+                name="contents->uploads->film"
+                :note-id="configs.note_id"
+                v-model="form.uploads.film"
+            />
+            <image-uploader
+                class="mt-2"
+                label="2. ใบรายงานผล COVID"
+                :filename="form.uploads.lab"
+                name="contents->uploads->lab"
+                :note-id="configs.note_id"
+                v-model="form.uploads.lab"
+            />
+            <image-uploader
+                class="mt-2"
+                v-if="$page.props.user.center !== 'ศิริราช'"
+                label="3. รูปถ่ายหน้าบัตรประชาชน (หากยังไม่มี HN ศิริราช)"
+                :filename="form.uploads.id_document"
+                name="contents->uploads->id_document"
+                :note-id="configs.note_id"
+                v-model="form.uploads.id_document"
+            />
         </div>
 
-        <button class="btn btn-dark w-full mt-4 sm:mt-6 md:mt-12">
+        <button
+            class="btn btn-dark w-full mt-4 sm:mt-6 md:mt-12"
+            @click="confirm"
+        >
             ยืนยันการส่งต่อผู้ป่วย
         </button>
 
@@ -408,6 +414,8 @@ import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
 import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
+import ImageUploader from '@/Components/Controls/ImageUploader';
+import Icon from '@/Components/Helpers/Icon';
 export default {
     layout: Layout,
     components: {
@@ -416,89 +424,110 @@ export default {
         FormInput,
         FormSelect,
         FormSelectOther,
+        ImageUploader,
+        Icon,
     },
     props: {
-        patchEndpoint: { type: String, required: true },
         contents: { type: Object, required: true },
         formConfigs: { type: Object, required: true }
     },
+    data () {
+        return {
+            baseUrl: this.$page.props.app.baseUrl,
+            form: useForm({...this.contents}),
+            configs: {...this.formConfigs},
+            selectOtherPlaceholder: '',
+            otherItem: '',
+            otherItemAdded: false,
+            film: useForm({
+                file: null,
+                name: 'contents->uploads->film',
+            }),
+        };
+    },
     watch: {
+        'form.symptoms.asymptomatic': {
+            handler(val) {
+                if (!val) {
+                    this.form.symptoms.asymptomatic_detail = null;
+                    this.form.diagnosis.asymptomatic = false;
+                    return;
+                }
+
+                // reset others
+                Object.keys(this.form.symptoms).map(symptom => {
+                    if (symptom !== 'asymptomatic') {
+                        this.form.symptoms[symptom] = typeof this.form.symptoms[symptom] === 'boolean' ? false : null;
+                    }
+                });
+                this.form.diagnosis.asymptomatic = true;
+            }
+        },
         'form.symptoms': {
             handler(val) {
-                if (val.asymptomatic) {
-                    // reset others
-                    Object.keys(val).map(symptom => {
-                        if (symptom !== 'asymptomatic') {
-                            val[symptom] = typeof val[symptom] === 'boolean' ? false : '';
-                        }
-                    });
-                    return;
-                } else {
-                    val.asymptomatic_detail = '';
-                }
-
-                let symtomsChecked = Object.keys(val).filter(symptom => val[symptom] === true);
-
-                if (!symtomsChecked.length) {
+                let symptomsChecked = Object.keys(val).filter(symptom => val[symptom] === true);
+                if (!symptomsChecked.length) {
                     return;
                 }
 
-                if (symtomsChecked.indexOf('diarrhea') !== -1 && !this.diagnosis.gastroenteritis) {
-                    this.diagnosis.gastroenteritis = true;
+                if (symptomsChecked.indexOf('diarrhea') !== -1 && !this.form.diagnosis.gastroenteritis) {
+                    this.form.diagnosis.gastroenteritis = true;
                 }
 
-                if (!this.diagnosis.uri) {
-                    if (symtomsChecked.length > 1) {
-                        this.diagnosis.uri = true;
-                    } else if (symtomsChecked[0] !== 'diarrhea') {
-                        this.diagnosis.uri = true;
+                if (!this.form.diagnosis.uri && (symptomsChecked.length > 1 || symptomsChecked[0] !== 'diarrhea')) {
+                    this.form.diagnosis.uri = true;
+                }
+            },
+            deep: true
+        },
+        'form.diagnosis.asymptomatic': {
+            handler(val) {
+                if (!val) {
+                    this.form.symptoms.asymptomatic = false;
+                    return;
+                }
+                // reset others
+                Object.keys(this.form.diagnosis).map(field => {
+                    if (field !== 'asymptomatic') {
+                        this.form.diagnosis[field] = typeof this.form.diagnosis[field] === 'boolean' ? false : null;
                     }
+                });
+                this.form.symptoms.asymptomatic = true;
+            }
+        },
+        'form.diagnosis.uri': {
+            handler(val) {
+                if (!val) {
+                    this.form.diagnosis.date_uri = null;
+                }
+            }
+        },
+        'form.diagnosis.pneumonia': {
+            handler(val) {
+                if (!val) {
+                    this.form.diagnosis.pneumonia = null;
+                }
+            }
+        },
+        'form.adr.none': {
+            handler (val) {
+                if (val) {
+                    val.detail = null;
                 }
             },
-            deep: true
         },
-        'form.diagnosis': {
+        'form.comorbids.none': {
             handler(val) {
-                if (val.asymptomatic) {
-                    // reset others
-                    Object.keys(val).map(field => {
-                        if (field !== 'asymptomatic') {
-                            val[field] = typeof val[field] === 'boolean' ? false : '';
-                        }
-                    });
+                if (!val) {
                     return;
                 }
-
-                if (val.uri === false) {
-                    val.date_uri = '';
-                }
-
-                if (val.pneumonia === false) {
-                    val.date_pneumonia = '';
-                }
-            },
-            deep: true
-        },
-        'form.adr': {
-            handler (val) {
-                if (val.none) {
-                    val.detail = '';
-                }
-            },
-            deep: true
-        },
-        'form.comorbids': {
-            handler(val) {
-                if (val.none) {
-                    // reset others
-                    Object.keys(val).map(field => {
-                        if (field !== 'none') {
-                            val[field] = typeof val[field] === 'boolean' ? false : '';
-                        }
-                    });
-                }
-            },
-            deep: true
+                // reset others
+                Object.keys(val).map(field => {
+                    if (field !== 'none') {
+                        val[field] = typeof val[field] === 'boolean' ? false : null;
+                    }
+                });
+            }
         },
         'form.patient.insurance': {
             handler (val) {
@@ -524,20 +553,8 @@ export default {
                 this.$refs.selectOther.open();
             }
         }
-
-    },
-    data () {
-        return {
-            baseUrl: this.$page.props.app.baseUrl,
-            form: useForm({...this.contents}),
-            configs: {...this.formConfigs},
-            selectOtherPlaceholder: '',
-            otherItem: '',
-            otherItemAdded: false,
-        };
     },
     created () {
-        console.log(this.configs);
         if (this.form.patient.insurance && !this.configs.insurances.includes(this.form.patient.insurance)) {
             this.configs.insurances.push(this.form.patient.insurance);
         }
@@ -565,13 +582,23 @@ export default {
             this.$refs[this.formSelectRef].setOther(val);
         },
         autosave (field) {
-            let form = {};
-            form['contents->' + (field.split('.').join('->'))] = lodashGet(this.form, field);
-            axios.patch(this.patchEndpoint, form);
-            // form = useForm(form);
-            // form.patch(this.patchEndpoint, {
-            //     preserveScroll: true,
-            // });
+            this.$nextTick(() => {
+                let form = {};
+                if (field.indexOf('symptoms') !== -1 || field.indexOf('diagnosis') !== -1) {
+                    form['contents->symptoms'] = this.form.symptoms;
+                    form['contents->diagnosis'] = this.form.diagnosis;
+                } else {
+                    form['contents->' + (field.split('.').join('->'))] = lodashGet(this.form, field);
+                }
+                window.axios.patch(this.configs.patchEndpoint, form);
+            });
+        },
+        confirm () {
+            this.form
+                .transform(data => ({...data, remember: 'on'}))
+                .patch(`${this.baseUrl}/refer-cases/${this.configs.note_id}`, {
+                    onFinish: () => console.log(this.$page.props.errors)
+                });
         }
     }
 };

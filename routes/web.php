@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\ReferCasesController;
+use App\Http\Controllers\UploadsController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 
@@ -37,7 +38,12 @@ Route::middleware('auth')->get('/users', [PagesController::class, 'users']);
 // refer cases
 Route::middleware('auth')->get('/refer-cases', [ReferCasesController::class, 'index']);
 Route::middleware('auth')->post('/refer-cases', [ReferCasesController::class, 'store']);
+Route::middleware('auth')->patch('/refer-cases/{note}', [ReferCasesController::class, 'update']);
 
 // form
 Route::middleware('auth')->get('/forms/{note:slug}/edit', [NotesController::class, 'edit']);
 Route::middleware('auth')->patch('/forms/{note}', [NotesController::class, 'update']);
+
+// Upload
+Route::middleware('auth')->post('/uploads', [UploadsController::class, 'store']);
+Route::middleware('auth')->get('/uploads/{path}', [UploadsController::class, 'show']);

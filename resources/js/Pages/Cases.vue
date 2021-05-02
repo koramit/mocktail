@@ -52,7 +52,7 @@ export default {
                 // this.$refs.createCase is not available at the time
                 // so, we wait until the component has switched
                 // this is 100% speculation 🤣
-                setTimeout(() => this.$refs.createCase.open(), 300);
+                setTimeout(() => this.$nextTick(() => this.$refs.createCase.open()), 300);
             }
         });
     },

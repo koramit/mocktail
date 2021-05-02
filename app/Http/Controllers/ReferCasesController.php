@@ -72,7 +72,7 @@ class ReferCasesController extends Controller
         }
 
         $user = Auth::user();
-        $contents = (new ReferNoteManager())->initNote();
+        $contents = ReferNoteManager::initNote();
         $contents['patient']['sat_code'] = Request::input('sat_code');
         $contents['patient']['date_admit_origin'] = Request::input('date_admit_origin');
 
@@ -97,5 +97,10 @@ class ReferCasesController extends Controller
         $case = $user->referCases()->create($case);
 
         return Redirect::to(url('forms/'.$note->slug.'/edit'));
+    }
+
+    public function update(Note $note)
+    {
+        ReferNoteManager::validate();
     }
 }
