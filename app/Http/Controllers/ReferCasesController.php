@@ -18,7 +18,7 @@ class ReferCasesController extends Controller
     public function index()
     {
         Request::session()->flash('page-title', 'รายการเคส'.(Session::get('center')->name === config('app.main_center') ? '' : (' '.Session::get('center')->name)));
-        Request::session()->flash('messages', []);
+        Request::session()->flash('messages', null);
         Request::session()->flash('main-menu-links', []);
         Request::session()->flash('action-menu', [
             ['icon' => 'ambulance', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-new-case'],

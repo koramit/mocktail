@@ -148,7 +148,6 @@
                         <icon
                             class="block w-12 h-12 text-red-400"
                             name="exclamation-circle"
-                            v-if="$page.props.flash.messages.status === 'info'"
                         />
                         <div class="ml-4">
                             <div
