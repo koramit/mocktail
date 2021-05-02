@@ -38,7 +38,7 @@ Route::middleware('auth')->get('/users', [PagesController::class, 'users']);
 // refer cases
 Route::middleware('auth')->get('/refer-cases', [ReferCasesController::class, 'index']);
 Route::middleware('auth')->post('/refer-cases', [ReferCasesController::class, 'store']);
-Route::middleware('auth')->patch('/refer-cases/{note}', [ReferCasesController::class, 'update']);
+Route::middleware('auth')->post('/refer-cases/{note}', [ReferCasesController::class, 'update']);
 
 // form
 Route::middleware('auth')->get('/forms/{note:slug}/edit', [NotesController::class, 'edit']);

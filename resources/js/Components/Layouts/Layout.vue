@@ -156,7 +156,7 @@
                             >
                                 <p>๏</p>
                                 <p class="px-2">
-                                    ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบ
+                                    ข้อมูลไม่ถูกต้อง <span class="font-semibold">{{ Object.keys($page.props.errors).length }} รายการ</span> กรุณาตรวจสอบ
                                 </p>
                             </div>
                         </div>

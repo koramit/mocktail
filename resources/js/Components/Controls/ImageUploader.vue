@@ -29,6 +29,12 @@
                 />
             </button> -->
         </div>
+        <div
+            v-if="error"
+            class="text-red-700 text-sm"
+        >
+            {{ error }}
+        </div>
         <img
             v-if="modelValue !== undefined"
             :src="`${baseUrl}/uploads/${modelValue}`"
@@ -57,6 +63,7 @@ export default {
         label: { type: String, required: true },
         name: { type: String, required: true },
         noteId: { type: Number, required: true },
+        error: { type: String, default: '' },
     },
     data () {
         return {
