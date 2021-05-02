@@ -33,7 +33,7 @@
                 <form-input
                     class="mt-2"
                     name="email"
-                    tyoe="email"
+                    type="email"
                     label="อีเมล์"
                     v-model="form.email"
                     :error="form.errors.email"
