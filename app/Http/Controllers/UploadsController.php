@@ -24,7 +24,10 @@ class UploadsController extends Controller
         }
 
         // this is NOT A ERROR, but its only way (that I know) to make inertia accept response data when using visit api
-        return back()->withErrors(['filename' => basename($path)]);
+        return back()->withErrors([
+            'filename' => basename($path),
+            'hidden' => true,
+        ]);
     }
 
     public function show($path)

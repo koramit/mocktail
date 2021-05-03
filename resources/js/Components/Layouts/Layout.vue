@@ -142,7 +142,7 @@
                 >
                     <!-- <flash-messages /> -->
                     <div
-                        v-if="Object.keys($page.props.errors).length"
+                        v-if="Object.keys($page.props.errors).length && $page.props.errors.hidden === undefined"
                         class="flex items-center rounded-tl-lg rounded-tr-lg border-red-400 border-8 border-t-0 border-l-0 border-r-0 shadow p-4"
                     >
                         <icon
