@@ -75,6 +75,9 @@ export default {
     methods: {
         open () {
             this.form.reset();
+            if (this.form.hasErrors) {
+                this.form.clearErrors();
+            }
             this.$refs.modal.open();
         },
         store () {

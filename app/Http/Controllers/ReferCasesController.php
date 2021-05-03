@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -44,7 +45,7 @@ class ReferCasesController extends Controller
 
     public function store()
     {
-        Request::validate([
+        $validator = Validator::make(Request::all(), [
             'sat_code' => 'required|alpha_num|size:18',
             'date_admit_origin' => 'required|date',
             'hn' => [function ($attribute, $value, $fail) {
@@ -65,9 +66,18 @@ class ReferCasesController extends Controller
             }],
         ]);
 
+        if ($validator->fails()) {
+            $validator->errors()->add(
+                'hidden', true,
+            );
+
+            return back()->withErrors($validator->errors());
+        }
+
         if (Request::input('hn') && ! Request::input('confirmed', false)) {
             return back()->withErrors([
                 'confirmed' => (new PatientManager())->manage(Request::input('hn'))['patient']->full_name,
+                'hidden' => true,
             ]);
         }
 
