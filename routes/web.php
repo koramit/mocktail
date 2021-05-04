@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdmissionsController;
+use App\Http\Controllers\APIs\Front\PatientAPIController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\NotesController;
@@ -35,7 +37,7 @@ Route::middleware('auth')->post('/logout', [AuthenticatedSessionController::clas
 Route::middleware('auth')->get('/home', [PagesController::class, 'home'])->name('home');
 Route::middleware('auth')->get('/users', [PagesController::class, 'users']);
 
-// refer cases
+// refer case
 Route::middleware('auth')->get('/refer-cases', [ReferCasesController::class, 'index']);
 Route::middleware('auth')->post('/refer-cases', [ReferCasesController::class, 'store']);
 Route::middleware('auth')->post('/refer-cases/{note}', [ReferCasesController::class, 'update']);
@@ -47,3 +49,12 @@ Route::middleware('auth')->patch('/forms/{note}', [NotesController::class, 'upda
 // Upload
 Route::middleware('auth')->post('/uploads', [UploadsController::class, 'store']);
 Route::middleware('auth')->get('/uploads/{path}', [UploadsController::class, 'show']);
+
+//admission case
+Route::middleware('auth')->post('/admissions', [AdmissionsController::class, 'store']);
+
+// front api
+Route::middleware('auth')->post('/front-api/patient-rencently-admission', [PatientAPIController::class, 'recentlyAdmission']);
+
+// report
+Route::middleware('auth')->get('/reports/{note:slug}', [NotesController::class, 'show']);

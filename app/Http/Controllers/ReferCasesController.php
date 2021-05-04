@@ -30,13 +30,15 @@ class ReferCasesController extends Controller
                           ->get()
                           ->transform(function ($case) {
                               return [
+                                  'id' => $case->id,
                                   'note_slug' => $case->note->slug,
                                   'referer' => $case->referer->name,
-                                  'patient_name' => $case->patient ? $case->patient->full_name : $case->patient_name,
+                                  'patient_name' => ($case->patient ? $case->patient->full_name : $case->patient_name) ?? 'ยังไม่มีข้อมูลชื่อ',
                                   'hn' => $case->patient ? $case->patient->hn : null,
                                   'center' => $case->center->name,
                                   'status' => $case->status,
                                   'referer' => $case->referer->name,
+                                  'updated_at_for_humans' => $case->updated_at_for_humans,
                               ];
                           });
 
@@ -67,11 +69,7 @@ class ReferCasesController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $validator->errors()->add(
-                'hidden', true,
-            );
-
-            return back()->withErrors($validator->errors());
+            return back()->withErrors($validator->errors()->add('hidden', true));
         }
 
         if (Request::input('hn') && ! Request::input('confirmed', false)) {

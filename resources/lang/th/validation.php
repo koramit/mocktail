@@ -179,6 +179,8 @@ return [
 
         'temperature_per_day' => 'คำสั่งการรักษา Temperature',
         'oxygen_sat_RA_per_day' => 'คำสั่งการรักษา Oxygen sat RA',
+
+        'room_number' => 'หมายเลขห้อง',
     ],
 
 ];

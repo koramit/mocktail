@@ -18,18 +18,29 @@ class ReferNoteManager
         $this->note = $note;
     }
 
-    public function setFlashData()
+    public function setFlashData($report = false)
     {
         // title and menu
-        Request::session()->flash('page-title', 'เขียนใบส่งตัว: '.($this->note->referCase->patient_name ?? 'ยังไม่มีชื่อ'));
-        Request::session()->flash('messages', [
-            'status' => 'info',
-            'messages' => [
-                'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
-                'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> ท้ายฟอร์ม',
-                'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้อยู่จนกว่าเคสจะแอดมิด',
-            ],
-        ]);
+        if ($report) {
+            Request::session()->flash('page-title', 'ใบส่งตัว: '.($this->note->referCase->patient_name ?? 'ยังไม่มีชื่อ'));
+            Request::session()->flash('messages', [
+                'status' => 'info',
+                'messages' => [
+                    'สำหรับอ่านเท่านั้น',
+                ],
+            ]);
+        } else {
+            Request::session()->flash('page-title', 'เขียนใบส่งตัว: '.($this->note->referCase->patient_name ?? 'ยังไม่มีชื่อ'));
+            Request::session()->flash('messages', [
+                'status' => 'info',
+                'messages' => [
+                    'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
+                    'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> ท้ายฟอร์ม',
+                    'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้อยู่จนกว่าเคสจะแอดมิด',
+                ],
+            ]);
+        }
+
         Request::session()->flash('main-menu-links', [ // need check abilities
             ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
             // ['icon' => 'clinic', 'label' => 'Clinics', 'route' => 'prototypes/ClinicsIndex'],

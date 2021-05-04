@@ -13,12 +13,20 @@ class ReferCase extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'submitted_at' => 'datetime',
+        'meta' => 'array',
+    ];
+
     /**
      * The accessors to append to the model's array form.
      *
      * @var array
      */
-    protected $appends = ['status'];
+    protected $appends = [
+        'status',
+        'updated_at_for_humans',
+    ];
 
     public function patient()
     {
@@ -73,6 +81,12 @@ class ReferCase extends Model
     public function getStatusAttribute()
     {
         return $this->submitted_at ? 'ส่งแล้ว' : 'ร่าง';
+    }
+
+    public function getUpdatedAtForHumansAttribute()
+    {
+        return $this->updated_at->locale('th_TH')->diffForHumans(now());
+        // return $this->submitted_at ? 'ส่งแล้ว' : 'ร่าง';
     }
 
     public function scopeWithFilterUserCenter($query, $userCenterId)

@@ -3,7 +3,7 @@
         <modal
             ref="modal"
             @opened="$refs.satCode.focus()"
-            @closed="$emit('closed', otherItem)"
+            @closed="$emit('closed')"
         >
             <template #header>
                 <div class="font-semibold text-dark-theme-light">
@@ -88,7 +88,6 @@ export default {
                     confirmed: this.form.errors.confirmed ? true:false
                 }))
                 .post(`${this.$page.props.app.baseUrl}/refer-cases`, {
-                    onSuccess: res => console.log(res),
                     onFinish: () => this.form.processing = false,
                 });
         }

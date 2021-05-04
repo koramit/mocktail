@@ -22,6 +22,7 @@ class CreateReferCasesTable extends Migration
             $table->unsignedBigInteger('admission_id')->nullable()->constrained('admissions')->onDelete('cascade');
             $table->unsignedBigInteger('note_id')->constrained('notes')->onDelete('cascade');
             $table->datetime('submitted_at')->nullable();
+            $table->json('meta')->nullable();
             $table->unsignedBigInteger('user_id')->constrained('users')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();

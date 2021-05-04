@@ -18,7 +18,7 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
-    <link href="https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,300;0,600;1,300;1,600&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,300;0,400;0,600;1,300;1,600&display=swap"
         rel="stylesheet">
 
     <link href="{{ mix('/css/app.css') }}" rel="stylesheet" />

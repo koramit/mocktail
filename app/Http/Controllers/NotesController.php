@@ -9,6 +9,23 @@ use Inertia\Inertia;
 
 class NotesController extends Controller
 {
+    public function show(Note $note)
+    {
+        if ($note->type === 'refer note') {
+            $manager = new ReferNoteManager($note);
+        }
+
+        if ($note->type === 'refer note') {
+            $manager = new ReferNoteManager($note);
+        }
+        $manager->setFlashData(true);
+
+        return Inertia::render('Reports/ReferNote', [
+            'contents' => $manager->getContents(),
+            'formConfigs' => $manager->getConfigs(),
+        ]);
+    }
+
     public function edit(Note $note)
     {
         if ($note->type === 'refer note') {
@@ -17,7 +34,6 @@ class NotesController extends Controller
         $manager->setFlashData();
 
         return Inertia::render('Forms/ReferNote', [
-
             'contents' => $manager->getContents(),
             'formConfigs' => $manager->getConfigs(),
         ]);

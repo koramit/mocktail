@@ -10,15 +10,18 @@ class PatientManager
 {
     public function manage($hn)
     {
+        $api = app()->make('App\Contracts\PatientAPI');
+
         // search HN in DB
         $patient = Patient::findByEncryptedKey($hn);
         if (! $patient) {
-            $data = $this->callAPI($hn);
+            $data = $api->getPatient($hn);
             if (! $data['found']) {
                 return $data;
             }
 
-            $patient = Patient::create(['hn' => $hn, 'slug' => Str::uuid()->toString(), 'profile' => $this->mapProfile($data)]);
+            unset($data['ok'], $data['found']);
+            $patient = Patient::create(['hn' => $hn, 'slug' => Str::uuid()->toString(), 'profile' => $data]);
 
             return [
                 'found' => true,
@@ -27,37 +30,27 @@ class PatientManager
         }
 
         // determine if update needed
-        if ($patient->updated_at->diffInDays(now()) <= 1) {
+        if ($patient->updated_at->diffInDays(now()) <= 5) {
             return [
                 'found' => true,
                 'patient' => $patient,
             ];
         }
 
-        $data = $this->callAPI($hn);
+        $data = $api->getPatient($hn);
         if (! $data['found']) {
             Log::info($hn.' hn cancle or something went wrong');
 
             return $patient;
         }
 
-        $patient = $this->update($patient, $this->mapProfile($data));
+        unset($data['ok'], $data['found']);
+        $patient = $this->update($patient, $data);
 
         return [
             'found' => true,
             'patient' => $patient,
         ];
-    }
-
-    protected function callAPI($hn)
-    {
-        $data = app()->make('App\Contracts\PatientAPI')->recentlyAdmission($hn);
-
-        $patient = $data['patient'];
-        unset($data['patient']);
-        $patient['admission'] = $data;
-
-        return $patient;
     }
 
     public function update($patient, $profile)
@@ -82,27 +75,5 @@ class PatientManager
         $patient->update(['profile' => $oldProfile]);
 
         return $patient;
-    }
-
-    protected function mapProfile($data)
-    {
-        return [
-            'dob' => $data['dob'],
-            'gender' => $data['gender'],
-            'title' => $data['title'],
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'document_id' => $data['document_id'],
-            'insurance' => $data['insurance_name'],
-            'marital_status' => $data['marital_status_name'],
-            'spouse' => $data['spouse'],
-            'race' => $data['race'],
-            'nation' => $data['nation'],
-            'tel_no' => $data['tel_no'],
-            'address' => $data['address'],
-            'location' => $data['location'],
-            'province' => $data['province'],
-            'alternative_contact' => $data['alternative_contact'],
-        ];
     }
 }
