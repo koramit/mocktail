@@ -37,6 +37,7 @@ class ReferCasesController extends Controller
                                   'hn' => $case->patient ? $case->patient->hn : null,
                                   'center' => $case->center->name,
                                   'status' => $case->status,
+                                  'status_label' => $case->status_label,
                                   'referer' => $case->referer->name,
                                   'updated_at_for_humans' => $case->updated_at_for_humans,
                               ];
@@ -123,6 +124,30 @@ class ReferCasesController extends Controller
         if ($errors) {
             return back()->withErrors($errors);
         }
+
+        if (! Request::input('criterias')) {
+            return back();
+        }
+
+        // dd(Request::all());
+        $data = Request::all();
+        $hn = $data['patient']['hn'];
+
+        if (! $note->referCase->updateHn($hn)) {
+            return back()->withErrors(['hn' => 'ไม่พบ HN นี้ในระบบ']);
+        }
+        $meta = $note->referCase->meta;
+        $meta['status'] = 'submitted';
+        $note->referCase->meta = $meta;
+        $note->referCase->save();
+
+        unset($data['remember']);
+        unset($data['patient']['hn']);
+        unset($data['patient']['name']);
+
+        $data['submitted'] = true;
+        $note->contents = $data;
+        $note->save();
 
         return Redirect::route('refer-cases')->with('messages', [
             'status' => 'success',

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Managers\PatientManager;
 use App\Traits\DataCryptable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -78,7 +79,7 @@ class ReferCase extends Model
         return $this->decryptField($this->attributes['patient_name']);
     }
 
-    public function getStatusAttribute()
+    public function getStatusLabelAttribute()
     {
         $statuses = [
             'draft' => 'ร่าง',
@@ -89,6 +90,11 @@ class ReferCase extends Model
         ];
 
         return $statuses[$this->meta['status']];
+    }
+
+    public function getStatusAttribute()
+    {
+        return $this->meta['status'];
     }
 
     public function getUpdatedAtForHumansAttribute()
@@ -108,5 +114,28 @@ class ReferCase extends Model
                 $query->where('centers.id', $userCenterId);
             });
         }
+    }
+
+    public function updateHn($hn)
+    {
+        $oldHn = $this->patient ? $this->patient->hn : null;
+        if ($oldHn === $hn) {
+            return true;
+        }
+
+        $patient = (new PatientManager())->manage($hn);
+
+        if (! $patient['found']) {
+            $this->patient_name = 'HN '.$hn.' not found';
+            $this->patient_id = null;
+            $this->save();
+
+            return false;
+        }
+
+        $this->patient_name = $patient['patient']->full_name;
+        $this->patient_id = $patient['patient']->id;
+
+        return $this->save();
     }
 }

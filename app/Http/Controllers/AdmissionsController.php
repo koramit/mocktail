@@ -18,10 +18,7 @@ class AdmissionsController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator->errors()->add('hidden', true));
         }
-        Request::validate([
-            'id' => 'required|exists:refer_cases',
-            'an' => 'required|digits:8',
-            'room_number' => 'required|digits:3',
-        ]);
+
+        return 'OK🥳';
     }
 }
