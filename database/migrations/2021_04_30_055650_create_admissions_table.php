@@ -16,7 +16,7 @@ class CreateAdmissionsTable extends Migration
         Schema::create('admissions', function (Blueprint $table) {
             $table->id();
             $table->uuid('slug');
-            $table->string('an', 16)->index();
+            $table->string('an')->index();
             $table->unsignedBigInteger('patient_id')->nullable()->constrained('patients')->onDelete('cascade');
             $table->json('meta')->nullable();
             $table->dateTime('encountered_at')->index()->nullable();

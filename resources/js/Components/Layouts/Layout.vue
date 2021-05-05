@@ -150,11 +150,9 @@
                             name="exclamation-circle"
                         />
                         <div class="ml-4">
-                            <div
-                                class="flex my-1 text-dark-theme-light text-xs"
-                            >
+                            <div class="flex my-2 text-dark-theme-light text-sm font-normal">
                                 <p>๏</p>
-                                <p class="px-2">
+                                <p class="px-2 tracking-wide leading-5">
                                     ข้อมูลไม่ถูกต้อง <span class="font-semibold">{{ Object.keys($page.props.errors).length }} รายการ</span> กรุณาตรวจสอบ
                                 </p>
                             </div>
@@ -164,7 +162,8 @@
                         v-else-if="$page.props.flash.messages && !Object.keys($page.props.errors).length"
                         class="flex items-center rounded-tl-lg rounded-tr-lg border-8 border-t-0 border-l-0 border-r-0 shadow p-4"
                         :class="{
-                            'border-alt-theme-light': $page.props.flash.messages.status === 'info'
+                            'border-alt-theme-light': $page.props.flash.messages.status === 'info',
+                            'border-green-200': $page.props.flash.messages.status === 'success',
                         }"
                     >
                         <icon
@@ -172,15 +171,20 @@
                             name="info-circle"
                             v-if="$page.props.flash.messages.status === 'info'"
                         />
+                        <icon
+                            class="block w-12 h-12 text-green-200"
+                            name="check-circle"
+                            v-else-if="$page.props.flash.messages.status === 'success'"
+                        />
                         <div class="ml-4">
                             <div
-                                class="flex my-1 text-dark-theme-light text-xs"
+                                class="flex my-2 text-dark-theme-light text-sm font-normal"
                                 v-for="(message, key) in $page.props.flash.messages.messages"
                                 :key="key"
                             >
                                 <p>๏</p>
                                 <p
-                                    class="px-2"
+                                    class="px-2 tracking-wide leading-5"
                                     v-html="message"
                                 />
                             </div>

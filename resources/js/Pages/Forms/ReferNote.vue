@@ -5,6 +5,13 @@
             <h2 class="font-semibold text-thick-theme-light">
                 ข้อมูลเบื้องต้น
             </h2>
+            <form-checkbox
+                class="mt-4"
+                v-model="form.no_admit"
+                label="ส่งตัวโดยไม่ได้รับไว้ในโรงพยาบาล"
+                :toggler="true"
+                @autosave="autosave('no_admit')"
+            />
             <form-input
                 class="mt-2"
                 name="sat_code"
@@ -42,6 +49,7 @@
                 @autosave="autosave('patient.insurance')"
             />
             <form-datetime
+                v-if="!form.no_admit"
                 class="mt-2"
                 label="วันแรกที่มีอาการ"
                 v-model="form.patient.date_symptom_start"
@@ -58,6 +66,7 @@
                 @autosave="autosave('patient.date_covid_infected')"
             />
             <form-datetime
+                v-if="!form.no_admit"
                 class="mt-2"
                 label="วันที่รับไว้ในโรงพยาบาล"
                 v-model="form.patient.date_admit_origin"
@@ -152,110 +161,131 @@
             />
         </div>
 
-        <!-- symptoms -->
-        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
-            <h2 class="font-semibold text-thick-theme-light">
-                บันทึกอาการแสดง
-            </h2>
-            <small
-                class="my-t text-red-700 text-sm"
-                v-if="form.errors.symptoms"
-            >{{ form.errors.symptoms }}</small>
-            <form-checkbox
-                class="mt-2"
-                v-model="form.symptoms.asymptomatic_symptom"
-                label="Asymptomatic"
-                :toggler="true"
-                @autosave="autosave('symptoms.asymptomatic_symptom')"
-            />
-            <div v-if="!form.symptoms.asymptomatic_symptom">
+        <template v-if="!form.no_admit">
+            <!-- symptoms -->
+            <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+                <h2 class="font-semibold text-thick-theme-light">
+                    บันทึกอาการแสดง
+                </h2>
+                <small
+                    class="my-t text-red-700 text-sm"
+                    v-if="form.errors.symptoms"
+                >{{ form.errors.symptoms }}</small>
                 <form-checkbox
-                    v-for="(symptom, key) in configs.symptoms"
-                    :key="key"
                     class="mt-2"
-                    v-model="form.symptoms[symptom.name]"
-                    :label="symptom.label"
-                    @autosave="autosave('symptoms.' + symptom.name)"
+                    v-model="form.symptoms.asymptomatic_symptom"
+                    label="Asymptomatic"
+                    :toggler="true"
+                    @autosave="autosave('symptoms.asymptomatic_symptom')"
                 />
-                <form-input
+                <div v-if="!form.symptoms.asymptomatic_symptom">
+                    <form-checkbox
+                        v-for="(symptom, key) in configs.symptoms"
+                        :key="key"
+                        class="mt-2"
+                        v-model="form.symptoms[symptom.name]"
+                        :label="symptom.label"
+                        @autosave="autosave('symptoms.' + symptom.name)"
+                    />
+                    <form-input
+                        class="mt-2"
+                        placeholder="อาการอื่นๆ คือ"
+                        name="other_symptoms"
+                        v-model="form.symptoms.other_symptoms"
+                        @autosave="autosave('symptoms.other_symptoms')"
+                    />
+                </div>
+                <form-select
+                    v-else
                     class="mt-2"
-                    placeholder="อาการอื่นๆ คือ"
-                    name="other_symptoms"
-                    v-model="form.symptoms.other_symptoms"
-                    @autosave="autosave('symptoms.other_symptoms')"
+                    v-model="form.symptoms.asymptomatic_detail"
+                    :error="form.errors.asymptomatic_detail"
+                    name="asymptomatic_detail"
+                    :options="['ไม่มีอาการตั้งแต่ต้น', 'อาการดีขึ้นแล้ว']"
+                    @autosave="autosave('symptoms.asymptomatic_detail')"
                 />
             </div>
-            <form-select
-                v-else
-                class="mt-2"
-                v-model="form.symptoms.asymptomatic_detail"
-                :error="form.errors.asymptomatic_detail"
-                name="asymptomatic_detail"
-                :options="['ไม่มีอาการตั้งแต่ต้น', 'อาการดีขึ้นแล้ว']"
-                @autosave="autosave('symptoms.asymptomatic_detail')"
-            />
-        </div>
 
-        <!-- diagnosis -->
-        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <!-- diagnosis -->
+            <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+                <h2 class="font-semibold text-thick-theme-light">
+                    วินิจฉัย
+                </h2>
+                <small
+                    class="my-t text-red-700 text-sm"
+                    v-if="form.errors.diagnosis"
+                >{{ form.errors.diagnosis }}</small>
+                <form-checkbox
+                    class="mt-2"
+                    v-model="form.diagnosis.asymptomatic_diagnosis"
+                    label="Asymptomatic COVID 19 infection"
+                    :toggler="true"
+                    @autosave="autosave('diagnosis.asymptomatic_diagnosis')"
+                />
+                <div v-if="!form.diagnosis.asymptomatic_diagnosis">
+                    <form-checkbox
+                        class="mt-2"
+                        v-model="form.diagnosis.uri"
+                        label="COVID 19 with URI"
+                        @autosave="autosave('diagnosis.uri')"
+                    />
+                    <form-datetime
+                        v-if="form.diagnosis.uri"
+                        class="mt-2"
+                        label="วันที่เริ่มมีอาการ uri"
+                        v-model="form.diagnosis.date_uri"
+                        :error="form.errors.date_uri"
+                        name="date_uri"
+                        @autosave="autosave('diagnosis.date_uri')"
+                    />
+                    <form-checkbox
+                        class="mt-2"
+                        v-model="form.diagnosis.pneumonia"
+                        label="COVID 19 with Pneumonia"
+                        @autosave="autosave('diagnosis.pneumonia')"
+                    />
+                    <form-datetime
+                        v-if="form.diagnosis.pneumonia"
+                        class="mt-2"
+                        label="วันที่เริ่มมีอาการ pneumonia"
+                        v-model="form.diagnosis.date_pneumonia"
+                        :error="form.errors.date_pneumonia"
+                        name="date_pneumonia"
+                        @autosave="autosave('diagnosis.date_pneumonia')"
+                    />
+                    <form-checkbox
+                        class="mt-2"
+                        v-model="form.diagnosis.gastroenteritis"
+                        label="COVID 19 with Gastroenteritis"
+                        @autosave="autosave('diagnosis.gastroenteritis')"
+                    />
+                    <form-input
+                        class="mt-2"
+                        name="other_diagnosis"
+                        placeholder="วินิจฉัยอื่นๆ"
+                        v-model="form.diagnosis.other_diagnosis"
+                        @autosave="autosave('diagnosis.other_diagnosis')"
+                    />
+                </div>
+            </div>
+        </template>
+        <div
+            class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
+            v-else
+        >
             <h2 class="font-semibold text-thick-theme-light">
-                วินิจฉัย
+                ข้อมูลบันทึกอาการแสดงและวินิจฉัย
             </h2>
-            <small
-                class="my-t text-red-700 text-sm"
-                v-if="form.errors.diagnosis"
-            >{{ form.errors.diagnosis }}</small>
-            <form-checkbox
-                class="mt-2"
-                v-model="form.diagnosis.asymptomatic_diagnosis"
-                label="Asymptomatic COVID 19 infection"
-                :toggler="true"
-                @autosave="autosave('diagnosis.asymptomatic_diagnosis')"
-            />
-            <div v-if="!form.diagnosis.asymptomatic_diagnosis">
-                <form-checkbox
-                    class="mt-2"
-                    v-model="form.diagnosis.uri"
-                    label="COVID 19 with URI"
-                    @autosave="autosave('diagnosis.uri')"
-                />
-                <form-datetime
-                    v-if="form.diagnosis.uri"
-                    class="mt-2"
-                    label="วันที่เริ่มมีอาการ uri"
-                    v-model="form.diagnosis.date_uri"
-                    :error="form.errors.date_uri"
-                    name="date_uri"
-                    @autosave="autosave('diagnosis.date_uri')"
-                />
-                <form-checkbox
-                    class="mt-2"
-                    v-model="form.diagnosis.pneumonia"
-                    label="COVID 19 with Pneumonia"
-                    @autosave="autosave('diagnosis.pneumonia')"
-                />
-                <form-datetime
-                    v-if="form.diagnosis.pneumonia"
-                    class="mt-2"
-                    label="วันที่เริ่มมีอาการ pneumonia"
-                    v-model="form.diagnosis.date_pneumonia"
-                    :error="form.errors.date_pneumonia"
-                    name="date_pneumonia"
-                    @autosave="autosave('diagnosis.date_pneumonia')"
-                />
-                <form-checkbox
-                    class="mt-2"
-                    v-model="form.diagnosis.gastroenteritis"
-                    label="COVID 19 with Gastroenteritis"
-                    @autosave="autosave('diagnosis.gastroenteritis')"
-                />
-                <form-input
-                    class="mt-2"
-                    name="other_diagnosis"
-                    placeholder="วินิจฉัยอื่นๆ"
-                    v-model="form.diagnosis.other_diagnosis"
-                    @autosave="autosave('diagnosis.other_diagnosis')"
-                />
+            <div class="text-sm tracking-wide font-semibold">
+                <p class="text-dark-theme-light mt-4">
+                    ๏ บันทึกอาการแสดง: Asymptomatic
+                </p>
+                <p class="text-dark-theme-light mt-2">
+                    ๏ วินิจฉัย: Asymptomatic COVID 19 infection
+                </p>
+                <p class="text-yellow-400 mt-4">
+                    ลงให้อัตโนมัติเนื่องจากไม่ได้รับไว้ในโรงพยาบาล
+                </p>
             </div>
         </div>
 
@@ -343,53 +373,56 @@
             <h2 class="font-semibold text-thick-theme-light">
                 คำสั่งการรักษา
             </h2>
-            <form-select
-                class="mt-2"
-                label="Temperature"
-                name="temperature_per_day"
-                v-model="form.treatments.temperature_per_day"
-                :error="form.errors.temperature_per_day"
-                :options="['วันละครั้ง', 'วันละสองครั้งเช้าเย็น']"
-                @autosave="autosave('treatments.temperature_per_day')"
-            />
-            <form-select
-                class="mt-2"
-                label="Oxygen sat RA"
-                name="oxygen_sat_RA_per_day"
-                v-model="form.treatments.oxygen_sat_RA_per_day"
-                :error="form.errors.oxygen_sat_RA_per_day"
-                :options="['วันละครั้ง', 'วันละสองครั้งเช้าเย็น']"
-                @autosave="autosave('treatments.oxygen_sat_RA_per_day')"
-            />
-            <form-checkbox
-                class="mt-4"
-                v-model="form.treatments.favipiravir"
-                label="FAVIPIRAVIR"
-                :toggler="true"
-                @autosave="autosave('treatments.favipiravir')"
-            />
-            <template v-if="form.treatments.favipiravir">
-                <form-datetime
+            <template v-if="!form.no_admit">
+                <form-select
                     class="mt-2"
-                    label="Favipiravir (วันที่เริ่มยา)"
-                    v-model="form.treatments.date_start_favipiravir"
-                    :error="form.errors.date_start_favipiravir"
-                    name="date_start_favipiravir"
-                    @autosave="autosave('treatments.date_start_favipiravir')"
+                    label="Temperature"
+                    name="temperature_per_day"
+                    v-model="form.treatments.temperature_per_day"
+                    :error="form.errors.temperature_per_day"
+                    :options="['วันละครั้ง', 'วันละสองครั้งเช้าเย็น']"
+                    @autosave="autosave('treatments.temperature_per_day')"
                 />
-                <form-datetime
+                <form-select
                     class="mt-2"
-                    label="Favipiravir (กำหนดครบวันที่)"
-                    v-model="form.treatments.date_stop_favipiravir"
-                    :error="form.errors.date_stop_favipiravir"
-                    name="date_stop_favipiravir"
-                    @autosave="autosave('treatments.date_stop_favipiravir')"
+                    label="Oxygen sat RA"
+                    name="oxygen_sat_RA_per_day"
+                    v-model="form.treatments.oxygen_sat_RA_per_day"
+                    :error="form.errors.oxygen_sat_RA_per_day"
+                    :options="['วันละครั้ง', 'วันละสองครั้งเช้าเย็น']"
+                    @autosave="autosave('treatments.oxygen_sat_RA_per_day')"
                 />
+                <form-checkbox
+                    class="mt-4"
+                    v-model="form.treatments.favipiravir"
+                    label="FAVIPIRAVIR"
+                    :toggler="true"
+                    @autosave="autosave('treatments.favipiravir')"
+                />
+                <template v-if="form.treatments.favipiravir">
+                    <form-datetime
+                        class="mt-2"
+                        label="Favipiravir (วันที่เริ่มยา)"
+                        v-model="form.treatments.date_start_favipiravir"
+                        :error="form.errors.date_start_favipiravir"
+                        name="date_start_favipiravir"
+                        @autosave="autosave('treatments.date_start_favipiravir')"
+                    />
+                    <form-datetime
+                        class="mt-2"
+                        label="Favipiravir (กำหนดครบวันที่)"
+                        v-model="form.treatments.date_stop_favipiravir"
+                        :error="form.errors.date_stop_favipiravir"
+                        name="date_stop_favipiravir"
+                        @autosave="autosave('treatments.date_stop_favipiravir')"
+                    />
+                </template>
             </template>
             <form-datetime
                 class="mt-2"
                 label="นัดมาทำ NP swab ซ้ำ วันที่"
                 v-model="form.treatments.date_repeat_NP_swap"
+                :error="form.errors.date_repeat_NP_swap"
                 name="date_repeat_NP_swap"
                 @autosave="autosave('treatments.date_repeat_NP_swap')"
             />
@@ -402,7 +435,7 @@
             </h2>
             <image-uploader
                 class="mt-2"
-                label="1. Film Chest ล่าสุด"
+                label="๏ Film Chest ล่าสุด"
                 :filename="form.uploads.film"
                 name="contents->uploads->film"
                 :note-id="configs.note_id"
@@ -411,7 +444,7 @@
             />
             <image-uploader
                 class="mt-2"
-                label="2. ใบรายงานผล COVID"
+                label="๏ ใบรายงานผล COVID"
                 :filename="form.uploads.lab"
                 name="contents->uploads->lab"
                 :note-id="configs.note_id"
@@ -421,7 +454,7 @@
             <image-uploader
                 class="mt-2"
                 v-if="$page.props.user.center !== 'ศิริราช'"
-                label="3. รูปถ่ายหน้าบัตรประชาชน (หากยังไม่มี HN ศิริราช)"
+                label="๏ รูปถ่ายหน้าบัตรประชาชน (กรณีไม่มี HN)"
                 :filename="form.uploads.id_document"
                 name="contents->uploads->id_document"
                 :note-id="configs.note_id"
@@ -480,6 +513,19 @@ export default {
         };
     },
     watch: {
+        'form.no_admit': {
+            handler(val) {
+                if (val) {
+                    if (! this.form.symptoms.asymptomatic_symptom) {
+                        this.form.symptoms.asymptomatic_symptom = true;
+                    }
+
+                    if (! this.form.diagnosis.asymptomatic_diagnosis) {
+                        this.form.diagnosis.asymptomatic_diagnosis = true;
+                    }
+                }
+            }
+        },
         'form.symptoms.asymptomatic_symptom': {
             handler(val) {
                 if (!val) {
@@ -627,7 +673,13 @@ export default {
                     form['contents->comorbids'] = this.form.comorbids;
                 } else if (field.indexOf('treatments') !== -1) {
                     form['contents->treatments'] = this.form.treatments;
-                } else{
+                } else if (field === 'no_admit') {
+                    form['contents->no_admit'] = lodashGet(this.form, field);
+                    if (form['contents->no_admit']) {
+                        form['contents->symptoms'] = this.form.symptoms;
+                        form['contents->diagnosis'] = this.form.diagnosis;
+                    }
+                } else {
                     form['contents->' + (field.split('.').join('->'))] = lodashGet(this.form, field);
                 }
                 window.axios.patch(this.configs.patchEndpoint, form);
@@ -636,7 +688,9 @@ export default {
         confirm () {
             this.form
                 .transform(data => ({...data, remember: 'on'}))
-                .post(`${this.baseUrl}/refer-cases/${this.configs.note_id}`);
+                .post(`${this.baseUrl}/refer-cases/${this.configs.note_id}`, {
+                    replace: true,
+                });
         }
     }
 };

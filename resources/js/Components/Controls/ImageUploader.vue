@@ -10,24 +10,35 @@
                 />
             </p>
             <button
+                v-if="!readonly"
                 class="ml-4"
-                @click="$refs.input.click()"
+                @click="$refs.useCamera.click()"
             >
                 <icon
                     class="w-4 h-4 text-thick-theme-light"
-                    :class="{'animate-pulse': form.processing}"
                     name="camera"
                 />
             </button>
-            <!-- <button
+            <button
+                v-if="!readonly"
                 class="ml-4"
-                v-if="form.uploads.film !== undefined"
+                @click="$refs.useGallery.click()"
             >
                 <icon
                     class="w-4 h-4 text-thick-theme-light"
                     name="image"
                 />
-            </button> -->
+            </button>
+            <button
+                class="ml-4"
+                v-if="modelValue"
+                @click="show = !show"
+            >
+                <icon
+                    class="w-4 h-4 text-dark-theme-light"
+                    :name="show ? 'eyes-slash':'eyes'"
+                />
+            </button>
         </div>
         <div
             v-if="error"
@@ -36,16 +47,23 @@
             {{ error }}
         </div>
         <img
-            v-if="modelValue !== undefined"
+            v-if="modelValue !== undefined && show"
             :src="`${baseUrl}/uploads/${modelValue}`"
             alt=""
         >
         <input
             class="hidden"
             type="file"
-            ref="input"
+            ref="useCamera"
             @input="fileInput"
             capture="environment"
+            accept="image/*"
+        >
+        <input
+            class="hidden"
+            type="file"
+            ref="useGallery"
+            @input="fileInput"
             accept="image/*"
         >
     </div>
@@ -58,12 +76,12 @@ export default {
     emits: ['update:modelValue', 'autosave'],
     components: { Icon },
     props: {
-        // filename: { type: String, required: true },
-        modelValue: { type: String, required: true },
+        modelValue: { type: String, default: '' },
         label: { type: String, required: true },
         name: { type: String, required: true },
         noteId: { type: Number, required: true },
         error: { type: String, default: '' },
+        readonly: { type: Boolean, },
     },
     data () {
         return {
@@ -72,6 +90,7 @@ export default {
                 name: this.name,
             }),
             baseUrl: this.$page.props.app.baseUrl,
+            show: false,
         };
     },
     methods: {
@@ -80,9 +99,13 @@ export default {
             this.form.transform(data => ({...data, note_id: this.noteId}))
                 .post(`${this.baseUrl}/uploads`, {
                     preserveScroll: true,
-                    // this is NOT A ERROR, but its only way (that I know) to make inertia accept response data when using visit api
-                    // onFinish: () => this.form.uploads.film = this.film.errors.filename,
-                    onFinish: () => this.$emit('update:modelValue', this.form.errors.filename)
+                    onFinish: () => {
+                        if (!this.show) {
+                            this.show = true;
+                        }
+                        // this is NOT A ERROR, but its only way (that I know) to make inertia accept response data when using visit api
+                        this.$emit('update:modelValue', this.form.errors.filename);
+                    }
                 });
         }
     }

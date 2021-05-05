@@ -71,7 +71,7 @@
 export default {
     emits: ['update:modelValue', 'autosave'],
     props: {
-        modelValue: { type: String, required: true },
+        modelValue: { type: String, default: '' },
         options: { type: Array, required: true },
         name: { type: String, required: true },
         label: { type: String, default: '' },

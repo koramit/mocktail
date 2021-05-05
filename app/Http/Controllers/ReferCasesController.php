@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -19,7 +18,8 @@ class ReferCasesController extends Controller
     public function index()
     {
         Request::session()->flash('page-title', 'รายการเคส'.(Session::get('center')->name === config('app.main_center') ? '' : (' '.Session::get('center')->name)));
-        Request::session()->flash('messages', null);
+        // dd(Request::session()->get('messages'));
+        Request::session()->flash('messages', Request::session()->has('messages') ? Request::session()->pull('messages') : null);
         Request::session()->flash('main-menu-links', []);
         Request::session()->flash('action-menu', [
             ['icon' => 'ambulance', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-new-case'],
@@ -30,13 +30,15 @@ class ReferCasesController extends Controller
                           ->get()
                           ->transform(function ($case) {
                               return [
+                                  'id' => $case->id,
                                   'note_slug' => $case->note->slug,
                                   'referer' => $case->referer->name,
-                                  'patient_name' => $case->patient ? $case->patient->full_name : $case->patient_name,
+                                  'patient_name' => ($case->patient ? $case->patient->full_name : $case->patient_name) ?? 'ยังไม่มีข้อมูลชื่อ',
                                   'hn' => $case->patient ? $case->patient->hn : null,
                                   'center' => $case->center->name,
                                   'status' => $case->status,
                                   'referer' => $case->referer->name,
+                                  'updated_at_for_humans' => $case->updated_at_for_humans,
                               ];
                           });
 
@@ -45,46 +47,44 @@ class ReferCasesController extends Controller
 
     public function store()
     {
-        $validator = Validator::make(Request::all(), [
-            'sat_code' => 'required|alpha_num|size:18',
-            'date_admit_origin' => 'required|date',
-            'hn' => [function ($attribute, $value, $fail) {
-                if ($value) {
-                    if (! is_numeric($value) || strlen($value) !== 8) {
-                        $fail('ไม่พบ HN นี้ในระบบ');
-                    }
-
-                    $result = (new PatientManager())->manage($value);
-                    if (! $result['found']) {
-                        $fail('ไม่พบ HN นี้ในระบบ');
-                    }
-                } else {
-                    if (Session::get('center')->name === config('app.main_center')) {
-                        $fail('จำเป็นต้องลง HN');
-                    }
-                }
-            }],
-        ]);
-
-        if ($validator->fails()) {
-            $validator->errors()->add(
-                'hidden', true,
-            );
-
-            return back()->withErrors($validator->errors());
+        $errors = [];
+        $hn = Request::input('hn', null);
+        if (Session::get('center')->name === config('app.main_center')) {
+            // Main center needs hn
+            if (! $hn) {
+                $errors['hn'] = 'จำเป็นต้องลง HN';
+            }
+        } else {
+            // Other center needs hn or name
+            if (! $hn && ! Request::input('patient_name', null)) {
+                $errors['patient_name'] = 'จำเป็นต้องลง ชื่อผู้ป่วย';
+            }
         }
 
-        if (Request::input('hn') && ! Request::input('confirmed', false)) {
-            return back()->withErrors([
+        if ($hn) { // validate hn
+            if (! is_numeric($hn) || strlen($hn) !== 8) {
+                $errors['hn'] = 'ไม่พบ HN นี้ในระบบ';
+            } else {
+                $result = (new PatientManager())->manage($hn);
+                if (! $result['found']) {
+                    $errors['hn'] = 'ไม่พบ HN นี้ในระบบ';
+                }
+            }
+        }
+
+        if (count($errors) > 0) {
+            return $errors + ['errors' => true];
+        }
+
+        if ($hn && ! Request::input('confirmed', false)) {
+            return [
+                'errors' => true,
                 'confirmed' => (new PatientManager())->manage(Request::input('hn'))['patient']->full_name,
-                'hidden' => true,
-            ]);
+            ];
         }
 
         $user = Auth::user();
         $contents = ReferNoteManager::initNote();
-        $contents['patient']['sat_code'] = Request::input('sat_code');
-        $contents['patient']['date_admit_origin'] = Request::input('date_admit_origin');
 
         $note = new Note();
         $note->slug = Str::uuid()->toString();
@@ -96,17 +96,24 @@ class ReferCasesController extends Controller
         $case = [
             'slug' => Str::uuid()->toString(),
             'note_id' => $note->id,
+            'meta' => [
+                'status' => 'draft',
+            ],
         ];
 
         if (Request::input('hn')) {
             $patient = (new PatientManager())->manage(Request::input('hn'))['patient']; // need handle error
             $case['patient_id'] = $patient->id;
             $case['patient_name'] = $patient->full_name;
+        } else {
+            $case['patient_name'] = Request::input('patient_name');
         }
 
         $case = $user->referCases()->create($case);
 
-        return Redirect::to(url('forms/'.$note->slug.'/edit'));
+        return [
+            'url' => 'forms/'.$note->slug.'/edit',
+        ];
     }
 
     public function update(Note $note)
@@ -117,6 +124,11 @@ class ReferCasesController extends Controller
             return back()->withErrors($errors);
         }
 
-        return 'OK 😇';
+        return Redirect::route('refer-cases')->with('messages', [
+            'status' => 'success',
+            'messages' => [
+                'ยืนยันการส่งต่อ '.$note->referCase->name.' สำเร็จ',
+            ],
+        ]);
     }
 }

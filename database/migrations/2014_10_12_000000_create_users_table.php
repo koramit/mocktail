@@ -59,8 +59,9 @@ class CreateUsersTable extends Migration
         Ability::insert([
             ['name' => 'refer_case'] + $datetime, // on behalf of center
             ['name' => 'create_note'] + $datetime, // md:[admit, DC], nurse:[nurse]
-            ['name' => 'view_cases'] + $datetime, // scope by center
-            ['name' => 'create_patient'] + $datetime, // add SI HN to patient
+            ['name' => 'view_case'] + $datetime, // scope by center
+            ['name' => 'view_any_cases'] + $datetime, // hospitel staff
+            // ['name' => 'create_patient'] + $datetime, // add SI HN to patient, this should merge with admit_patient
             ['name' => 'admit_patient'] + $datetime, // add AN to case
             ['name' => 'grant_admin'] + $datetime, // assign admin for user
             ['name' => 'grant_user'] + $datetime, // assign center, md and nurse for user
@@ -77,11 +78,11 @@ class CreateUsersTable extends Migration
         ]);
 
         $assignment = [
-            'root' => ['grant_admin', 'grant_user', 'view_cases', 'create_patient', 'admit_patient'],
-            'admin' => ['grant_user', 'view_cases', 'create_patient', 'admit_patient'],
-            'referer' => ['refer_case', 'view_cases'],
-            'md' => ['refer_case', 'create_note', 'view_cases', 'create_patient', 'admit_patient'],
-            'nurse' => ['create_note', 'view_cases', 'create_patient', 'admit_patient'],
+            'root' => ['grant_admin', 'grant_user', 'view_any_cases', 'admit_patient'],
+            'admin' => ['grant_user', 'view_any_cases', 'admit_patient'],
+            'referer' => ['refer_case', 'view_case'],
+            'md' => ['refer_case', 'create_note', 'view_any_cases', 'admit_patient'],
+            'nurse' => ['create_note', 'view_any_cases', 'admit_patient'],
             'center' => ['grant_teammate'],
         ];
 

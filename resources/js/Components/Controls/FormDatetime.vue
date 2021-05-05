@@ -29,7 +29,7 @@ import flatpickr from 'flatpickr';
 export default {
     emits: ['autosave', 'update:modelValue'],
     props: {
-        modelValue: { type: String, required: true },
+        modelValue: { type: String, default: '' },
         name: { type: String, required: true },
         label: { type: String, default: '' },
         mode: { type: String, default: 'date' },
