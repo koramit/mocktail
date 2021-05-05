@@ -14,4 +14,11 @@ class PatientAPIController extends Controller
 
         return $api->recentlyAdmission(Request::input('hn'));
     }
+
+    public function patient(PatientAPI $api)
+    {
+        Request::validate(['hn' => 'required|digits:8']);
+
+        return $api->getPatient(Request::input('hn'));
+    }
 }

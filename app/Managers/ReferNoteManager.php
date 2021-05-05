@@ -268,10 +268,10 @@ class ReferNoteManager
 
             if (! $treatments['date_stop_favipiravir']) {
                 $errors['date_stop_favipiravir'] = 'จำเป็นต้องลง กำหนดครบวันที่';
-            } elseif ($treatments['date_start_favipiravir'] && ( // date_stop_favipiravir MUST >= date_expect_discharge
-                ! Carbon::create($treatments['date_stop_favipiravir'])->greaterThanOrEqualTo(Carbon::create($patient['date_expect_discharge']))
+            } elseif ($treatments['date_start_favipiravir'] && ( // date_stop_favipiravir MUST > date_stop_favipiravir
+                ! Carbon::create($treatments['date_stop_favipiravir'])->greaterThan(Carbon::create($treatments['date_start_favipiravir']))
             )) {
-                $errors['date_stop_favipiravir'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ครบกำหนดนอนใน hospitel';
+                $errors['date_stop_favipiravir'] = 'ข้อมูลไม่สอดคล้องกับ วันที่เริ่มยา';
             }
         }
         // date_repeat_NP_swap >= date_expect_discharge
@@ -308,26 +308,18 @@ class ReferNoteManager
         // 'date_refer' MUST >= date_covid_infected
         if (! Carbon::create($patient['date_refer'])->greaterThanOrEqualTo(Carbon::create($patient['date_covid_infected']))) { // timeline fails
             $errors['date_refer'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ตรวจพบเชื้อ';
-
-            return $errors;
         }
         // 'date_expect_discharge' MUST > date_refer
         if (! Carbon::create($patient['date_expect_discharge'])->greaterThan(Carbon::create($patient['date_refer']))) { // timeline fails
             $errors['date_expect_discharge'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ส่งผู้ป่วยไป Hospitel';
-
-            return $errors;
         }
         // 'date_quarantine_end' MUST >= date_expect_discharge
         if (! Carbon::create($patient['date_quarantine_end'])->greaterThanOrEqualTo(Carbon::create($patient['date_expect_discharge']))) { // timeline fails
             $errors['date_quarantine_end'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ครบกำหนดนอนใน Hospitel';
-
-            return $errors;
         }
-        // 'date_repeat_NP_swap' >= date_expect_discharge
+        // 'date_repeat_NP_swap' MUST >= date_expect_discharge
         if ($data['treatments']['date_repeat_NP_swap'] && ! Carbon::create($data['treatments']['date_repeat_NP_swap'])->greaterThanOrEqualTo(Carbon::create($patient['date_expect_discharge']))) { // timeline fails
             $errors['date_repeat_NP_swap'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ครบกำหนดนอนใน Hospitel';
-
-            return $errors;
         }
 
         if (count($errors) > 0) {
@@ -386,6 +378,7 @@ class ReferNoteManager
             } else {
                 if ($note->referCase->patient_id !== $patientExists['patient']->id) {
                     $note->referCase->patient_id = $patientExists['patient']->id;
+                    $note->referCase->patient_name = $patientExists['patient']->full_name;
                     $note->referCase->save();
                 }
             }

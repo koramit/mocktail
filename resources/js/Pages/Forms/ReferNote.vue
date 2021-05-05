@@ -475,6 +475,12 @@
             ref="selectOther"
             @closed="selectOtherClosed"
         />
+
+        <confirm-refer
+            ref="confirmRefer"
+            :patient="form.patient.name"
+            @confirmed="criteriaConfirmed"
+        />
     </div>
 </template>
 
@@ -488,6 +494,8 @@ import FormInput from '@/Components/Controls/FormInput';
 import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
 import ImageUploader from '@/Components/Controls/ImageUploader';
+import ConfirmRefer from '@/Components/Forms/ConfirmRefer';
+import axios from 'axios';
 export default {
     layout: Layout,
     components: {
@@ -497,6 +505,7 @@ export default {
         FormSelect,
         FormSelectOther,
         ImageUploader,
+        ConfirmRefer,
     },
     props: {
         contents: { type: Object, required: true },
@@ -510,6 +519,7 @@ export default {
             selectOtherPlaceholder: '',
             otherItem: '',
             otherItemAdded: false,
+            criterias: null,
         };
     },
     watch: {
@@ -632,7 +642,18 @@ export default {
                 this.formSelectRef = 'meal';
                 this.$refs.selectOther.open();
             }
-        }
+        },
+        // 'form.patient.hn': {
+        //     handler (val) {
+        //         if (val && val.length === 8 && Number.isInteger(parseInt(val))) {
+        //             window.axios
+        //                 .post(`${this.baseUrl}/front-api/patient`, { hn: val })
+        //                 .then(response => {
+        //                     this.form.patient.name = response.data.patient_name;
+        //                 });
+        //         }
+        //     }
+        // }
     },
     created () {
         if (this.form.patient.insurance && !this.configs.insurances.includes(this.form.patient.insurance)) {
@@ -683,14 +704,41 @@ export default {
                     form['contents->' + (field.split('.').join('->'))] = lodashGet(this.form, field);
                 }
                 window.axios.patch(this.configs.patchEndpoint, form);
+                if (field === 'patient.hn') {
+                    this.updatePatient();
+                }
             });
         },
         confirm () {
             this.form
-                .transform(data => ({...data, remember: 'on'}))
+                .transform(data => ({...data, remember: 'on', criterias: this.criterias}))
                 .post(`${this.baseUrl}/refer-cases/${this.configs.note_id}`, {
+                    onSuccess: () => {
+                        if (Object.keys(this.form.errors).length === 0 && !this.criterias) {
+                            this.$refs.confirmRefer.open();
+                            this.criterias = null;
+                        }
+                    },
                     replace: true,
                 });
+        },
+        criteriaConfirmed (criterias) {
+            this.criterias = criterias;
+            this.confirm();
+        },
+        updatePatient () {
+            if (this.form.patient.hn && this.form.patient.hn.length === 8 && Number.isInteger(parseInt(this.form.patient.hn))) {
+                window.axios
+                    .post(`${this.baseUrl}/front-api/patient`, { hn: this.form.patient.hn })
+                    .then(response => {
+                        if (response.data.found) {
+                            this.form.patient.name = response.data.patient_name;
+                        } else {
+                            this.form.patient.name = 'ไม่พบ HN นี้ในระบบ';
+                        }
+                        this.autosave('patient.name');
+                    });
+            }
         }
     }
 };

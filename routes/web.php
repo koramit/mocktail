@@ -55,6 +55,7 @@ Route::middleware('auth')->post('/admissions', [AdmissionsController::class, 'st
 
 // front api
 Route::middleware('auth')->post('/front-api/patient-rencently-admission', [PatientAPIController::class, 'recentlyAdmission']);
+Route::middleware('auth')->post('/front-api/patient', [PatientAPIController::class, 'patient']);
 
 // report
 Route::middleware('auth')->get('/reports/{note:slug}', [NotesController::class, 'show']);

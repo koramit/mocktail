@@ -13,7 +13,14 @@
                         class="font-semibold mr-1"
                         v-if="$page.props.user.center === 'ศิริราช'"
                     >{{ referCase.center }}</span>
-                    <span class="bg-gray-200 text-sm shadow-sm italic px-2 rounded-xl">{{ referCase.status }}</span>
+                    <span
+                        class="text-sm shadow-sm italic px-2 rounded-xl"
+                        :class="{
+                            'bg-gray-200 text-thick-theme-light': referCase.status === 'draft',
+                            'bg-yellow-200 text-yellow-400': referCase.status === 'submitted',
+                        }"
+                    >
+                        {{ referCase.status_label }}</span>
                 </p>
                 <p class="p-1 text-lg pt-0">
                     {{ referCase.patient_name }}
@@ -24,10 +31,10 @@
             </div>
             <!-- right menu -->
             <div class="w-1/4 text-sm p-1 grid justify-items-center ">
-                <!-- write or read -->
+                <!-- write -->
                 <inertia-link
                     class="w-full flex text-yellow-200 justify-start"
-                    v-if="referCase.referer === $page.props.user.name"
+                    v-if="userCan('write', referCase)"
                     :href="`${$page.props.app.baseUrl}/forms/${referCase.note_slug}/edit`"
                 >
                     <icon
@@ -36,9 +43,24 @@
                     />
                     <span class="block font-normal text-thick-theme-light">เขียนต่อ</span>
                 </inertia-link>
+
+                <!-- edit -->
                 <inertia-link
                     class="w-full flex text-alt-theme-light justify-start"
-                    v-else
+                    v-if="userCan('edit', referCase)"
+                    :href="`${$page.props.app.baseUrl}/forms/${referCase.note_slug}/edit`"
+                >
+                    <icon
+                        class="w-4 h-4 mr-1"
+                        name="eraser"
+                    />
+                    <span class="block font-normal text-thick-theme-light">แก้ไข</span>
+                </inertia-link>
+
+                <!-- read -->
+                <inertia-link
+                    class="w-full flex text-alt-theme-light justify-start"
+                    v-if="userCan('read', referCase)"
                     :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
                 >
                     <icon
@@ -50,7 +72,7 @@
 
                 <!-- admit -->
                 <button
-                    v-if="abilities.includes('admit_patient') && referCase.status === 'รอ'"
+                    v-if="userCan('admit', referCase)"
                     class="w-full flex items-center text-green-200 justify-start"
                     :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
                     @click="this.$refs.admission.open(referCase.id, referCase.hn, referCase.patient_name)"
@@ -96,7 +118,7 @@ export default {
     computed: {
         abilities () {
             return this.$page.props.user.abilities;
-        }
+        },
     },
     created () {
         this.eventBus.on('action-clicked', (action) => {
@@ -118,6 +140,20 @@ export default {
 
             default:
                 break;
+            }
+        },
+        userCan(ability, referCase) {
+            switch (ability) {
+            case 'write':
+                return referCase.referer === this.$page.props.user.name && referCase.status === 'draft';
+            case 'edit':
+                return referCase.referer === this.$page.props.user.name && referCase.status === 'submitted';
+            case 'read':
+                return referCase.referer !== this.$page.props.user.name;
+            case 'admit':
+                return this.abilities.includes('admit_patient') && referCase.status === 'submitted';
+            default:
+                return false;
             }
         }
     }

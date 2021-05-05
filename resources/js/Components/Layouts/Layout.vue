@@ -232,7 +232,8 @@ export default {
         window.addEventListener('focus', () => {
             let timeDiff = Date.now() - lastTimeCheckSessionTimeout;
             if ( (timeDiff) > (sessionLifetimeSeconds) ) {
-                axios.post(endpoint)
+                window.axios
+                    .post(endpoint)
                     .then(() => lastTimeCheckSessionTimeout = Date.now())
                     .catch(() => location.reload());
             }
