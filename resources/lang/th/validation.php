@@ -158,9 +158,11 @@ return [
         'full_name' => 'ชื่อเต็ม',
         'tel_no' => 'หมายเลขโทรศัพท์',
         'center' => 'ศูนย์',
+
         'sat_code' => 'SAT CODE',
         'date_admit_origin' => 'วันที่รับไว้ในโรงพยาบาล',
         'hn' => 'HN',
+        'patient_name' => 'ชื่อผู้ป่วย',
         'insurance' => 'สิทธิ์การรักษา',
         'date_symptom_start' => 'วันแรกที่มีอาการ',
         'date_covid_infected' => 'วันที่ตรวจพบเชื้อ',
@@ -179,6 +181,8 @@ return [
 
         'temperature_per_day' => 'คำสั่งการรักษา Temperature',
         'oxygen_sat_RA_per_day' => 'คำสั่งการรักษา Oxygen sat RA',
+
+        'adr_detail' => 'ยา/อาหารที่แพ้ หากไม่มีโปรดเลือกไม่แพ้',
 
         'room_number' => 'หมายเลขห้อง',
     ],

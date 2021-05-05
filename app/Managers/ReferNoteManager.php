@@ -22,7 +22,7 @@ class ReferNoteManager
     {
         // title and menu
         if ($report) {
-            Request::session()->flash('page-title', 'ใบส่งตัว: '.($this->note->referCase->patient_name ?? 'ยังไม่มีชื่อ'));
+            Request::session()->flash('page-title', 'ใบส่งตัว: '.($this->note->referCase->name));
             Request::session()->flash('messages', [
                 'status' => 'info',
                 'messages' => [
@@ -30,13 +30,13 @@ class ReferNoteManager
                 ],
             ]);
         } else {
-            Request::session()->flash('page-title', 'เขียนใบส่งตัว: '.($this->note->referCase->patient_name ?? 'ยังไม่มีชื่อ'));
+            Request::session()->flash('page-title', 'เขียนใบส่งตัว: '.($this->note->referCase->name));
             Request::session()->flash('messages', [
                 'status' => 'info',
                 'messages' => [
                     'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
                     'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> ท้ายฟอร์ม',
-                    'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้อยู่จนกว่าเคสจะแอดมิด',
+                    'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้จนกว่าเคสจะแอดมิด',
                 ],
             ]);
         }
@@ -56,7 +56,7 @@ class ReferNoteManager
     public function getContents()
     {
         $contents = $this->note->contents;
-        $contents['patient']['name'] = $this->note->referCase->patient_name;
+        $contents['patient']['name'] = $this->note->referCase->name;
         $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
 
         return $contents;
@@ -87,6 +87,7 @@ class ReferNoteManager
     public static function initNote()
     {
         return [
+            'no_admit' => false,
             'patient' => [
                 'sat_code' => null,
                 'insurance' => null,
@@ -156,71 +157,48 @@ class ReferNoteManager
         ];
     }
 
-    public static function validate(Note $note)
+    public static function validate(Note &$note)
     {
-        $rules = [
-            'sat_code' => 'required|alpha_num|size:18',
-            'insurance' => 'required|string',
-            'date_symptom_start' => 'required|date',
-            'date_covid_infected' => 'required|date',
-            'date_admit_origin' => 'required|date',
-            'date_refer' => 'required|date',
-            'date_expect_discharge' => 'required|date',
-            'date_quarantine_end' => 'required|date',
-            'meal' => 'required|string',
-
-            'temperature_celsius' => 'required|numeric',
-            'pulse_per_minute' => 'required|integer',
-            'respiration_rate_per_minute' => 'required|integer',
-            'sbp' => 'required|integer',
-            'dbp' => 'required|integer',
-            'o2_sat' => 'required|integer',
-
-            'temperature_per_day' => 'required|string',
-            'oxygen_sat_RA_per_day' => 'required|string',
-        ];
-
-        if (Session::get('center')->id === config('app.main_center_id')) {
-            $rules['hn'] = 'required|digits:8';
+        if ($note->contents['no_admit']) {
+            return static::validateNoAdmit($note);
         }
 
+        $errors = [];
         $data = Request::all();
-        Validator::make($data['patient'] + $data['vital_signs'] + $data['treatments'], $rules)->validate();
-
-        $patient = $data['patient'];
-
-        // validate hn
-        $patientExists = (new PatientManager())->manage($patient['hn']);
-        if (! $patientExists['found']) {
-            return [
-                'hn' => 'ไม่พบ HN นี้ในระบบ',
-            ];
-        } else {
-            if ($note->referCase->patient_id !== $patientExists['patient']->id) {
-                $note->referCase->patient_id = $patientExists['patient']->id;
-                $note->referCase->save();
-            }
+        $rules = static::getBaseRules();
+        $validator = Validator::make($data['patient'] + $data['vital_signs'] + $data['treatments'] + $data['adr'], $rules);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
         }
+        static::validateCommonFields($note, $data, $errors);
 
         // *** validate timeline
-        $timeline = [
-            'date_symptom_start',
-            'date_covid_infected',
-            'date_admit_origin',
-            'date_refer',
-            'date_expect_discharge',
-            'date_quarantine_end',
-        ];
-        for ($i = 0; $i < count($timeline) - 1; $i++) {
-            if (Carbon::create($patient[$timeline[$i + 1]])->lessThanOrEqualTo(Carbon::create($patient[$timeline[$i]]))) {
-                return [
-                    $timeline[$i] => 'ลำดับเวลาไม่สอดคล้อง',
-                    $timeline[$i + 1] => 'ลำดับเวลาไม่สอดคล้อง',
-                ];
-            }
+        $patient = $data['patient'];
+        // date_covid_infected MUST <= date_admit_origin
+        if (! Carbon::create($patient['date_covid_infected'])->lessThanOrEqualTo(Carbon::create($patient['date_admit_origin']))) { // timeline fails
+            $errors['date_covid_infected'] = 'ข้อมูลไม่สอดคล้องกับ วันที่รับไว้ในโรงพยาบาล';
+        }
+        // date_symptom_start MUST <= date_admit_origin
+        if (! Carbon::create($patient['date_symptom_start'])->lessThanOrEqualTo(Carbon::create($patient['date_admit_origin']))) { // timeline fails
+            $errors['date_symptom_start'] = 'ข้อมูลไม่สอดคล้องกับ วันที่รับไว้ในโรงพยาบาล';
         }
 
-        $errors = []; // we can combine errors now
+        // date_admit_origin MUST >= date_covid_infected
+        if (! Carbon::create($patient['date_admit_origin'])->greaterThanOrEqualTo(Carbon::create($patient['date_covid_infected']))) { // timeline fails
+            $errors['date_admit_origin'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ตรวจพบเชื้อ';
+        }
+        // date_refer MUST > date_admit_origin
+        if (! Carbon::create($patient['date_refer'])->greaterThan(Carbon::create($patient['date_admit_origin']))) { // timeline fails
+            $errors['date_refer'] = 'ข้อมูลไม่สอดคล้องกับ วันที่รับไว้ในโรงพยาบาล';
+        }
+        // date_expect_discharge MUST > date_refer
+        if (! Carbon::create($patient['date_expect_discharge'])->greaterThan(Carbon::create($patient['date_refer']))) { // timeline fails
+            $errors['date_expect_discharge'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ส่งผู้ป่วยไป Hospitel';
+        }
+        // date_quarantine_end MUST >= date_expect_discharge
+        if (! Carbon::create($patient['date_quarantine_end'])->greaterThanOrEqualTo(Carbon::create($patient['date_expect_discharge']))) { // timeline fails
+            $errors['date_quarantine_end'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ครบกำหนดนอนใน hospitel';
+        }
 
         // validate symptoms
         $symptoms = $data['symptoms'];
@@ -259,30 +237,158 @@ class ReferNoteManager
             if ($diagnosis['uri']) {
                 if (! $diagnosis['date_uri']) {
                     $errors['date_uri'] = 'จำเป็นต้องลง วันที่เริ่มมีอาการ URI';
-                } elseif (
-                    Carbon::create($diagnosis['date_uri'])->lessThan(Carbon::create($patient['date_symptom_start'])) ||
-                    Carbon::create($diagnosis['date_uri'])->greaterThanOrEqualTo(Carbon::create($patient['date_refer']))
+                } elseif ( // date_uri MUST >= date_symptom_start
+                    ! Carbon::create($diagnosis['date_uri'])->greaterThanOrEqualTo(Carbon::create($patient['date_symptom_start']))
                 ) {
-                    $errors['date_uri'] = 'วันที่เริ่มมีอาการ URI ควรอยู่ระหว่างวันแรกที่มีอาการและวันที่ส่งผู้ป่วยไป Hospitel';
+                    $errors['date_uri'] = 'ข้อมูลไม่สอดคล้องกับ วันแรกที่มีอาการ';
                 }
             }
 
             if ($diagnosis['pneumonia']) {
                 if (! $diagnosis['date_pneumonia']) {
                     $errors['date_pneumonia'] = 'จำเป็นต้องลง วันที่เริ่มมีอาการ PNEUMONIA';
-                } elseif (
-                    Carbon::create($diagnosis['date_pneumonia'])->lessThan(Carbon::create($patient['date_symptom_start'])) ||
-                    Carbon::create($diagnosis['date_pneumonia'])->greaterThanOrEqualTo(Carbon::create($patient['date_refer']))
+                } elseif ( // date_pneumonia MUST >= date_symptom_start
+                    ! Carbon::create($diagnosis['date_uri'])->greaterThanOrEqualTo(Carbon::create($patient['date_symptom_start']))
                 ) {
-                    $errors['date_pneumonia'] = 'วันที่เริ่มมีอาการ PNEUMONIA ควรอยู่ระหว่างวันแรกที่มีอาการและวันที่ส่งผู้ป่วยไป Hospitel';
+                    $errors['date_pneumonia'] = 'ข้อมูลไม่สอดคล้องกับ วันแรกที่มีอาการ';
                 }
             }
         }
 
-        // validate adr
-        $adr = $data['adr'];
-        if (! $adr['no_adr'] && ! $adr['adr_detail']) {
-            $errors['adr_detail'] = 'จำเป็นต้องลง ยา/อาหารที่แพ้ หากไม่มีโปรดเลือกไม่แพ้';
+        // validate treatments
+        $treatments = $data['treatments'];
+        if ($treatments['favipiravir']) {
+            if (! $treatments['date_start_favipiravir']) {
+                $errors['date_start_favipiravir'] = 'จำเป็นต้องลง วันที่เริ่มยา';
+            } elseif ( // date_start_favipiravir MUST >= date_admit_origin
+                ! Carbon::create($treatments['date_start_favipiravir'])->greaterThanOrEqualTo(Carbon::create($patient['date_admit_origin']))
+            ) {
+                $errors['date_start_favipiravir'] = 'ข้อมูลไม่สอดคล้องกับ วันที่รับไว้ในโรงพยาบาล';
+            }
+
+            if (! $treatments['date_stop_favipiravir']) {
+                $errors['date_stop_favipiravir'] = 'จำเป็นต้องลง กำหนดครบวันที่';
+            } elseif ($treatments['date_start_favipiravir'] && ( // date_stop_favipiravir MUST >= date_expect_discharge
+                ! Carbon::create($treatments['date_stop_favipiravir'])->greaterThanOrEqualTo(Carbon::create($patient['date_expect_discharge']))
+            )) {
+                $errors['date_stop_favipiravir'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ครบกำหนดนอนใน hospitel';
+            }
+        }
+        // date_repeat_NP_swap >= date_expect_discharge
+        if ($treatments['date_repeat_NP_swap'] && ! Carbon::create($treatments['date_repeat_NP_swap'])->greaterThanOrEqualTo(Carbon::create($patient['date_expect_discharge']))) { // timeline fails
+            $errors['date_repeat_NP_swap'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ครบกำหนดนอนใน hospitel';
+        }
+
+        // check candidate keys
+        $count = Note::where('contents->patient->sat_code', $patient['sat_code'])
+                     ->where('contents->patient->date_admit_origin', $patient['date_admit_origin'])
+                     ->count();
+        if ($count > 1) {
+            $errors['sat_code'] = 'เคสซ้ำ โปรดตรวจสอบ SAT CODE และ วันที่รับไว้ในโรงพยาบาล';
+        }
+
+        if (count($errors) > 0) {
+            return $errors;
+        }
+    }
+
+    protected static function validateNoAdmit(Note &$note)
+    {
+        $errors = [];
+        $data = Request::all();
+        $rules = static::getBaseRules(true);
+        $validator = Validator::make($data['patient'] + $data['vital_signs'] + $data['treatments'] + $data['adr'], $rules);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+        }
+        static::validateCommonFields($note, $data, $errors);
+
+        // timeline => date_covid_infected : reference
+        $patient = $data['patient'];
+        // 'date_refer' MUST >= date_covid_infected
+        if (! Carbon::create($patient['date_refer'])->greaterThanOrEqualTo(Carbon::create($patient['date_covid_infected']))) { // timeline fails
+            $errors['date_refer'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ตรวจพบเชื้อ';
+
+            return $errors;
+        }
+        // 'date_expect_discharge' MUST > date_refer
+        if (! Carbon::create($patient['date_expect_discharge'])->greaterThan(Carbon::create($patient['date_refer']))) { // timeline fails
+            $errors['date_expect_discharge'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ส่งผู้ป่วยไป Hospitel';
+
+            return $errors;
+        }
+        // 'date_quarantine_end' MUST >= date_expect_discharge
+        if (! Carbon::create($patient['date_quarantine_end'])->greaterThanOrEqualTo(Carbon::create($patient['date_expect_discharge']))) { // timeline fails
+            $errors['date_quarantine_end'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ครบกำหนดนอนใน Hospitel';
+
+            return $errors;
+        }
+        // 'date_repeat_NP_swap' >= date_expect_discharge
+        if ($data['treatments']['date_repeat_NP_swap'] && ! Carbon::create($data['treatments']['date_repeat_NP_swap'])->greaterThanOrEqualTo(Carbon::create($patient['date_expect_discharge']))) { // timeline fails
+            $errors['date_repeat_NP_swap'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ครบกำหนดนอนใน Hospitel';
+
+            return $errors;
+        }
+
+        if (count($errors) > 0) {
+            return $errors;
+        }
+    }
+
+    protected static function getBaseRules($noAdmit = false)
+    {
+        $rules = [
+            'sat_code' => 'required|alpha_num|size:18',
+            'insurance' => 'required|string',
+            'date_covid_infected' => 'required|date',
+            'date_refer' => 'required|date',
+            'date_expect_discharge' => 'required|date',
+            'date_quarantine_end' => 'required|date',
+            'meal' => 'required|string',
+
+            'temperature_celsius' => 'required|numeric',
+            'pulse_per_minute' => 'required|integer',
+            'respiration_rate_per_minute' => 'required|integer',
+            'sbp' => 'required|integer',
+            'dbp' => 'required|integer',
+            'o2_sat' => 'required|integer',
+
+            'adr_detail' => 'exclude_if:no_adr,true|required|string',
+        ];
+
+        if (! $noAdmit) {
+            $rules = $rules + [
+                'date_symptom_start' => 'required|date',
+                'date_admit_origin' => 'required|date',
+                'temperature_per_day' => 'required|string',
+                'oxygen_sat_RA_per_day' => 'required|string',
+            ];
+        }
+
+        if (Session::get('center')->id === config('app.main_center_id')) {
+            $rules['hn'] = 'required|digits:8';
+        }
+
+        return $rules;
+    }
+
+    protected static function validateCommonFields($note, &$data, &$errors)
+    {
+        $patient = $data['patient'];
+
+        if ($patient['hn'] || Session::get('center')->name === config('app.main_center')) {
+            // validate hn
+            $patientExists = (new PatientManager())->manage($patient['hn']);
+            if (! $patientExists['found']) {
+                return [
+                    'hn' => 'ไม่พบ HN นี้ในระบบ',
+                ];
+            } else {
+                if ($note->referCase->patient_id !== $patientExists['patient']->id) {
+                    $note->referCase->patient_id = $patientExists['patient']->id;
+                    $note->referCase->save();
+                }
+            }
         }
 
         // validate comorbids
@@ -296,29 +402,7 @@ class ReferNoteManager
             }
         }
 
-        // treatments validate
-        $treatments = $data['treatments'];
-        if ($treatments['favipiravir']) {
-            if (! $treatments['date_start_favipiravir']) {
-                $errors['date_start_favipiravir'] = 'จำเป็นต้องลง วันที่เริ่มยา';
-            } elseif (
-                Carbon::create($treatments['date_start_favipiravir'])->lessThan(Carbon::create($patient['date_admit_origin'])) ||
-                Carbon::create($treatments['date_start_favipiravir'])->greaterThanOrEqualTo(Carbon::create($patient['date_refer']))
-            ) {
-                $errors['date_start_favipiravir'] = 'วันที่เริ่มยา ควรอยู่ระหว่างวันที่รับไว้ในโรงพยาบาลและวันที่ส่งผู้ป่วยไป Hospitel';
-            }
-
-            if (! $treatments['date_stop_favipiravir']) {
-                $errors['date_stop_favipiravir'] = 'จำเป็นต้องลง กำหนดครบวันที่';
-            } elseif ($treatments['date_start_favipiravir'] && (
-                Carbon::create($treatments['date_stop_favipiravir'])->lessThan(Carbon::create($treatments['date_start_favipiravir'])) ||
-                Carbon::create($treatments['date_stop_favipiravir'])->greaterThanOrEqualTo(Carbon::create($patient['date_refer']))
-            )) {
-                $errors['date_stop_favipiravir'] = 'กำหนดครบวันที่ ควรอยู่ระหว่างวันที่เริ่มยาและวันที่ส่งผู้ป่วยไป Hospitel';
-            }
-        }
-
-        // treatments validate
+        // validate uploads
         $uploads = $data['uploads'];
         if (! $uploads['film']) {
             $errors['film'] = ['จำเป็นต้องแนบภาพ Film Chest ล่าสุด'];
@@ -338,18 +422,6 @@ class ReferNoteManager
             } elseif (! Storage::exists('uploads/'.$uploads['id_document'])) {
                 $errors['id_document'] = ['กรุณาแนบไฟล์ใหม่'];
             }
-        }
-
-        // check candidate keys
-        $count = Note::where('contents->patient->sat_code', $patient['sat_code'])
-                     ->where('contents->patient->date_admit_origin', $patient['date_admit_origin'])
-                     ->count();
-        if ($count > 1) {
-            $errors['sat_code'] = 'เคสซ้ำ โปรดตรวจสอบ SAT CODE และ วันที่รับไว้ในโรงพยาบาล';
-        }
-
-        if (count($errors) > 0) {
-            return $errors;
         }
     }
 }

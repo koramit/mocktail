@@ -41,10 +41,10 @@ class HandleInertiaRequests extends Middleware
                 'baseUrl' => url(''),
             ],
             'flash' => [
-                'title' => fn () => $request->session()->get('page-title', 'MISSING'),
-                'messages' => fn () => $request->session()->get('messages'),
-                'mainMenuLinks' => fn () => $request->session()->get('main-menu-links', []),
-                'actionMenu' => fn () => $request->session()->get('action-menu', []),
+                'title' => fn () => $request->session()->pull('page-title', 'MISSING'),
+                'messages' => fn () => $request->session()->pull('messages'),
+                'mainMenuLinks' => fn () => $request->session()->pull('main-menu-links', []),
+                'actionMenu' => fn () => $request->session()->pull('action-menu', []),
             ],
             'user' => fn () => $request->user()
                 ? [

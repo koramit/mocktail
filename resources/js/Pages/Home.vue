@@ -24,7 +24,7 @@
                 <inertia-link
                     class="btn btn-bitter block text-center"
                     :href="`${baseUrl}/refer-cases`"
-                    v-if="abilities.includes('view_cases')"
+                    v-if="abilities.includes('refer_case') || abilities.includes('admit_patient')"
                 >
                     รายการเคส
                 </inertia-link>

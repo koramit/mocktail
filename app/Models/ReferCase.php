@@ -80,13 +80,25 @@ class ReferCase extends Model
 
     public function getStatusAttribute()
     {
-        return $this->submitted_at ? 'ส่งแล้ว' : 'ร่าง';
+        $statuses = [
+            'draft' => 'ร่าง',
+            'submitted' => 'รอ',
+            'admitted' => 'แอดมิด',
+            'discharged' => 'จำหน่าย',
+            'canceled' => 'ยกเลิก',
+        ];
+
+        return $statuses[$this->meta['status']];
     }
 
     public function getUpdatedAtForHumansAttribute()
     {
         return $this->updated_at->locale('th_TH')->diffForHumans(now());
-        // return $this->submitted_at ? 'ส่งแล้ว' : 'ร่าง';
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->patient ? $this->patient->full_name : ($this->patient_name ?? 'ยังไม่มีชื่อ');
     }
 
     public function scopeWithFilterUserCenter($query, $userCenterId)

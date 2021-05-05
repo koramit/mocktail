@@ -88,6 +88,7 @@ export default {
                     remember: data.remember ? 'on' : '',
                 }))
                 .post(`${this.baseUrl}/login`, {
+                    replace: true,
                     onFinish: () => this.form.processing = false,
                 });
         }

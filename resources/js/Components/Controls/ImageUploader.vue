@@ -12,12 +12,21 @@
             <button
                 v-if="!readonly"
                 class="ml-4"
-                @click="$refs.input.click()"
+                @click="$refs.useCamera.click()"
             >
                 <icon
                     class="w-4 h-4 text-thick-theme-light"
-                    :class="{'animate-pulse': form.processing}"
                     name="camera"
+                />
+            </button>
+            <button
+                v-if="!readonly"
+                class="ml-4"
+                @click="$refs.useGallery.click()"
+            >
+                <icon
+                    class="w-4 h-4 text-thick-theme-light"
+                    name="image"
                 />
             </button>
             <button
@@ -45,9 +54,16 @@
         <input
             class="hidden"
             type="file"
-            ref="input"
+            ref="useCamera"
             @input="fileInput"
             capture="environment"
+            accept="image/*"
+        >
+        <input
+            class="hidden"
+            type="file"
+            ref="useGallery"
+            @input="fileInput"
             accept="image/*"
         >
     </div>
