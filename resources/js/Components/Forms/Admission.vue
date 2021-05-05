@@ -64,7 +64,7 @@
                     class="btn-dark w-full mt-6"
                     v-if="state !== 'try_later'"
                     @click="perform"
-                    :disabled="!form.hn"
+                    :disabled="!form.hn || (state && !form.room_number)"
                 >
                     {{ !state ? 'ค้น HN':'ยืนยัน' }}
                 </spinner-button>
