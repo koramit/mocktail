@@ -114,4 +114,14 @@ class User extends Authenticatable
             return $this->roles->pluck('name');
         });
     }
+
+    public function getFullNameAttribute()
+    {
+        return $this->profile['full_name'];
+    }
+
+    public function getTelNoAttribute()
+    {
+        return $this->profile['tel_no'];
+    }
 }

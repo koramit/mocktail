@@ -17,4 +17,9 @@ class Note extends Model
     {
         return $this->hasOne(ReferCase::class);
     }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
