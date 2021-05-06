@@ -87,7 +87,7 @@
                             class="flex flex-col text-center"
                             @click="mobileMenuVisible = false"
                         >
-                            <div class="flex justify-center mt-2">
+                            <!-- <div class="flex justify-center mt-2">
                                 <div
                                     class="w-12 h-12 rounded-full overflow-hidden border-bitter-theme-light border-2"
                                     v-if="!avatarSrcError"
@@ -98,7 +98,7 @@
                                         @error="avatarSrcError = true"
                                     >
                                 </div>
-                            </div>
+                            </div> -->
                             <span class="inline-block py-1 text-white">{{ $page.props.user.name }}</span>
                             <template v-if="hasRoles">
                                 <inertia-link
