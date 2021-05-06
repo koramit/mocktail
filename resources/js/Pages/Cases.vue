@@ -18,6 +18,7 @@
                         :class="{
                             'bg-gray-200 text-thick-theme-light': referCase.status === 'draft',
                             'bg-yellow-200 text-yellow-400': referCase.status === 'submitted',
+                            'bg-green-200 text-green-400': referCase.status === 'admitted',
                         }"
                     >
                         {{ referCase.status_label }}</span>
@@ -84,8 +85,9 @@
                     <span class="block font-normal text-thick-theme-light">แอดมิด</span>
                 </button>
 
+                <!-- next features -->
                 <!-- cancel -->
-                <button
+                <!-- <button
                     v-if="abilities.includes('admit_patient') || referCase.referer === $page.props.user.name"
                     class="w-full flex text-red-200 justify-start"
                     :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
@@ -95,7 +97,7 @@
                         name="trash-alt"
                     />
                     <span class="block font-normal text-thick-theme-light">ยกเลิก</span>
-                </button>
+                </button> -->
             </div>
         </div>
 

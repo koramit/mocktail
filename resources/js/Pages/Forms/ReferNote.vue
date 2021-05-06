@@ -5,13 +5,14 @@
             <h2 class="font-semibold text-thick-theme-light">
                 ข้อมูลเบื้องต้น
             </h2>
-            <form-checkbox
+            <!-- next features -->
+            <!-- <form-checkbox
                 class="mt-4"
                 v-model="form.no_admit"
                 label="ส่งตัวโดยไม่ได้รับไว้ในโรงพยาบาล"
                 :toggler="true"
                 @autosave="autosave('no_admit')"
-            />
+            /> -->
             <form-input
                 class="mt-2"
                 name="sat_code"
@@ -57,6 +58,7 @@
                 name="date_symptom_start"
                 @autosave="autosave('patient.date_symptom_start')"
             />
+            <small class="text-md text-thick-theme-light italic">๏ หากไม่มีอาการให้ลงวันที่ตรวจพบเชื้อ</small>
             <form-datetime
                 class="mt-2"
                 label="วันที่ตรวจพบเชื้อ"
@@ -463,12 +465,17 @@
             />
         </div>
 
-        <button
-            class="btn btn-dark w-full mt-4 sm:mt-6 md:mt-12"
+        <spinner-button
+            class="btn btn-bitter w-full mt-4 sm:mt-6 md:mt-12"
+            :class="{
+                'btn-dark': !form.submitted,
+                'btn-bitter': form.submitted,
+            }"
             @click="confirm"
+            :spin="form.processing"
         >
-            ยืนยันการส่งต่อผู้ป่วย
-        </button>
+            {{ form.submitted ? 'ยืนยัน':'ยืนยันการส่งต่อผู้ป่วย' }}
+        </spinner-button>
 
         <form-select-other
             :placeholder="selectOtherPlaceholder"
@@ -495,7 +502,7 @@ import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
 import ImageUploader from '@/Components/Controls/ImageUploader';
 import ConfirmRefer from '@/Components/Forms/ConfirmRefer';
-import axios from 'axios';
+import SpinnerButton from '@/Components/Controls/SpinnerButton';
 export default {
     layout: Layout,
     components: {
@@ -506,6 +513,7 @@ export default {
         FormSelectOther,
         ImageUploader,
         ConfirmRefer,
+        SpinnerButton,
     },
     props: {
         contents: { type: Object, required: true },
@@ -643,17 +651,6 @@ export default {
                 this.$refs.selectOther.open();
             }
         },
-        // 'form.patient.hn': {
-        //     handler (val) {
-        //         if (val && val.length === 8 && Number.isInteger(parseInt(val))) {
-        //             window.axios
-        //                 .post(`${this.baseUrl}/front-api/patient`, { hn: val })
-        //                 .then(response => {
-        //                     this.form.patient.name = response.data.patient_name;
-        //                 });
-        //         }
-        //     }
-        // }
     },
     created () {
         if (this.form.patient.insurance && !this.configs.insurances.includes(this.form.patient.insurance)) {
@@ -683,6 +680,10 @@ export default {
             this.$refs[this.formSelectRef].setOther(val);
         },
         autosave (field) {
+            if (this.form.submitted) {
+                return;
+            }
+
             this.$nextTick(() => {
                 let form = {};
                 if (field.indexOf('symptoms') !== -1 || field.indexOf('diagnosis') !== -1) {
@@ -714,7 +715,7 @@ export default {
                 .transform(data => ({...data, remember: 'on', criterias: this.criterias}))
                 .post(`${this.baseUrl}/refer-cases/${this.configs.note_id}`, {
                     onSuccess: () => {
-                        if (Object.keys(this.form.errors).length === 0 && !this.criterias) {
+                        if (Object.keys(this.form.errors).length === 0 && !this.criterias && !this.form.submitted) {
                             this.$refs.confirmRefer.open();
                             this.criterias = null;
                         }
@@ -739,6 +740,9 @@ export default {
                         this.autosave('patient.name');
                     });
             }
+        },
+        confirmUpdate () {
+
         }
     }
 };

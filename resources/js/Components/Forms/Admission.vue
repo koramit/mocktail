@@ -127,7 +127,9 @@ export default {
                 this.checkAdmission();
             } else if (this.state === 'comfirm') {
                 let form = useForm({...this.form, remember: 'on'});
-                form.post(`${this.$page.props.app.baseUrl}/admissions`);
+                form.post(`${this.$page.props.app.baseUrl}/admissions`, {
+                    onSuccess: () => this.$refs.modal.close(),
+                });
             }
         },
         checkAdmission () {

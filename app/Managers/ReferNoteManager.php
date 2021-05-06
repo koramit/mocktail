@@ -31,14 +31,21 @@ class ReferNoteManager
             ]);
         } else {
             Request::session()->flash('page-title', 'เขียนใบส่งตัว: '.($this->note->referCase->name));
-            Request::session()->flash('messages', [
-                'status' => 'info',
-                'messages' => [
-                    'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
-                    'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> ท้ายฟอร์ม',
-                    'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้จนกว่าเคสจะแอดมิด',
-                ],
-            ]);
+            if ($this->note->contents['submitted']) {
+                Request::session()->flash('messages', [
+                    'status' => 'warning',
+                    'messages' => ['โปรด <span class="font-semibold">ยืนยัน</span> ทุกครั้งหลังแก้ไขข้อมูล'],
+                ]);
+            } else {
+                Request::session()->flash('messages', [
+                    'status' => 'info',
+                    'messages' => [
+                        'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
+                        'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> ท้ายฟอร์ม',
+                        'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้จนกว่าเคสจะแอดมิด',
+                    ],
+                ]);
+            }
         }
 
         Request::session()->flash('main-menu-links', [ // need check abilities
@@ -87,6 +94,7 @@ class ReferNoteManager
     public static function initNote()
     {
         return [
+            'submitted' => false,
             'no_admit' => false,
             'patient' => [
                 'sat_code' => null,
