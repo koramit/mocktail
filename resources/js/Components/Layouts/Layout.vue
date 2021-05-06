@@ -87,7 +87,7 @@
                             class="flex flex-col text-center"
                             @click="mobileMenuVisible = false"
                         >
-                            <div class="flex justify-center mt-2">
+                            <!-- <div class="flex justify-center mt-2">
                                 <div
                                     class="w-12 h-12 rounded-full overflow-hidden border-bitter-theme-light border-2"
                                     v-if="!avatarSrcError"
@@ -98,7 +98,7 @@
                                         @error="avatarSrcError = true"
                                     >
                                 </div>
-                            </div>
+                            </div> -->
                             <span class="inline-block py-1 text-white">{{ $page.props.user.name }}</span>
                             <template v-if="hasRoles">
                                 <inertia-link
@@ -135,9 +135,13 @@
                     :url="url()"
                     class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto"
                 />
+                <action-menu
+                    class="hidden md:block bg-thick-theme-light flex-shrink-0 w-56 xl:w-64 py-12 px-6 overflow-y-auto"
+                    @action-clicked="actionClicked"
+                />
                 <!-- this is main page -->
                 <div
-                    class="w-full p-4 md:overflow-y-auto sm:p-8 md:p-16"
+                    class="w-full p-4 md:overflow-y-auto sm:p-8 md:p-16 lg:px-24"
                     scroll-region
                 >
                     <!-- <flash-messages /> -->

@@ -1,5 +1,5 @@
 <template>
-    <div class="lg:max-w-3xl lg:mx-auto">
+    <div>
         <!-- preliminary data -->
         <div class="bg-white rounded shadow-sm p-4  mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">

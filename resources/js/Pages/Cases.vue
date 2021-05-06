@@ -84,11 +84,78 @@
                     />
                     <span class="block font-normal text-thick-theme-light">แอดมิด</span>
                 </button>
+                <dropdown v-if="userCan('note', referCase)">
+                    <template #default>
+                        <button
+                            class="w-full flex text-alt-theme-light justify-start"
+                        >
+                            <icon
+                                class="w-4 h-4 mr-1"
+                                name="notes-medical"
+                            />
+                            <span class="block font-normal text-thick-theme-light">เขียนโน๊ต</span>
+                        </button>
+                    </template>
+                    <template #dropdown>
+                        <div class="mt-2 p-2 shadow-xl min-w-max bg-white text-thick-theme-light cursor-pointer rounded text-sm">
+                            <inertia-link
+                                class="w-full flex text-alt-theme-light justify-start my-2"
+                                :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
+                            >
+                                <icon
+                                    class="w-4 h-4 mr-1"
+                                    name="edit"
+                                />
+                                <span class="block font-normal text-thick-theme-light">ฟอร์มปรอท</span>
+                            </inertia-link>
+                            <inertia-link
+                                class="w-full flex text-alt-theme-light justify-start my-2"
+                                :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
+                            >
+                                <icon
+                                    class="w-4 h-4 mr-1"
+                                    name="edit"
+                                />
+                                <span class="block font-normal text-thick-theme-light">admission note</span>
+                            </inertia-link>
+                            <inertia-link
+                                class="w-full flex text-alt-theme-light justify-start my-2"
+                                :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
+                            >
+                                <icon
+                                    class="w-4 h-4 mr-1"
+                                    name="edit"
+                                />
+                                <span class="block font-normal text-thick-theme-light">discharge summary</span>
+                            </inertia-link>
+                        </div>
+                        <!-- <div class="mt-2 py-2 shadow-xl min-w-max bg-thick-theme-light text-white cursor-pointer rounded text-sm">
+                                <template v-if="hasRoles">
+                                    <inertia-link
+                                        class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
+                                        :href="`${baseUrl}/home`"
+                                        v-if="! currentPage('home')"
+                                    >
+                                        หน้าหลัก
+                                    </inertia-link>
+                                </template>
+                                <inertia-link
+                                    class="w-full font-semibold text-left px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
+                                    :href="`${baseUrl}/logout`"
+                                    method="post"
+                                    as="button"
+                                    type="button"
+                                >
+                                    ออกจากระบบ
+                                </inertia-link>
+                            </div> -->
+                    </template>
+                </dropdown>
 
                 <!-- next features -->
                 <!-- cancel -->
-                <!-- <button
-                    v-if="abilities.includes('admit_patient') || referCase.referer === $page.props.user.name"
+                <button
+                    v-if="userCan('delete', referCase)"
                     class="w-full flex text-red-200 justify-start"
                     :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
                 >
@@ -97,7 +164,7 @@
                         name="trash-alt"
                     />
                     <span class="block font-normal text-thick-theme-light">ยกเลิก</span>
-                </button> -->
+                </button>
             </div>
         </div>
 
@@ -111,9 +178,10 @@ import Layout from '@/Components/Layouts/Layout';
 import CreateCase from '@/Components/Forms/CreateCase';
 import Admission from '@/Components/Forms/Admission';
 import Icon from '@/Components/Helpers/Icon';
+import Dropdown from '@/Components/Helpers/Dropdown';
 export default {
     layout: Layout,
-    components: { Admission, CreateCase, Icon },
+    components: { Admission, CreateCase, Icon, Dropdown },
     props: {
         cases: { type: Array, required: true },
     },
@@ -154,6 +222,10 @@ export default {
                 return referCase.referer !== this.$page.props.user.name || referCase.status === 'admitted';
             case 'admit':
                 return this.abilities.includes('admit_patient') && referCase.status === 'submitted';
+            case 'note':
+                return false; //this.abilities.includes('admit_patient') && referCase.status === 'admitted'; // demo only
+            case 'delete':
+                return false; //!['admitted', 'discharged', 'canceled'].includes(referCase.status) && (this.abilities.includes('admit_patient') || referCase.referer === this.$page.props.user.name);
             default:
                 return false;
             }

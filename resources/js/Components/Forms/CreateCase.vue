@@ -2,6 +2,7 @@
     <teleport to="body">
         <modal
             ref="modal"
+            width-mode="form-cols-1"
             @closed="$emit('closed')"
         >
             <template #header>
