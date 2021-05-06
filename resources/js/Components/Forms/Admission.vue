@@ -3,6 +3,7 @@
         <!-- @opened="checkAdmission" -->
         <modal
             ref="modal"
+            width-mode="form-cols-1"
             @closed="$emit('closed')"
         >
             <template #header>
@@ -70,7 +71,7 @@
                 </spinner-button>
                 <p
                     v-else
-                    class="text-xs text-yellow-400 w-full text-center"
+                    class="text-sm text-yellow-400 w-full text-center"
                 >
                     <span class="font-semibold">HN</span> นี้ยังไม่มีข้อมูลแอดมิดใน <span class="font-semibold">{{ wardNameCheck }}</span><br class="sm:hidden"> โปรดลองใหม่ภายหลัง
                 </p>
