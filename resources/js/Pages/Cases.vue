@@ -151,7 +151,7 @@ export default {
             case 'edit':
                 return referCase.referer === this.$page.props.user.name && referCase.status === 'submitted';
             case 'read':
-                return referCase.referer !== this.$page.props.user.name;
+                return referCase.referer !== this.$page.props.user.name || referCase.status === 'admitted';
             case 'admit':
                 return this.abilities.includes('admit_patient') && referCase.status === 'submitted';
             default:
