@@ -164,6 +164,7 @@
                         :class="{
                             'border-alt-theme-light': $page.props.flash.messages.status === 'info',
                             'border-green-200': $page.props.flash.messages.status === 'success',
+                            'border-yellow-400': $page.props.flash.messages.status === 'warning',
                         }"
                     >
                         <icon
@@ -175,6 +176,11 @@
                             class="block w-12 h-12 text-green-200"
                             name="check-circle"
                             v-else-if="$page.props.flash.messages.status === 'success'"
+                        />
+                        <icon
+                            class="block w-12 h-12 text-yellow-400"
+                            name="exclamation-circle"
+                            v-else-if="$page.props.flash.messages.status === 'warning'"
                         />
                         <div class="ml-4">
                             <div

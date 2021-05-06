@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\Registered;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class InitUserRole
 {
@@ -26,6 +27,7 @@ class InitUserRole
     public function handle(Registered $event)
     {
         $profile = $event->user->profile;
+        $initRole = json_decode(Storage::get('init/role.json'), true);
 
         if (! isset($profile['org_id'])) {
             // non SI User
