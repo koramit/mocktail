@@ -21,9 +21,9 @@ class ReferCasesController extends Controller
         // dd(Request::session()->get('messages'));
         // Request::session()->flash('messages', Request::session()->has('messages') ? Request::session()->pull('messages') : null);
         Request::session()->flash('main-menu-links', []);
-        Request::session()->flash('action-menu', [
+        Request::session()->flash('action-menu', Auth::user()->abilities->contains('refer_case') ? [
             ['icon' => 'ambulance', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-new-case'],
-        ]);
+        ] : []);
 
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)

@@ -16,7 +16,7 @@
             >
                 <button
                     class="btn btn-bitter block w-full text-center"
-                    v-if="abilities.includes('refer_case') || abilities.includes('grant_user')"
+                    v-if="abilities.includes('refer_case')"
                     @click="$refs.createCase.open()"
                 >
                     เพิ่มเคสใหม่
