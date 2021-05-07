@@ -338,7 +338,8 @@
             </h2>
             <image-uploader
                 class="mt-2"
-                label="1. Film Chest ล่าสุด"
+                v-if="$page.props.user.center !== 'ศิริราช'"
+                label="๏  Film Chest ล่าสุด"
                 :filename="form.uploads.film"
                 name="contents->uploads->film"
                 :note-id="configs.note_id"
@@ -347,7 +348,7 @@
             />
             <image-uploader
                 class="mt-2"
-                label="2. ใบรายงานผล COVID"
+                label="๏  ใบรายงานผล COVID"
                 :filename="form.uploads.lab"
                 name="contents->uploads->lab"
                 :note-id="configs.note_id"
@@ -357,7 +358,7 @@
             <image-uploader
                 class="mt-2"
                 v-if="$page.props.user.center !== 'ศิริราช'"
-                label="3. รูปถ่ายหน้าบัตรประชาชน (หากยังไม่มี HN ศิริราช)"
+                label="๏  รูปถ่ายหน้าบัตรประชาชน (หากยังไม่มี HN ศิริราช)"
                 :filename="form.uploads.id_document"
                 name="contents->uploads->id_document"
                 :note-id="configs.note_id"
@@ -375,11 +376,11 @@
                 ผู้นำส่ง
             </h2>
 
-            <div class="text-sm font-semibold text-alt-theme-light mt-4 flex items-center">
+            <div class="text-sm font-semibold text-dark-theme-light mt-4 flex items-center">
                 <p>{{ configs.author }}</p>
                 <button
                     @click="showContact = !showContact"
-                    class="ml-4 text-yellow-400"
+                    class="ml-4 text-alt-theme-light"
                 >
                     <icon
                         class="h-4 h-4"
@@ -388,7 +389,7 @@
                 </button>
             </div>
             <p
-                class="text-sm font-semibold text-yellow-400 mt-2"
+                class="text-sm font-semibold text-alt-theme-light mt-2"
                 v-if="showContact"
             >
                 {{ configs.contact }}

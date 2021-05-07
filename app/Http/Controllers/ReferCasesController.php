@@ -130,9 +130,6 @@ class ReferCasesController extends Controller
             return back()->withErrors($errors);
         }
 
-        if ($note->contents['submitted']) {
-        }
-
         if (! Request::input('criterias') && ! $note->contents['submitted']) {
             return back();
         }
