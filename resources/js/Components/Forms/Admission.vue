@@ -53,7 +53,6 @@
                             v-model="form.room_number"
                             label="หมายเลขห้อง"
                             name="room_number"
-                            type="tel"
                             :error="$page.props.errors.room_number"
                         />
                     </template>

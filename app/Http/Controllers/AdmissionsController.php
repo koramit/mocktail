@@ -14,7 +14,7 @@ class AdmissionsController extends Controller
         $validator = Validator::make(Request::only(['id', 'an', 'room_number']), [
             'id' => 'required|exists:refer_cases',
             'an' => 'required|digits:8',
-            'room_number' => 'required|digits:3',
+            'room_number' => 'required|string',
         ]);
 
         if ($validator->fails()) {
