@@ -19,11 +19,11 @@ class ReferCasesController extends Controller
     {
         Request::session()->flash('page-title', 'รายการเคส'.(Session::get('center')->name === config('app.main_center') ? '' : (' '.Session::get('center')->name)));
         // dd(Request::session()->get('messages'));
-        Request::session()->flash('messages', Request::session()->has('messages') ? Request::session()->pull('messages') : null);
+        // Request::session()->flash('messages', Request::session()->has('messages') ? Request::session()->pull('messages') : null);
         Request::session()->flash('main-menu-links', []);
-        Request::session()->flash('action-menu', [
+        Request::session()->flash('action-menu', Auth::user()->abilities->contains('refer_case') ? [
             ['icon' => 'ambulance', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-new-case'],
-        ]);
+        ] : []);
 
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
@@ -42,6 +42,11 @@ class ReferCasesController extends Controller
                                   'updated_at_for_humans' => $case->updated_at_for_humans,
                               ];
                           });
+
+        Request::session()->flash('messages', Request::session()->has('messages') ?
+                Request::session()->pull('messages') :
+                ($cases->count() > 0 ? null : ['status' => 'info', 'messages' => ['ยังไม่มีข้อมูลเคส']])
+            );
 
         return Inertia::render('Cases', ['cases' => $cases]);
     }
@@ -125,11 +130,13 @@ class ReferCasesController extends Controller
             return back()->withErrors($errors);
         }
 
-        if (! Request::input('criterias')) {
+        if ($note->contents['submitted']) {
+        }
+
+        if (! Request::input('criterias') && ! $note->contents['submitted']) {
             return back();
         }
 
-        // dd(Request::all());
         $data = Request::all();
         $hn = $data['patient']['hn'];
 

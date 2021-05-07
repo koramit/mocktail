@@ -1,5 +1,5 @@
 <template>
-    <div class="lg:max-w-3xl lg:mx-auto">
+    <div>
         <!-- preliminary data -->
         <div class="bg-white rounded shadow-sm p-4  mt-4 sm:mt-6 md:mt-12">
             <h2 class="font-semibold text-thick-theme-light">
@@ -365,12 +365,42 @@
                 :readonly="true"
             />
         </div>
+
+        <!-- contact -->
+        <div
+            class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12"
+            v-if="configs.author_username !== $page.props.user.name"
+        >
+            <h2 class="font-semibold text-thick-theme-light">
+                ผู้นำส่ง
+            </h2>
+
+            <div class="text-sm font-semibold text-alt-theme-light mt-4 flex items-center">
+                <p>{{ configs.author }}</p>
+                <button
+                    @click="showContact = !showContact"
+                    class="ml-4 text-yellow-400"
+                >
+                    <icon
+                        class="h-4 h-4"
+                        name="phone-square"
+                    />
+                </button>
+            </div>
+            <p
+                class="text-sm font-semibold text-yellow-400 mt-2"
+                v-if="showContact"
+            >
+                {{ configs.contact }}
+            </p>
+        </div>
     </div>
 </template>
 
 <script>
 import { useForm } from '@inertiajs/inertia-vue3';
 import Layout from '@/Components/Layouts/Layout';
+import Icon from '@/Components/Helpers/Icon';
 import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
@@ -384,6 +414,7 @@ export default {
         FormInput,
         FormSelect,
         ImageUploader,
+        Icon,
     },
     props: {
         contents: { type: Object, required: true },
@@ -397,6 +428,7 @@ export default {
             selectOtherPlaceholder: '',
             otherItem: '',
             otherItemAdded: false,
+            showContact: false,
         };
     },
     created () {

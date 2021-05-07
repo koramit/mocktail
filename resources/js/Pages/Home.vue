@@ -16,7 +16,7 @@
             >
                 <button
                     class="btn btn-bitter block w-full text-center"
-                    v-if="abilities.includes('refer_case') || abilities.includes('grant_user')"
+                    v-if="abilities.includes('refer_case')"
                     @click="$refs.createCase.open()"
                 >
                     เพิ่มเคสใหม่
@@ -28,7 +28,8 @@
                 >
                     รายการเคส
                 </inertia-link>
-                <inertia-link
+                <!-- next features -->
+                <!-- <inertia-link
                     class="btn btn-bitter block text-center"
                     :href="`${baseUrl}/users`"
                     v-if="abilities.includes('grant_user')"
@@ -41,11 +42,12 @@
                     v-if="abilities.includes('grant_teammate')"
                 >
                     เปิดสิทธิ์เพื่อนร่วมงาน
-                </inertia-link>
+                </inertia-link> -->
             </div>
         </div>
 
-        <div class="bg-white rounded shadow-sm p-4 mt-8 md:mt-16">
+        <!-- next features -->
+        <!-- <div class="bg-white rounded shadow-sm p-4 mt-8 md:mt-16">
             <h2 class="font-semibold pb-2 border-b border-dashed text-thick-theme-light">
                 ตั้งค่าหน้าแรก
             </h2>
@@ -61,7 +63,7 @@
             <h2 class="font-semibold pb-2 border-b border-dashed text-thick-theme-light">
                 แจ้งปัญหา
             </h2>
-        </div>
+        </div> -->
 
         <create-case ref="createCase" />
     </div>

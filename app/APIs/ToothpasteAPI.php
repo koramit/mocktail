@@ -18,6 +18,13 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         $password = str_replace('=', 'TaOkUbSiGn', $password);
 
         $data = $this->brushing($this->pasteLoad('authenticate', ['login' => $login, 'password' => $password]));
+        if (! $data) { // error: $data = null
+            return [
+                'found' => false,
+                'message' => __('service.failed'),
+            ];
+        }
+
         if (! $data['ok'] || ! $data['found']) {
             $data['found'] = false;
             $data['message'] = $data['message'] ?? __('auth.failed');
@@ -80,8 +87,14 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function recentlyAdmission($hn)
     {
         $data = $this->brushing($this->pasteLoad('recently_admit', ['hn' => $hn]));
+        if (! $data) { // error: $data = null
+            return [
+                'found' => false,
+                'message' => __('service.failed'),
+            ];
+        }
 
-        if ($data['found']) {
+        if ($data['found']) { // error: not found found
             $data['patient']['found'] = true;
             $data['attending_name'] = $data['attending'];
             $data['discharge_type_name'] = $data['discharge_type'];
@@ -95,7 +108,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         }
 
         $data['message'] = __('reply_messages.frontend_api.item_not_found', ['item' => 'admission']);
-        if ($data['patient']['found']) {
+        if (isset($data['patient']) && $data['patient']['found']) { // error not found patient
             $data['patient']['marital_status_name'] = $data['patient']['marital_status'];
             $data['patient']['location'] = $data['patient']['postcode'];
 

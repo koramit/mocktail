@@ -2,6 +2,7 @@
     <teleport to="body">
         <modal
             ref="modal"
+            width-mode="form-cols-1"
             @closed="$emit('closed')"
         >
             <template #header>
@@ -20,7 +21,7 @@
                     <div class="flex my-2  text-sm font-normal">
                         <p>1.</p>
                         <p class="px-2 tracking-wide leading-5">
-                            อายุเกิน 18 ปี สามารถช่วยเหลือตัวเองได้และไม่มีความเสี่ยงทางจิตเวช
+                            สามารถช่วยเหลือตัวเองได้ ไม่มีความเสี่ยงทางจิตเวชและไม่มีประวัติใช้สารเสพติด
                         </p>
                     </div>
                     <div class="flex my-2  text-sm font-normal">

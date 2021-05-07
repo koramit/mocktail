@@ -22,31 +22,38 @@ class AdmissionManager
                 'meta' => $meta,
             ]);
 
-            return $admission;
+            // return $admission;
+            return [
+                'found' => true,
+                'admission' => $admission,
+            ];
         }
 
-        // create
         if (! $admissionData['found']) {
             return $admissionData;
         }
 
+        // create
         $patient = (new PatientManager())->manage($admissionData['hn']);
         if (! $patient['found']) {
             return $patient; // rare case
         }
 
-        return $patient['patient']->admissions()->create([
-            'slug' => Str::uuid()->toString(),
-            'an' => $an,
-            'meta' => [
-                'place_name' => $admissionData['ward_name'] ?? null,
-                'place_name_short' => $admissionData['ward_name_short'] ?? null,
-                'attending' => $admissionData['attending_name'] ?? null,
-                'discharge_type' => $admissionData['discharge_type_name'] ?? null,
-                'discharge_status' => $admissionData['discharge_status_name'] ?? null,
-            ],
-            'encountered_at' => $admissionData['encountered_at'],
-            'dismissed_at' => $admissionData['dismissed_at'],
-        ]);
+        return [
+            'found' => true,
+            'admission' => $patient['patient']->admissions()->create([
+                'slug' => Str::uuid()->toString(),
+                'an' => $an,
+                'meta' => [
+                    'place_name' => $admissionData['ward_name'] ?? null,
+                    'place_name_short' => $admissionData['ward_name_short'] ?? null,
+                    'attending' => $admissionData['attending_name'] ?? null,
+                    'discharge_type' => $admissionData['discharge_type_name'] ?? null,
+                    'discharge_status' => $admissionData['discharge_status_name'] ?? null,
+                ],
+                'encountered_at' => $admissionData['encountered_at'],
+                'dismissed_at' => $admissionData['dismissed_at'],
+            ]),
+        ];
     }
 }
