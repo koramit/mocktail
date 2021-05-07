@@ -88,7 +88,7 @@ class ReferNoteManager
             ],
             'patchEndpoint' => url('/forms/'.$this->note->id),
             'note_id' => $this->note->id,
-            'author' => $this->note->author->name,
+            'author_username' => $this->note->author->name,
             'author' => $this->note->author->full_name,
             'contact' => $this->note->author->tel_no,
         ];
