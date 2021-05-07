@@ -84,6 +84,8 @@
                     />
                     <span class="block font-normal text-thick-theme-light">แอดมิด</span>
                 </button>
+
+                <!-- next features -->
                 <dropdown v-if="userCan('note', referCase)">
                     <template #default>
                         <button
@@ -129,26 +131,6 @@
                                 <span class="block font-normal text-thick-theme-light">discharge summary</span>
                             </inertia-link>
                         </div>
-                        <!-- <div class="mt-2 py-2 shadow-xl min-w-max bg-thick-theme-light text-white cursor-pointer rounded text-sm">
-                                <template v-if="hasRoles">
-                                    <inertia-link
-                                        class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
-                                        :href="`${baseUrl}/home`"
-                                        v-if="! currentPage('home')"
-                                    >
-                                        หน้าหลัก
-                                    </inertia-link>
-                                </template>
-                                <inertia-link
-                                    class="w-full font-semibold text-left px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
-                                    :href="`${baseUrl}/logout`"
-                                    method="post"
-                                    as="button"
-                                    type="button"
-                                >
-                                    ออกจากระบบ
-                                </inertia-link>
-                            </div> -->
                     </template>
                 </dropdown>
 
@@ -157,7 +139,7 @@
                 <button
                     v-if="userCan('delete', referCase)"
                     class="w-full flex text-red-200 justify-start"
-                    :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
+                    @click="cancel(referCase)"
                 >
                     <icon
                         class="w-4 h-4 mr-1"
@@ -174,6 +156,7 @@
 </template>
 
 <script>
+import { useForm } from '@inertiajs/inertia-vue3';
 import Layout from '@/Components/Layouts/Layout';
 import CreateCase from '@/Components/Forms/CreateCase';
 import Admission from '@/Components/Forms/Admission';
@@ -181,9 +164,16 @@ import Icon from '@/Components/Helpers/Icon';
 import Dropdown from '@/Components/Helpers/Dropdown';
 export default {
     layout: Layout,
+    emits: ['need-confirm'],
     components: { Admission, CreateCase, Icon, Dropdown },
     props: {
         cases: { type: Array, required: true },
+    },
+    data () {
+        return {
+            baseUrl: this.$page.props.app.baseUrl,
+            currentConfirm: {}
+        };
     },
     computed: {
         abilities () {
@@ -200,18 +190,16 @@ export default {
                 setTimeout(() => this.$nextTick(() => this.$refs.createCase.open()), 300);
             }
         });
+        this.eventBus.on('confirmed', (text) => {
+            if (this.currentConfirm.action === 'cancel') {
+                let form = useForm({ reason: text ?? 'owner' });
+                form.delete(`${this.baseUrl}/refer-cases/${this.currentConfirm.resource_id}`, {
+                    preserveScroll: true,
+                });
+            }
+        });
     },
     methods: {
-        handleAction (action) {
-            switch (action) {
-            case 'create-new-case':
-                this.$nextTick(() => this.$nextTick(() => this.$refs.createCase.open()));
-                break;
-
-            default:
-                break;
-            }
-        },
         userCan(ability, referCase) {
             switch (ability) {
             case 'write':
@@ -225,10 +213,15 @@ export default {
             case 'note':
                 return false; //this.abilities.includes('admit_patient') && referCase.status === 'admitted'; // demo only
             case 'delete':
-                return false; //!['admitted', 'discharged', 'canceled'].includes(referCase.status) && (this.abilities.includes('admit_patient') || referCase.referer === this.$page.props.user.name);
+                return !['admitted', 'discharged', 'canceled'].includes(referCase.status) && (this.abilities.includes('admit_patient') || referCase.referer === this.$page.props.user.name);
             default:
                 return false;
             }
+        },
+        cancel (referCase) {
+            this.currentConfirm.action = 'cancel';
+            this.currentConfirm.resource_id = referCase.id;
+            this.eventBus.emit('need-confirm', { confirmText: 'ยกเลิกใบส่งตัว ' + referCase.patient_name, needReason: referCase.referer !== this.$page.props.user.name });
         }
     }
 };

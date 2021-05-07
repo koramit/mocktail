@@ -163,4 +163,11 @@ class ReferCasesController extends Controller
             ],
         ]);
     }
+
+    public function destroy(ReferCase $case)
+    {
+        $case->cancel(Request::input('reason'));
+
+        return back();
+    }
 }
