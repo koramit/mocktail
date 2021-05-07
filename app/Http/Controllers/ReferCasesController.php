@@ -163,4 +163,12 @@ class ReferCasesController extends Controller
             ],
         ]);
     }
+
+    public function destroy(ReferCase $case)
+    {
+        // NEED perform policy check here
+        $case->cancel(Auth::user()->name, Request::input('reason'));
+
+        return back();
+    }
 }

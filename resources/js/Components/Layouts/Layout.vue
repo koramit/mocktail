@@ -205,6 +205,8 @@
                 </div>
             </div>
         </div>
+
+        <confirm-form ref="confirmForm" />
     </div>
 </template>
 
@@ -213,8 +215,9 @@ import Dropdown from '@/Components/Helpers/Dropdown';
 import Icon from '@/Components/Helpers/Icon';
 import MainMenu from '@/Components/Helpers/MainMenu';
 import ActionMenu from '@/Components/Helpers/ActionMenu';
+import ConfirmForm from '@/Components/Forms/ConfirmForm';
 export default {
-    components: { Dropdown, Icon, MainMenu, ActionMenu },
+    components: { Dropdown, Icon, MainMenu, ActionMenu, ConfirmForm },
     computed: {
         hasRoles() {
             return this.$page.props.user.abilities.length;
@@ -255,6 +258,7 @@ export default {
             }
         });
         this.eventBus.on('typing-stopped', () => this.typing = false);
+        this.eventBus.on('need-confirm', (cinfigs) => this.$refs.confirmForm.open(cinfigs));
     },
     mounted () {
         this.$nextTick(() => {

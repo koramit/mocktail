@@ -138,4 +138,15 @@ class ReferCase extends Model
 
         return $this->save();
     }
+
+    public function cancel($actor, $reason)
+    {
+        $meta = $this->meta;
+        $meta['status'] = 'canceled';
+        $meta['cancel_by'] = $actor;
+        $meta['cancel_reason'] = $reason;
+        $meta['canceled_at'] = now()->format('Y-m-d H:i:s');
+        $this->meta = $meta;
+        return $this->save();
+    }
 }
