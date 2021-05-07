@@ -31,6 +31,20 @@ class InitUserRole
 
         if (! isset($profile['org_id'])) {
             // non SI User
+            $referers = $initRole['referer'];
+            foreach ($referers as $referer) {
+                if (
+                    $referer['tel_no'] === $event->user->profile['tel_no'] &&
+                    $referer['pln'] === $event->user->profile['pln'] &&
+                    $referer['center_id'] === $event->user->center->id
+                    ) {
+                    $event->user->assignRole('referer');
+
+                    return;
+                }
+            }
+
+            // center
             $userCenter = strtolower($event->user->center->name_short);
             if (! isset($initRole['center'][$userCenter])) {
                 Log::notice($event->user->center->name.' '.$profile['full_name'].' ไม่สามารถกำหนด role ได้');
@@ -45,6 +59,7 @@ class InitUserRole
 
                 return;
             }
+            Log::notice($event->user->center->name.' '.$profile['full_name'].' ไม่สามารถกำหนด role ได้');
 
             return;
         }
