@@ -6,7 +6,7 @@
                 <icon
                     class="ml-1 w-4 h-4 inline-block opacity-25 animate-spin"
                     name="circle-notch"
-                    v-if="form.processing"
+                    v-if="loading || form.processing"
                 />
             </p>
             <button
@@ -49,6 +49,8 @@
         <img
             v-if="modelValue !== undefined && show"
             :src="`${baseUrl}/uploads/${modelValue}`"
+            @loadstart="loading = true"
+            @load="$nextTick(() => loading = false)"
             alt=""
         >
         <input
@@ -91,6 +93,7 @@ export default {
             }),
             baseUrl: this.$page.props.app.baseUrl,
             show: false,
+            loading: false,
         };
     },
     methods: {

@@ -338,7 +338,7 @@
             </h2>
             <image-uploader
                 class="mt-2"
-                v-if="$page.props.user.center !== 'ศิริราช'"
+                v-if="configs.center !== 'ศิริราช'"
                 label="๏  Film Chest ล่าสุด"
                 :filename="form.uploads.film"
                 name="contents->uploads->film"
@@ -357,7 +357,7 @@
             />
             <image-uploader
                 class="mt-2"
-                v-if="$page.props.user.center !== 'ศิริราช'"
+                v-if="configs.center !== 'ศิริราช'"
                 label="๏  รูปถ่ายหน้าบัตรประชาชน (หากยังไม่มี HN ศิริราช)"
                 :filename="form.uploads.id_document"
                 name="contents->uploads->id_document"
