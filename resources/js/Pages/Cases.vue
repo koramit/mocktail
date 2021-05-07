@@ -19,6 +19,7 @@
                             'bg-gray-200 text-thick-theme-light': referCase.status === 'draft',
                             'bg-yellow-200 text-yellow-400': referCase.status === 'submitted',
                             'bg-green-200 text-green-400': referCase.status === 'admitted',
+                            'bg-red-200 text-red-400': referCase.status === 'canceled',
                         }"
                     >
                         {{ referCase.status_label }}</span>
@@ -207,7 +208,7 @@ export default {
             case 'edit':
                 return referCase.referer === this.$page.props.user.name && referCase.status === 'submitted';
             case 'read':
-                return referCase.referer !== this.$page.props.user.name || referCase.status === 'admitted';
+                return referCase.status !== 'canceled' && (referCase.referer !== this.$page.props.user.name || referCase.status === 'admitted');
             case 'admit':
                 return this.abilities.includes('admit_patient') && referCase.status === 'submitted';
             case 'note':

@@ -59,7 +59,8 @@ export default {
             this.$refs.modal.open();
         },
         confirmed () {
-            this.eventBus.emit('confirmed', this.confirmText);
+            this.eventBus.emit('confirmed', this.reason);
+            this.$refs.modal.close();
         }
     }
 };
