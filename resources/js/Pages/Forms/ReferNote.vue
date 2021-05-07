@@ -231,30 +231,34 @@
                         label="COVID 19 with URI"
                         @autosave="autosave('diagnosis.uri')"
                     />
-                    <form-datetime
-                        v-if="form.diagnosis.uri"
-                        class="mt-2"
-                        label="วันที่เริ่มมีอาการ uri"
-                        v-model="form.diagnosis.date_uri"
-                        :error="form.errors.date_uri"
-                        name="date_uri"
-                        @autosave="autosave('diagnosis.date_uri')"
-                    />
+                    <template v-if="form.diagnosis.uri">
+                        <form-datetime
+                            class="mt-2"
+                            label="วันที่เริ่มมีอาการ uri"
+                            v-model="form.diagnosis.date_uri"
+                            :error="form.errors.date_uri"
+                            name="date_uri"
+                            @autosave="autosave('diagnosis.date_uri')"
+                        />
+                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ลงวันที่ตรวจพบเชื้อแทน</small>
+                    </template>
                     <form-checkbox
                         class="mt-2"
                         v-model="form.diagnosis.pneumonia"
                         label="COVID 19 with Pneumonia"
                         @autosave="autosave('diagnosis.pneumonia')"
                     />
-                    <form-datetime
-                        v-if="form.diagnosis.pneumonia"
-                        class="mt-2"
-                        label="วันที่เริ่มมีอาการ pneumonia"
-                        v-model="form.diagnosis.date_pneumonia"
-                        :error="form.errors.date_pneumonia"
-                        name="date_pneumonia"
-                        @autosave="autosave('diagnosis.date_pneumonia')"
-                    />
+                    <template v-if="form.diagnosis.pneumonia">
+                        <form-datetime
+                            class="mt-2"
+                            label="วันที่เริ่มมีอาการ pneumonia"
+                            v-model="form.diagnosis.date_pneumonia"
+                            :error="form.errors.date_pneumonia"
+                            name="date_pneumonia"
+                            @autosave="autosave('diagnosis.date_pneumonia')"
+                        />
+                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ลงวันที่ตรวจพบเชื้อแทน</small>
+                    </template>
                     <form-checkbox
                         class="mt-2"
                         v-model="form.diagnosis.gastroenteritis"
@@ -438,6 +442,7 @@
             </h2>
             <image-uploader
                 class="mt-2"
+                v-if="$page.props.user.center !== 'ศิริราช'"
                 label="๏ Film Chest ล่าสุด"
                 :filename="form.uploads.film"
                 name="contents->uploads->film"

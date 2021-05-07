@@ -408,10 +408,12 @@ class ReferNoteManager
 
         // validate uploads
         $uploads = $data['uploads'];
-        if (! $uploads['film']) {
-            $errors['film'] = ['จำเป็นต้องแนบภาพ Film Chest ล่าสุด'];
-        } elseif (! Storage::exists('uploads/'.$uploads['film'])) {
-            $errors['film'] = ['กรุณาแนบไฟล์ใหม่'];
+        if ($note->author->center->id !== config('app.main_center_id')) {
+            if (! $uploads['film']) {
+                $errors['film'] = ['จำเป็นต้องแนบภาพ Film Chest ล่าสุด'];
+            } elseif (! Storage::exists('uploads/'.$uploads['film'])) {
+                $errors['film'] = ['กรุณาแนบไฟล์ใหม่'];
+            }
         }
 
         if (! $uploads['lab']) {
