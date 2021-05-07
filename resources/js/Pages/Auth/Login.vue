@@ -29,7 +29,7 @@
             />
             <spinner-button
                 :spin="form.processing"
-                class="btn-dark w-full mt-6"
+                class="btn-dark w-full my-6"
                 @click="login"
             >
                 เข้าใช้งาน
@@ -45,7 +45,7 @@
             </a> -->
             <inertia-link
                 :href="`${baseUrl}/register`"
-                class="mt-6 text-bitter-theme-light block"
+                class="text-bitter-theme-light"
             >
                 สร้างบัญชีใหม่
             </inertia-link>
