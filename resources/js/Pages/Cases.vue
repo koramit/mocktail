@@ -1,5 +1,15 @@
 <template>
     <div>
+        <!-- reset filters -->
+        <inertia-link
+            v-if="!cases.data.length && isFiltered"
+            :href="`${baseUrl}/refer-cases?remember=forget`"
+            class="text-yellow-400 text-semibold mt-2"
+            :replace="true"
+            as="button"
+        >
+            ยกเลิกตัวกรอง
+        </inertia-link>
         <!-- card -->
         <div
             class="rounded bg-white shadow-sm my-1 p-1 flex"
@@ -219,6 +229,9 @@ export default {
         abilities () {
             return this.$page.props.user.abilities;
         },
+        isFiltered () {
+            return location.search.substr(1).length > 0;
+        }
     },
     created () {
         this.eventBus.on('action-clicked', (action) => {

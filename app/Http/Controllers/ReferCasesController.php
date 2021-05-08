@@ -47,7 +47,7 @@ class ReferCasesController extends Controller
 
         Request::session()->flash('messages', Request::session()->has('messages') ?
                 Request::session()->pull('messages') :
-                ($cases->count() > 0 ? null : ['status' => 'info', 'messages' => ['ยังไม่มีข้อมูลเคส']])
+                ($cases->count() > 0 ? null : ['status' => 'info', 'messages' => ['ยังไม่มีข้อมูลเคส หรือ ไม่มีข้อมูลเคสตามตัวกรอง']])
             );
 
         return Inertia::render('Cases', [
