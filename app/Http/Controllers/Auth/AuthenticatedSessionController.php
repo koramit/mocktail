@@ -51,7 +51,11 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        $user = User::where('login', Request::input('login'))->first();
+        $user = User::where('login', Request::input('login')) // incase of database config to case sensitive 🤫
+                    ->orWhere('login', ucfirst(Request::input('login')))
+                    ->orWhere('login', strtolower(Request::input('login')))
+                    ->orWhere('login', ucfirst(strtolower(Request::input('login'))))
+                    ->first();
         if (! $user) {
             Session::put('profile', $data);
 
