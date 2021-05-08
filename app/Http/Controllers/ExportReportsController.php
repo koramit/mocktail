@@ -27,7 +27,7 @@ class ExportReportsController extends Controller
                               ];
                           });
 
-        return FastExcel::data($cases)->download('รายงานแบบบันทึกการส่งต่อผู้ป่วย@'.now()->format('d-m-Y').'.xlsx');
+        return FastExcel::data($cases)->download(mb_convert_encoding('รายงานแบบบันทึกการส่งต่อผู้ป่วย@'.now()->format('d-m-Y').'.xlsx', 'UTF-8'));
     }
 
     protected function castDate($dateStr)
