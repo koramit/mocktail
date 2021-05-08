@@ -6,6 +6,7 @@ use App\Models\ReferCase;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
+use Jenssegers\Agent\Agent;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 
 class ExportReportsController extends Controller
@@ -26,13 +27,15 @@ class ExportReportsController extends Controller
                                   'สถานะ' => $case->status_label,
                               ];
                           });
+        $filename = 'รายงานแบบบันทึกการส่งต่อผู้ป่วย@'.now()->tz('Asia/Bangkok')->format('d-m-Y').'.xlsx';
+        $agent = new Agent();
+        if ($agent->isSafari()) {
+            $path = FastExcel::data($cases)->export(storage_path('app/temp/safari-excel-'.Session::get('center')->id.'.xlsx'));
 
-        $filename = mb_convert_encoding('รายงานแบบบันทึกการส่งต่อผู้ป่วย@'.now()->format('d-m-Y').'.xlsx', 'UTF-8');
+            return response()->download($path, $filename);
+        }
 
-        return response(FastExcel::data($cases)->download($filename))
-                ->withHeaders([
-                    'Content-Disposition' => 'attachment; filename='.$filename,
-                ]);
+        return FastExcel::data($cases)->download($filename);
     }
 
     protected function castDate($dateStr)
