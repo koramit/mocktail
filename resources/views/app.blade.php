@@ -23,9 +23,17 @@
 
     <link href="{{ mix('/css/app.css') }}" rel="stylesheet" />
     <script src="{{ mix('/js/app.js') }}" defer></script>
+    <style>
+        .bg-test {
+            background-image: url("{{ asset('image/test-bg.svg') }}");
+            background-repeat: repeat;
+        }
+
+    </style>
 </head>
 
-<body class="m-0 font-krub font-light text-gray-600 bg-soft-theme-light">
+<body
+    class="m-0 font-krub font-light text-gray-600 {{ config('app.env') === 'dev' ? 'bg-test' : 'bg-soft-theme-light' }}">
     @inertia
 
         <div id="page-loading-indicator"
