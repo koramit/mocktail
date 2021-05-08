@@ -9,11 +9,19 @@
             <!-- left detail -->
             <div class="w-3/4">
                 <p class="p-1 pb-0 text-thick-theme-light">
-                    <span
+                    <button
                         class="font-semibold mr-1"
                         v-if="$page.props.user.center === 'ศิริราช'"
-                    >{{ referCase.center }}</span>
-                    <span
+                        @click="applyFilters('center', referCase.center)"
+                    >
+                        {{ referCase.center }}
+                        <icon
+                            class="inline w-2 h-2"
+                            name="filter"
+                            v-if="referCase.center === filters.center"
+                        />
+                    </button>
+                    <button
                         class="text-sm shadow-sm italic px-2 rounded-xl"
                         :class="{
                             'bg-gray-200 text-thick-theme-light': referCase.status === 'draft',
@@ -21,8 +29,15 @@
                             'bg-green-200 text-green-400': referCase.status === 'admitted',
                             'bg-red-200 text-red-400': referCase.status === 'canceled',
                         }"
+                        @click="applyFilters('status', referCase.status)"
                     >
-                        {{ referCase.status_label }}</span>
+                        {{ referCase.status_label }}
+                        <icon
+                            class="inline w-2 h-2"
+                            name="filter"
+                            v-if="referCase.status === filters.status"
+                        />
+                    </button>
                 </p>
                 <p class="p-1 text-lg pt-0">
                     {{ referCase.patient_name }}
@@ -191,7 +206,8 @@ export default {
     emits: ['need-confirm'],
     components: { Admission, CreateCase, Icon, Dropdown },
     props: {
-        cases: { type: Array, required: true },
+        cases: { type: Object, required: true },
+        filters: { type: Object, required: true },
     },
     data () {
         return {
@@ -246,6 +262,19 @@ export default {
             this.currentConfirm.action = 'cancel';
             this.currentConfirm.resource_id = referCase.id;
             this.eventBus.emit('need-confirm', { confirmText: 'ยกเลิกใบส่งตัว ' + referCase.patient_name, needReason: referCase.referer !== this.$page.props.user.name });
+        },
+        applyFilters (filter, value) {
+            let filters = {...this.filters};
+            console.log(filters);
+            filters[filter] = filters[filter] ? null : value;
+            console.log(filters);
+            let query = Object.keys(filters)
+                .filter(key => filters[key])
+                .map(key => `${key}=${filters[key]}`)
+                .join('&');
+            query = query ? query : 'remember=forget';
+            console.log(query);
+            this.$inertia.replace(`${this.baseUrl}/refer-cases?${query}`);
         }
     }
 };

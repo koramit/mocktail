@@ -27,7 +27,8 @@ class ReferCasesController extends Controller
 
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
-                          ->paginate(10)
+                          ->filter(Request::only('status', 'center'))
+                          ->paginate()
                           ->withQueryString()
                           ->through(function ($case) { // transform() will "transform" paginate->data and paginate->link
                               return [
@@ -49,7 +50,10 @@ class ReferCasesController extends Controller
                 ($cases->count() > 0 ? null : ['status' => 'info', 'messages' => ['ยังไม่มีข้อมูลเคส']])
             );
 
-        return Inertia::render('Cases', ['cases' => $cases]);
+        return Inertia::render('Cases', [
+            'cases' => $cases,
+            'filters' => Request::all('status', 'center'),
+        ]);
     }
 
     public function store()
