@@ -27,8 +27,9 @@ class ReferCasesController extends Controller
 
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
-                          ->get()
-                          ->transform(function ($case) {
+                          ->paginate(10)
+                          ->withQueryString()
+                          ->through(function ($case) { // transform() will "transform" paginate->data and paginate->link
                               return [
                                   'id' => $case->id,
                                   'note_slug' => $case->note->slug,
