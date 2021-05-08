@@ -38,7 +38,7 @@ Route::middleware('auth')->get('/home', [PagesController::class, 'home'])->name(
 Route::middleware('auth')->get('/users', [PagesController::class, 'users']);
 
 // refer case
-Route::middleware('auth')->get('/refer-cases', [ReferCasesController::class, 'index'])->name('refer-cases');
+Route::middleware('auth', 'remember')->get('/refer-cases', [ReferCasesController::class, 'index'])->name('refer-cases');
 Route::middleware('auth')->post('/refer-cases', [ReferCasesController::class, 'store']);
 Route::middleware('auth')->post('/refer-cases/{note}', [ReferCasesController::class, 'update']);
 Route::middleware('auth')->delete('/refer-cases/{case}', [ReferCasesController::class, 'destroy']);
