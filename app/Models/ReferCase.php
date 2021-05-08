@@ -116,6 +116,17 @@ class ReferCase extends Model
         }
     }
 
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['status'] ?? null, function ($query, $status) {
+            $query->where('meta->status', $status);
+        })->when($filters['center'] ?? null, function ($query, $center) {
+            $query->whereHas('center', function ($query) use ($center) {
+                $query->where('centers.name', $center);
+            });
+        });
+    }
+
     public function updateHn($hn)
     {
         $oldHn = $this->patient ? $this->patient->hn : null;
@@ -147,6 +158,7 @@ class ReferCase extends Model
         $meta['cancel_reason'] = $reason;
         $meta['canceled_at'] = now()->format('Y-m-d H:i:s');
         $this->meta = $meta;
+
         return $this->save();
     }
 }
