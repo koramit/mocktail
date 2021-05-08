@@ -4,6 +4,7 @@ use App\Http\Controllers\AdmissionsController;
 use App\Http\Controllers\APIs\Front\PatientAPIController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\ExportReportsController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\ReferCasesController;
@@ -59,4 +60,5 @@ Route::middleware('auth')->post('/front-api/patient-rencently-admission', [Patie
 Route::middleware('auth')->post('/front-api/patient', [PatientAPIController::class, 'patient']);
 
 // report
+Route::middleware('auth')->get('/reports/refer-cases', ExportReportsController::class);
 Route::middleware('auth')->get('/reports/{note:slug}', [NotesController::class, 'show']);
