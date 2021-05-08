@@ -10,6 +10,24 @@
         >
             ยกเลิกตัวกรอง
         </inertia-link>
+
+        <!-- download spreedsheet -->
+        <div
+            class="flex justify-end mb-2"
+            v-if="cases.data.length"
+        >
+            <a
+                class="flex items-center text-green-600"
+                :href="`${baseUrl}/reports/refer-cases${reportUrl}`"
+            >
+                <icon
+                    class="w-4 h-4 mr-1"
+                    name="file-excel"
+                />
+                <span class="block font-normal text-thick-theme-light">รายงาน</span>
+            </a>
+        </div>
+
         <!-- card -->
         <div
             class="rounded bg-white shadow-sm my-1 p-1 flex"
@@ -62,7 +80,7 @@
                 <inertia-link
                     class="w-full flex text-yellow-200 justify-start"
                     v-if="userCan('write', referCase)"
-                    :href="`${$page.props.app.baseUrl}/forms/${referCase.note_slug}/edit`"
+                    :href="`${baseUrl}/forms/${referCase.note_slug}/edit`"
                 >
                     <icon
                         class="w-4 h-4 mr-1"
@@ -75,7 +93,7 @@
                 <inertia-link
                     class="w-full flex text-alt-theme-light justify-start"
                     v-if="userCan('edit', referCase)"
-                    :href="`${$page.props.app.baseUrl}/forms/${referCase.note_slug}/edit`"
+                    :href="`${baseUrl}/forms/${referCase.note_slug}/edit`"
                 >
                     <icon
                         class="w-4 h-4 mr-1"
@@ -88,7 +106,7 @@
                 <inertia-link
                     class="w-full flex text-alt-theme-light justify-start"
                     v-if="userCan('read', referCase)"
-                    :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
+                    :href="`${baseUrl}/reports/${referCase.note_slug}`"
                 >
                     <icon
                         class="w-4 h-4 mr-1"
@@ -101,7 +119,7 @@
                 <button
                     v-if="userCan('admit', referCase)"
                     class="w-full flex items-center text-green-200 justify-start"
-                    :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
+                    :href="`${baseUrl}/reports/${referCase.note_slug}`"
                     @click="this.$refs.admission.open(referCase.id, referCase.hn, referCase.patient_name)"
                 >
                     <icon
@@ -128,7 +146,7 @@
                         <div class="mt-2 p-2 shadow-xl min-w-max bg-white text-thick-theme-light cursor-pointer rounded text-sm">
                             <inertia-link
                                 class="w-full flex text-alt-theme-light justify-start my-2"
-                                :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
+                                :href="`${baseUrl}/reports/${referCase.note_slug}`"
                             >
                                 <icon
                                     class="w-4 h-4 mr-1"
@@ -138,7 +156,7 @@
                             </inertia-link>
                             <inertia-link
                                 class="w-full flex text-alt-theme-light justify-start my-2"
-                                :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
+                                :href="`${baseUrl}/reports/${referCase.note_slug}`"
                             >
                                 <icon
                                     class="w-4 h-4 mr-1"
@@ -148,7 +166,7 @@
                             </inertia-link>
                             <inertia-link
                                 class="w-full flex text-alt-theme-light justify-start my-2"
-                                :href="`${$page.props.app.baseUrl}/reports/${referCase.note_slug}`"
+                                :href="`${baseUrl}/reports/${referCase.note_slug}`"
                             >
                                 <icon
                                     class="w-4 h-4 mr-1"
@@ -231,6 +249,13 @@ export default {
         },
         isFiltered () {
             return location.search.substr(1).length > 0;
+        },
+        reportUrl () {
+            let query = Object.keys(this.filters)
+                .filter(key => this.filters[key])
+                .map(key => `${key}=${this.filters[key]}`)
+                .join('&');
+            return query ? `?${query}` : '';
         }
     },
     created () {
@@ -286,7 +311,6 @@ export default {
                 .map(key => `${key}=${filters[key]}`)
                 .join('&');
             query = query ? query : 'remember=forget';
-            console.log(query);
             this.$inertia.replace(`${this.baseUrl}/refer-cases?${query}`);
         }
     }
