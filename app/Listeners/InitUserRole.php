@@ -77,12 +77,18 @@ class InitUserRole
             // SI User
             if (collect($initRole['root'])->search($profile['org_id']) !== false) {
                 $event->user->assignRole('root');
+                if (config('app.env') === 'dev') {
+                    $event->user->assignRole('referer');
+                }
 
                 return;
             }
 
             if (collect($initRole['admin'])->search($profile['org_id']) !== false) {
                 $event->user->assignRole('admin');
+                if (config('app.env') === 'dev') {
+                    $event->user->assignRole('referer');
+                }
 
                 return;
             }
