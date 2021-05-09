@@ -383,7 +383,7 @@
                     class="ml-4 text-alt-theme-light"
                 >
                     <icon
-                        class="h-4 h-4"
+                        class="w-4 h-4"
                         name="phone-square"
                     />
                 </button>

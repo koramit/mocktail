@@ -23,6 +23,11 @@ class Note extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function admission()
+    {
+        return $this->belongsTo(Admission::class);
+    }
+
     /**
      * Get the case's center.
      */

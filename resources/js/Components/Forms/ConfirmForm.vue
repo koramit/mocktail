@@ -12,9 +12,10 @@
             </template>
             <template #body>
                 <div class="py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
-                    <p class="font-semibold text-yellow-400">
-                        {{ confirmText }}
-                    </p>
+                    <p
+                        class="font-semibold text-yellow-400"
+                        v-html="confirmText"
+                    />
                     <template v-if="needReason">
                         <form-input
                             v-model="reason"

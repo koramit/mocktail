@@ -50,8 +50,6 @@ class ReferNoteManager
 
         Request::session()->flash('main-menu-links', [ // need check abilities
             ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
-            // ['icon' => 'clinic', 'label' => 'Clinics', 'route' => 'prototypes/ClinicsIndex'],
-            // ['icon' => 'procedure', 'label' => 'Procedures', 'route' => 'prototypes/ProceduresIndex'],
         ]);
         Request::session()->flash('action-menu', [
             // ['icon' => 'wheelchair', 'label' => 'Add Stay case', 'action' => 'add-stay-case'],

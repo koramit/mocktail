@@ -44,6 +44,11 @@ class ReferCase extends Model
         return $this->belongsTo(Note::class);
     }
 
+    public function admission()
+    {
+        return $this->belongsTo(Admission::class);
+    }
+
     /**
      * Get the case's center.
      */

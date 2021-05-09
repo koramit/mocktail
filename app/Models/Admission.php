@@ -29,6 +29,11 @@ class Admission extends Model
         return $this->belongsTo(Patient::class);
     }
 
+    public function referCase()
+    {
+        return $this->hasOne(ReferCase::class);
+    }
+
     public function getPatientAgeAtEncounterAttribute()
     {
         $ageInMonths = $this->encountered_at->diffInMonths($this->patient->dob);
