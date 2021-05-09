@@ -70,7 +70,21 @@ export default {
         };
     },
     created () {
-        document.title = 'Login';
+        document.title = 'Mocktail: ลงชื่อเข้าใช้งาน';
+
+        this.baseUrl = document.querySelector('meta[name=base-url]').content;
+        var lastTimeCheckSessionTimeout = Date.now();
+        const endpoint =  this.baseUrl + '/session-timeout';
+        const sessionLifetimeSeconds = parseInt(document.querySelector('meta[name=session-lifetime-seconds]').content);
+        window.addEventListener('focus', () => {
+            let timeDiff = Date.now() - lastTimeCheckSessionTimeout;
+            if ( (timeDiff) > (sessionLifetimeSeconds) ) {
+                window.axios
+                    .post(endpoint)
+                    .then(() => lastTimeCheckSessionTimeout = Date.now())
+                    .catch(() => location.reload());
+            }
+        });
     },
     mounted() {
         this.$nextTick(function () {
