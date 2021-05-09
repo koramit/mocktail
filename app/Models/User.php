@@ -102,7 +102,10 @@ class User extends Authenticatable
         return Cache::remember("uid-{$this->id}-abilities", config('session.lifetime') * 60, function () {
             unset($this->roles); // reload for new role
 
-            return $this->roles->map->abilities->flatten()->pluck('name')->unique();
+            // if unique() is not activated then the output is an array
+            // but the output is an associated array so, provide
+            // flatten() to garantee output awlays an array
+            return $this->roles->map->abilities->flatten()->pluck('name')->unique()->flatten();
         });
     }
 
