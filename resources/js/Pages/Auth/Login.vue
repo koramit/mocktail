@@ -26,6 +26,7 @@
                 name="password"
                 v-model="form.password"
                 :error="form.errors.password"
+                @keydown.enter="login"
             />
             <spinner-button
                 :spin="form.processing"
