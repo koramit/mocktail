@@ -89,7 +89,7 @@ class ReferCase extends Model
         $statuses = [
             'draft' => 'ร่าง',
             'submitted' => 'รอ',
-            'admitted' => 'แอดมิด',
+            'admitted' => 'แอดมิท',
             'discharged' => 'จำหน่าย',
             'canceled' => 'ยกเลิก',
         ];

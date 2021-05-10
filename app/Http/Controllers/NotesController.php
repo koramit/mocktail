@@ -8,6 +8,7 @@ use App\Managers\ReferNoteManager;
 use App\Models\Note;
 use App\Models\ReferCase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -25,28 +26,34 @@ class NotesController extends Controller
         $case = ReferCase::find(Request::input('refer_case_id'));
 
         // checks duplicate admission note and discharge summary
-        if (collect(['admission note', 'discharge summary']).contains($type)) {
-            $note = $case->admission->notes()->whereType($type);
+        if (collect(['admission note', 'discharge summary'])->contains($type)) {
+            $note = $case->admission->notes()->whereType($type)->first();
             if ($note) {
-                return '🤮 ลำใย';
+                return '🍻';
             }
         }
 
         if ($type === 'admission note') {
-            $manager = new AdmissionNoteManager();
+            $contents = AdmissionNoteManager::initNote();
         } elseif ($type === 'discharge summary') {
-            $manager = new DischargeSummaryManager();
+            $contents = DischargeSummaryManager::initNote();
         }
 
         $note = new Note();
         $note->slug = Str::uuid()->toString();
         $note->type = Request::input('type');
-        $note->contents = $manager->initNote();
+        $note->contents = $contents;
         $note->user_id = Auth::id();
         $note->admission_id = $case->admission->id;
         $note->save();
 
-        return 'OK🤗';
+        if ($type === 'admission note') {
+            (new AdmissionNoteManager($note))->transferData();
+        } elseif ($type === 'discharge summary') {
+            (new DischargeSummaryManager($note))->transferData();
+        }
+
+        return  Redirect::route('note.form', ['note' => $note]);
     }
 
     public function show(Note $note)
@@ -55,9 +62,9 @@ class NotesController extends Controller
             $manager = new ReferNoteManager($note);
         }
 
-        if ($note->type === 'refer note') {
-            $manager = new ReferNoteManager($note);
-        }
+        // if ($note->type === 'refer note') {
+        //     $manager = new ReferNoteManager($note);
+        // }
         $manager->setFlashData(true);
 
         return Inertia::render('Reports/ReferNote', [
@@ -70,10 +77,14 @@ class NotesController extends Controller
     {
         if ($note->type === 'refer note') {
             $manager = new ReferNoteManager($note);
+        } elseif ($note->type === 'admission note') {
+            $manager = new AdmissionNoteManager($note);
+        } elseif ($note->type === 'discharge summary') {
+            $manager = new DischargeSummaryManager($note);
         }
         $manager->setFlashData();
 
-        return Inertia::render('Forms/ReferNote', [
+        return Inertia::render($manager->getForm(), [
             'contents' => $manager->getContents(),
             'formConfigs' => $manager->getConfigs(),
         ]);

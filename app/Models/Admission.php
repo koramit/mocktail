@@ -74,6 +74,29 @@ class Admission extends Model
         ]);
     }
 
+    public function getLengthOfStayAttribute()
+    {
+        if (! $this->encountered_at || ! $this->dismissed_at) {
+            return null;
+        }
+
+        $losInMinutes = $this->encountered_at->diffInMinutes($this->dismissed_at);
+        // 1440 minutes in a day, more than 360 minutes count a day
+        if ($losInMinutes >= 1440) {
+            $losInDays = (int) floor($losInMinutes / 1440);
+            $remains = $losInMinutes % 1440;
+            if ($remains > 360) {
+                $losInDays++;
+            }
+
+            return $losInDays;
+        } elseif ($losInMinutes > 360) {
+            return 1;
+        }
+
+        return 0;
+    }
+
     public function encounteredAtRelativeToNow()
     {
         if (! $this->encountered_at) {

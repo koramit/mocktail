@@ -2,22 +2,14 @@
 
 namespace App\Managers;
 
-use App\Models\Note;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class ReferNoteManager
+class ReferNoteManager extends NoteManager
 {
-    protected $note;
-
-    public function __construct(Note $note)
-    {
-        $this->note = $note;
-    }
-
     public function setFlashData($report = false)
     {
         // title and menu
@@ -91,6 +83,11 @@ class ReferNoteManager
             'contact' => $this->note->author->tel_no,
             'center' => $this->note->center->name,
         ];
+    }
+
+    public function getForm()
+    {
+        return 'Forms/ReferNote';
     }
 
     public static function initNote()

@@ -17,8 +17,8 @@
                     <!-- write -->
                     <button
                         class="w-full flex text-yellow-200 justify-start items-center my-2"
-                        @click="createNote(type.name)"
-                        v-if="type.name !== 'Refer Note' && !noteCreated(type.name)"
+                        @click="writeNote(type.name.toLowerCase())"
+                        v-if="userCanWrite(type.name.toLowerCase())"
                     >
                         <icon
                             class="w-4 h-4 mr-1"
@@ -93,10 +93,10 @@ export default {
     },
     created () {
         this.eventBus.on('confirmed', () => {
-            if (this.currentConfirm.action === 'Create Admission Note' || this.currentConfirm.action === 'Create Discharge Summary') {
+            if (this.currentConfirm.action === 'write admission note' || this.currentConfirm.action === 'write discharge summary') {
                 let form = useForm({
                     refer_case_id: this.referCase.id,
-                    type: this.currentConfirm.action.replace('Create ', '').toLowerCase()
+                    type: this.currentConfirm.action.replace('write ', '').toLowerCase()
                 });
                 form.post(`${this.baseUrl}/notes`, {
                     preserveScroll: true,
@@ -116,16 +116,29 @@ export default {
         };
     },
     methods: {
-        createNote (type) {
-            this.currentConfirm.action = `Create ${type}`;
+        writeNote (type) {
+            // user is author
+            let notes = this.notes.filter(n => n.type === type);
+            console.log(notes);
+            if (notes.length && notes[0].author_id === this.$page.props.user.id) {
+                this.$inertia.visit(`${this.baseUrl}/forms/${notes[0].slug}/edit`);
+                return;
+            }
+
+            this.currentConfirm.action = `write ${type}`;
             this.currentConfirm.resource_id = this.referCase.id;
             this.eventBus.emit('need-confirm', {
                 confirmText: `เขียน ${type} AN: ${this.referCase.an} ${this.referCase.patient_name} <br>เมื่อเขียนแล้วโน๊ตจะเป็นของท่าน แพทย์ท่านอื่นจะไม่สามารถเขียนโน๊ตนี้ได้`,
                 needReason: false
             });
         },
-        noteCreated (type) {
-            return this.notes.filter(n => n.type === type.toLowerCase()).length > 0;
+        userCanWrite (type) {
+            if (type === 'refer note') {
+                return false;
+            }
+
+            let notes = this.notes.filter(n => n.type === type);
+            return notes.length === 0 || notes[0].author_id === this.$page.props.user.id;
         }
     }
 };

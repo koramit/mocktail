@@ -30,6 +30,7 @@ class ReferCaseNotesController extends Controller
                 return [
                     'slug' => $note->slug,
                     'type' => $note->type,
+                    'author_id' => $note->user_id,
                     'created_at' => $note->created_at->format('Y-d-m H:i:s'),
                 ];
             }),

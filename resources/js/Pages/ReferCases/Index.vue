@@ -125,7 +125,7 @@
                         class="w-4 h-4 mr-1"
                         name="procedure"
                     />
-                    <span class="block font-normal text-thick-theme-light">แอดมิด</span>
+                    <span class="block font-normal text-thick-theme-light">แอดมิท</span>
                 </button>
 
                 <!-- notes -->
@@ -253,9 +253,8 @@ import Layout from '@/Components/Layouts/Layout';
 import CreateCase from '@/Components/Forms/CreateCase';
 import Admission from '@/Components/Forms/Admission';
 import Icon from '@/Components/Helpers/Icon';
-import Dropdown from '@/Components/Helpers/Dropdown';
 export default {
-    components: { Admission, CreateCase, Icon, Dropdown },
+    components: { Admission, CreateCase, Icon },
     layout: Layout,
     emits: ['need-confirm'],
     props: {
@@ -336,15 +335,13 @@ export default {
         },
         applyFilters (filter, value) {
             let filters = {...this.filters};
-            console.log(filters);
             filters[filter] = filters[filter] ? null : value;
-            console.log(filters);
             let query = Object.keys(filters)
                 .filter(key => filters[key])
                 .map(key => `${key}=${filters[key]}`)
                 .join('&');
             query = query ? query : 'remember=forget';
-            this.$inertia.replace(`${this.baseUrl}/refer-cases?${query}`);
+            this.$inertia.visit(`${this.baseUrl}/refer-cases?${query}`, { replace: true });
         }
     }
 };

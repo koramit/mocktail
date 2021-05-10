@@ -10,6 +10,7 @@
             ref="input"
             type="date"
             :placeholder="placeholder"
+            :disabled="disabled"
             readonly
             :value="modelValue"
             class="appearance-none form-input"
@@ -37,6 +38,7 @@ export default {
         format: { type: String, default: 'F j, Y' }, // format for display date
         options: { type: Object, default: () => {} },
         error: { type: String, default: '' },
+        disabled: { type: Boolean },
     },
     created () {
         const onChange = (selectedDates, dateStr, fp) => {
