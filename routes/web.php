@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ExportReportsController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\ReferCaseNotesController;
 use App\Http\Controllers\ReferCasesController;
 use App\Http\Controllers\UploadsController;
 use Illuminate\Support\Facades\Redirect;
@@ -43,16 +44,18 @@ Route::middleware('auth', 'remember')->get('/refer-cases', [ReferCasesController
 Route::middleware('auth')->post('/refer-cases', [ReferCasesController::class, 'store']);
 Route::middleware('auth')->post('/refer-cases/{note}', [ReferCasesController::class, 'update']);
 Route::middleware('auth')->delete('/refer-cases/{case}', [ReferCasesController::class, 'destroy']);
+Route::middleware('auth')->get('/refer-cases/{case:slug}/notes', ReferCaseNotesController::class)->name('notes');
 
 // form
-Route::middleware('auth')->get('/forms/{note:slug}/edit', [NotesController::class, 'edit']);
+Route::middleware('auth')->post('/notes', [NotesController::class, 'store']);
+Route::middleware('auth')->get('/forms/{note:slug}/edit', [NotesController::class, 'edit'])->name('note.form');
 Route::middleware('auth')->patch('/forms/{note}', [NotesController::class, 'update']);
 
 // Upload
 Route::middleware('auth')->post('/uploads', [UploadsController::class, 'store']);
 Route::middleware('auth')->get('/uploads/{path}', [UploadsController::class, 'show']);
 
-//admission case
+//admit case
 Route::middleware('auth')->post('/admissions', [AdmissionsController::class, 'store']);
 
 // front api
@@ -60,5 +63,7 @@ Route::middleware('auth')->post('/front-api/patient-rencently-admission', [Patie
 Route::middleware('auth')->post('/front-api/patient', [PatientAPIController::class, 'patient']);
 
 // report
-Route::middleware('auth')->get('/reports/refer-cases', ExportReportsController::class);
 Route::middleware('auth')->get('/reports/{note:slug}', [NotesController::class, 'show']);
+
+// Export report
+Route::middleware('auth')->get('/reports/refer-cases', ExportReportsController::class);

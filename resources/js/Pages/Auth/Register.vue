@@ -138,10 +138,24 @@ export default {
         };
     },
     created () {
-        document.title = 'Register';
+        document.title = 'Mocktail: ลงทะเบียน';
         if (this.profile.org_id !== undefined) {
             this.form.full_name = this.profile.name;
         }
+
+        this.baseUrl = document.querySelector('meta[name=base-url]').content;
+        var lastTimeCheckSessionTimeout = Date.now();
+        const endpoint =  this.baseUrl + '/session-timeout';
+        const sessionLifetimeSeconds = parseInt(document.querySelector('meta[name=session-lifetime-seconds]').content);
+        window.addEventListener('focus', () => {
+            let timeDiff = Date.now() - lastTimeCheckSessionTimeout;
+            if ( (timeDiff) > (sessionLifetimeSeconds) ) {
+                window.axios
+                    .post(endpoint)
+                    .then(() => lastTimeCheckSessionTimeout = Date.now())
+                    .catch(() => location.reload());
+            }
+        });
     },
     mounted() {
         this.$nextTick(function () {

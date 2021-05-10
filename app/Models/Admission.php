@@ -29,6 +29,11 @@ class Admission extends Model
         return $this->belongsTo(Patient::class);
     }
 
+    public function referCase()
+    {
+        return $this->hasOne(ReferCase::class);
+    }
+
     public function getPatientAgeAtEncounterAttribute()
     {
         $ageInMonths = $this->encountered_at->diffInMonths($this->patient->dob);
@@ -67,6 +72,29 @@ class Admission extends Model
             $this->patient->hn,
             $this->patient->profile['first_name'],
         ]);
+    }
+
+    public function getLengthOfStayAttribute()
+    {
+        if (! $this->encountered_at || ! $this->dismissed_at) {
+            return null;
+        }
+
+        $losInMinutes = $this->encountered_at->diffInMinutes($this->dismissed_at);
+        // 1440 minutes in a day, more than 360 minutes count a day
+        if ($losInMinutes >= 1440) {
+            $losInDays = (int) floor($losInMinutes / 1440);
+            $remains = $losInMinutes % 1440;
+            if ($remains > 360) {
+                $losInDays++;
+            }
+
+            return $losInDays;
+        } elseif ($losInMinutes > 360) {
+            return 1;
+        }
+
+        return 0;
     }
 
     public function encounteredAtRelativeToNow()

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ReferCase;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Jenssegers\Agent\Agent;
@@ -27,7 +28,7 @@ class ExportReportsController extends Controller
                                   'สถานะ' => $case->status_label,
                               ];
                           });
-        $filename = 'รายงานแบบบันทึกการส่งต่อผู้ป่วย@'.now()->tz('Asia/Bangkok')->format('d-m-Y').'.xlsx';
+        $filename = 'รายงานแบบบันทึกการส่งต่อผู้ป่วย@'.now()->tz(Auth::user()->timezone)->format('d-m-Y').'.xlsx';
         $agent = new Agent();
         if ($agent->isSafari()) {
             $path = FastExcel::data($cases)->export(storage_path('app/temp/safari-excel-'.Session::get('center')->id.'.xlsx'));

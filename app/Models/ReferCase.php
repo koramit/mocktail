@@ -44,6 +44,11 @@ class ReferCase extends Model
         return $this->belongsTo(Note::class);
     }
 
+    public function admission()
+    {
+        return $this->belongsTo(Admission::class);
+    }
+
     /**
      * Get the case's center.
      */
@@ -84,7 +89,7 @@ class ReferCase extends Model
         $statuses = [
             'draft' => 'ร่าง',
             'submitted' => 'รอ',
-            'admitted' => 'แอดมิด',
+            'admitted' => 'แอดมิท',
             'discharged' => 'จำหน่าย',
             'canceled' => 'ยกเลิก',
         ];

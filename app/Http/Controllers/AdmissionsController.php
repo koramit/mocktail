@@ -40,6 +40,10 @@ class AdmissionsController extends Controller
         }
         $case->save();
 
+        // attach admission to refer note
+        $case->note->admission_id = $case->admission_id;
+        $case->note->save();
+
         return back()->with('messages', [
             'status' => 'success',
             'messages' => ['แอดมิด '.$case->name.' สำเร็จ'],

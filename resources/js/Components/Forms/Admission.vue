@@ -86,9 +86,6 @@ import Modal from '@/Components/Helpers/Modal';
 export default {
     emits: ['closed'],
     components: { FormInput, Modal, SpinnerButton },
-    // props: {
-    //     hn: { type: String, default: '' }
-    // },
     data () {
         return {
             form: {
@@ -126,13 +123,16 @@ export default {
                 // sarch hn
                 this.checkAdmission();
             } else if (this.state === 'comfirm') {
+                this.busy = true;
                 let form = useForm({...this.form, remember: 'on'});
                 form.post(`${this.$page.props.app.baseUrl}/admissions`, {
                     onSuccess: () => this.$refs.modal.close(),
+                    onFinish: () => this.busy = false,
                 });
             }
         },
         checkAdmission () {
+            this.busy = true;
             window.axios
                 .post(`${this.$page.props.app.baseUrl}/front-api/patient-rencently-admission`, this.form)
                 .then((response) => {

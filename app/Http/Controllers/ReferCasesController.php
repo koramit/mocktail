@@ -33,6 +33,7 @@ class ReferCasesController extends Controller
                           ->through(function ($case) { // transform() will "transform" paginate->data and paginate->link
                               return [
                                   'id' => $case->id,
+                                  'slug' => $case->slug,
                                   'note_slug' => $case->note->slug,
                                   'referer' => $case->referer->name,
                                   'patient_name' => ($case->patient ? $case->patient->full_name : $case->patient_name) ?? 'ยังไม่มีข้อมูลชื่อ',
@@ -50,7 +51,7 @@ class ReferCasesController extends Controller
                 ($cases->count() > 0 ? null : ['status' => 'info', 'messages' => ['ยังไม่มีข้อมูลเคส หรือ ไม่มีข้อมูลเคสตามตัวกรอง']])
             );
 
-        return Inertia::render('Cases', [
+        return Inertia::render('ReferCases/Index', [
             'cases' => $cases,
             'filters' => Request::all('status', 'center'),
         ]);

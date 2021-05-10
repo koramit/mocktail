@@ -23,18 +23,38 @@ class Note extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function admission()
+    {
+        return $this->belongsTo(Admission::class);
+    }
+
     /**
-     * Get the case's center.
+     * Get the patient.
      */
-    public function center()
+    public function patient()
     {
         return $this->hasOneThrough(
-            Center::class, // target
-            User::class, // via
+            Patient::class, // target
+            Admission::class, // via
             'id', // selected key on the via table...
             'id', // selected key on the target table...
-            'user_id', // link key this table => via table...
-            'center_id', // link key via table => target table...
+            'admission_id', // link key this table => via table...
+            'patient_id', // link key via table => target table...
         );
     }
+
+    /*
+     * Get the case's center.
+     */
+    // public function center()
+    // {
+    //     return $this->hasOneThrough(
+    //         Center::class, // target
+    //         User::class, // via
+    //         'id', // selected key on the via table...
+    //         'id', // selected key on the target table...
+    //         'user_id', // link key this table => via table...
+    //         'center_id', // link key via table => target table...
+    //     );
+    // }
 }
