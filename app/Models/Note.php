@@ -42,19 +42,4 @@ class Note extends Model
             'patient_id', // link key via table => target table...
         );
     }
-
-    /*
-     * Get the case's center.
-     */
-    // public function center()
-    // {
-    //     return $this->hasOneThrough(
-    //         Center::class, // target
-    //         User::class, // via
-    //         'id', // selected key on the via table...
-    //         'id', // selected key on the target table...
-    //         'user_id', // link key this table => via table...
-    //         'center_id', // link key via table => target table...
-    //     );
-    // }
 }
