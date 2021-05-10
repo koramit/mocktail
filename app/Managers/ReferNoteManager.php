@@ -81,7 +81,7 @@ class ReferNoteManager extends NoteManager
             'author_username' => $this->note->author->name,
             'author' => $this->note->author->full_name,
             'contact' => $this->note->author->tel_no,
-            'center' => $this->note->center->name,
+            'center' => $this->note->referCase->center->name,
         ];
     }
 
