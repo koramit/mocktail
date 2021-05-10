@@ -24,7 +24,6 @@
                     >
                         <svg
                             class="w-6 h-6"
-                            :class="{ 'animate-spin': typing }"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 576 512"
                         ><path
@@ -180,7 +179,6 @@ export default {
         return {
             mobileMenuVisible: false,
             avatarSrcError: false,
-            typing: false,
         };
     },
     created () {
@@ -197,14 +195,9 @@ export default {
                     .catch(() => location.reload());
             }
         });
-        this.eventBus.on('typing', () => {
-            if (! this.typing) {
-                this.typing = true;
-                console.log('roll the cookie');
-            }
+        this.eventBus.on('need-confirm', (cinfigs) => {
+            setTimeout(() => this.$nextTick(() => this.$refs.confirmForm.open(cinfigs)), 300);
         });
-        this.eventBus.on('typing-stopped', () => this.typing = false);
-        this.eventBus.on('need-confirm', (cinfigs) => this.$refs.confirmForm.open(cinfigs));
     },
     mounted () {
         this.$nextTick(() => {
