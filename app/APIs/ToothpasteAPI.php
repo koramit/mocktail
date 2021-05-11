@@ -54,7 +54,14 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function getPatient($hn)
     {
         $data = $this->brushing($this->pasteLoad('patient', ['hn' => $hn]));
-        if (! $data['found']) {
+        if (! $data) { // error: $data = null
+            return [
+                'found' => false,
+                'message' => __('service.failed'),
+            ];
+        }
+
+        if (! $data['found']) { // error: $data = null
             $data['message'] = __('reply_messages.frontend_api.item_not_found', ['item' => 'patient']);
             unset($data['body']);
 
