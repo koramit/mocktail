@@ -62,7 +62,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         }
 
         if (! $data['found']) { // error: $data = null
-            $data['message'] = __('reply_messages.frontend_api.item_not_found', ['item' => 'patient']);
+            $data['message'] = __('service.item_not_found', ['item' => 'HN']);
             unset($data['body']);
 
             return $data;
