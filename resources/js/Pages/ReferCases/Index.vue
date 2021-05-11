@@ -141,69 +141,6 @@
                     <span class="block font-normal text-thick-theme-light">โน็ต</span>
                 </inertia-link>
 
-                <!-- create note -->
-                <!-- <dropdown v-if="userCan('note', referCase)">
-                    <template #default>
-                        <button
-                            class="w-full flex text-dark-theme-light justify-start"
-                        >
-                            <icon
-                                class="w-4 h-4 mr-1"
-                                name="notes-medical"
-                            />
-                            <span class="block font-normal text-thick-theme-light">เขียนโน๊ต</span>
-                        </button>
-                    </template>
-                    <template #dropdown>
-                        <div class="mt-2 p-2 shadow-xl min-w-max bg-white text-thick-theme-light cursor-pointer rounded text-sm">
-                            <inertia-link
-                                class="w-full flex text-dark-theme-light justify-start my-2"
-                                :href="`${baseUrl}/reports/${referCase.note_slug}`"
-                                v-if="userCan('write nurse note', referCase)"
-                            >
-                                <icon
-                                    class="w-4 h-4 mr-1"
-                                    name="edit"
-                                />
-                                <span class="block font-normal text-thick-theme-light">ฟอร์มปรอท</span>
-                            </inertia-link>
-                            <inertia-link
-                                class="w-full flex text-dark-theme-light justify-start my-2"
-                                :href="`${baseUrl}/admission-notes/${referCase.slug}/edit`"
-                                v-if="userCan('write admission note', referCase)"
-                            >
-                                <icon
-                                    class="w-4 h-4 mr-1"
-                                    name="edit"
-                                />
-                                <span class="block font-normal text-thick-theme-light">admission note</span>
-                            </inertia-link>
-                            <inertia-link
-                                class="w-full flex text-dark-theme-light justify-start my-2"
-                                :href="`${baseUrl}/reports/${referCase.note_slug}`"
-                                v-if="userCan('write progress note', referCase)"
-                            >
-                                <icon
-                                    class="w-4 h-4 mr-1"
-                                    name="edit"
-                                />
-                                <span class="block font-normal text-thick-theme-light">progress note</span>
-                            </inertia-link>
-                            <inertia-link
-                                class="w-full flex text-dark-theme-light justify-start my-2"
-                                :href="`${baseUrl}/reports/${referCase.note_slug}`"
-                                v-if="userCan('write discharge summary', referCase)"
-                            >
-                                <icon
-                                    class="w-4 h-4 mr-1"
-                                    name="edit"
-                                />
-                                <span class="block font-normal text-thick-theme-light">discharge summary</span>
-                            </inertia-link>
-                        </div>
-                    </template>
-                </dropdown> -->
-
                 <!-- cancel -->
                 <button
                     v-if="userCan('delete', referCase)"
@@ -313,15 +250,8 @@ export default {
             case 'admit':
                 return this.abilities.includes('admit_patient') && referCase.status === 'submitted';
             case 'note':
-                return this.abilities.includes('create_note') && referCase.status === 'admitted'; // demo only
-            case 'write nurse note':
-                return this.$page.props.user.roles.includes('nurse') && referCase.status === 'admitted'; // demo only
-            case 'write admission note':
-                return this.$page.props.user.roles.includes('md') && referCase.status === 'admitted'; // demo only
-            case 'write progress note':
-                return this.$page.props.user.roles.includes('md') && referCase.status === 'admitted'; // demo only
-            case 'write discharge summary':
-                return this.$page.props.user.roles.includes('md') && referCase.status === 'admitted'; // demo only
+                return this.$page.props.user.roles.indexOf('md') && referCase.status === 'admitted'; // nurse not write note, for now
+                // return this.abilities.includes('create_note') && referCase.status === 'admitted'; // demo only
             case 'delete':
                 return !['admitted', 'discharged', 'canceled'].includes(referCase.status) && (this.abilities.includes('admit_patient') || referCase.referer === this.$page.props.user.name);
             default:
