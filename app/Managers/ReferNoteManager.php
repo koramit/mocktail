@@ -2,6 +2,7 @@
 
 namespace App\Managers;
 
+use App\Models\Note;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
@@ -34,7 +35,7 @@ class ReferNoteManager extends NoteManager
                     'messages' => [
                         'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
                         'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> ท้ายฟอร์ม',
-                        'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้จนกว่าเคสจะแอดมิด',
+                        'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้จนกว่าเคสจะแอดมิท',
                     ],
                 ]);
             }

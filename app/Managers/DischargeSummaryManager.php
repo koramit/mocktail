@@ -95,6 +95,7 @@ class DischargeSummaryManager extends NoteManager
     public static function initNote()
     {
         return [
+            'submitted' => false,
             'discharge' => [
                 'discharge_status' => null,
                 'discharge_type' => null,

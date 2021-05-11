@@ -424,6 +424,18 @@
             <small class="text-md text-thick-theme-light italic">๏ กรณีบุคลากรทางการแพทย์ศิริราช</small>
         </div>
 
+        <spinner-button
+            class="btn btn-bitter w-full mt-4 sm:mt-6 md:mt-12"
+            :class="{
+                'btn-dark': !form.submitted,
+                'btn-bitter': form.submitted,
+            }"
+            @click="confirm"
+            :spin="form.processing"
+        >
+            {{ form.submitted ? 'ปรับปรุง':'เผยแพร่โน๊ต' }}
+        </spinner-button>
+
         <form-select-other
             :placeholder="selectOtherPlaceholder"
             ref="selectOther"
@@ -441,15 +453,17 @@ import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
 import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
+import SpinnerButton from '@/Components/Controls/SpinnerButton.vue';
 export default {
-    layout: Layout,
     components: {
         FormCheckbox,
         FormDatetime,
         FormInput,
         FormSelect,
         FormSelectOther,
+        SpinnerButton,
     },
+    layout: Layout,
     props: {
         contents: { type: Object, required: true },
         formConfigs: { type: Object, required: true }
@@ -591,6 +605,10 @@ export default {
             this.$refs[this.formSelectRef].setOther(val);
         },
         autosave (field) {
+            if (this.form.submitted) {
+                return;
+            }
+
             this.$nextTick(() => {
                 let form = {};
                 if (field.indexOf('symptoms') !== -1 || field.indexOf('diagnosis') !== -1) {
@@ -616,14 +634,9 @@ export default {
         },
         confirm () {
             this.form
-                .transform(data => ({...data, remember: 'on', criterias: this.criterias}))
-                .post(`${this.baseUrl}/refer-cases/${this.configs.note_id}`, {
-                    onSuccess: () => {
-                        if (Object.keys(this.form.errors).length === 0 && !this.criterias && !this.form.submitted) {
-                            this.$refs.confirmRefer.open();
-                            this.criterias = null;
-                        }
-                    },
+                .transform(data => ({...data, remember: 'on'}))
+                .post(`${this.baseUrl}/admission-notes/${this.configs.note_id}`, {
+                    onFinish: () => this.form.processing = false,
                     replace: true,
                 });
         },
