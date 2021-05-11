@@ -2,6 +2,7 @@
 
 namespace App\Managers;
 
+use App\Models\Note;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
@@ -34,7 +35,7 @@ class ReferNoteManager extends NoteManager
                     'messages' => [
                         'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
                         'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> ท้ายฟอร์ม',
-                        'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้จนกว่าเคสจะแอดมิด',
+                        'เมื่อ <span class="font-semibold">ยืนยันการส่งต่อผู้ป่วย</span> แล้วยังสามารถแก้ไขข้อมูลได้จนกว่าเคสจะแอดมิท',
                     ],
                 ]);
             }
@@ -81,7 +82,7 @@ class ReferNoteManager extends NoteManager
             'author_username' => $this->note->author->name,
             'author' => $this->note->author->full_name,
             'contact' => $this->note->author->tel_no,
-            'center' => $this->note->center->name,
+            'center' => $this->note->referCase->center->name,
         ];
     }
 
@@ -95,6 +96,7 @@ class ReferNoteManager extends NoteManager
         return [
             'submitted' => false,
             'no_admit' => false,
+            'remark' => null,
             'patient' => [
                 'sat_code' => null,
                 'insurance' => null,
@@ -113,6 +115,8 @@ class ReferNoteManager extends NoteManager
                 'sbp' => null,
                 'dbp' => null,
                 'o2_sat' => null,
+                'level_of_consciousness' => ' Alert, Oriented, Cooperate',
+                'emotional_status' => 'Calm',
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,
@@ -287,11 +291,13 @@ class ReferNoteManager extends NoteManager
         }
 
         // check candidate keys
-        $count = Note::where('contents->patient->sat_code', $patient['sat_code'])
-                     ->where('contents->patient->date_admit_origin', $patient['date_admit_origin'])
-                     ->count();
-        if ($count > 1) {
-            $errors['sat_code'] = 'เคสซ้ำ โปรดตรวจสอบ SAT CODE และ วันที่รับไว้ในโรงพยาบาล';
+        if (! isset($errors['sat_code'])) {
+            $count = Note::where('contents->patient->sat_code', $patient['sat_code'])
+                        ->where('contents->patient->date_admit_origin', $patient['date_admit_origin'])
+                        ->count();
+            if ($count > 1) {
+                $errors['sat_code'] = 'เคสซ้ำ โปรดตรวจสอบ SAT CODE และ วันที่รับไว้ในโรงพยาบาล';
+            }
         }
 
         if (count($errors) > 0) {

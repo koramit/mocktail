@@ -37,4 +37,9 @@ class PagesController extends Controller
     {
         return Inertia::render('TermsAndPolicies');
     }
+
+    public function soon()
+    {
+        return Inertia::render('Soon');
+    }
 }

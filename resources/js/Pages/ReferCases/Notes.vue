@@ -16,8 +16,8 @@
                 <div class="w-1/4">
                     <!-- write -->
                     <button
-                        class="w-full flex text-yellow-200 justify-start items-center my-2"
-                        @click="writeNote(type.name.toLowerCase())"
+                        class="w-full flex text-yellow-200 justify-start items-center my-2 focus:outline-none"
+                        @click="event => writeNote(event, type.name.toLowerCase())"
                         v-if="userCanWrite(type.name.toLowerCase())"
                     >
                         <icon
@@ -31,7 +31,8 @@
                     <!-- read -->
                     <inertia-link
                         class="w-full flex text-alt-theme-light justify-start items-center my-2"
-                        :href="`${baseUrl}/reports/${referCase.slug}`"
+                        :href="`${baseUrl}/soon`"
+                        v-if="userCanRead(type.name.toLowerCase())"
                     >
                         <icon
                             class="w-4 h-4 mr-1"
@@ -49,6 +50,7 @@
                 </h2>
                 <button
                     class="flex text-bitter-theme-light justify-start items-center"
+                    @click="$inertia.visit(`${baseUrl}/soon`)"
                 >
                     <icon
                         class="w-4 h-4 mr-1"
@@ -65,6 +67,7 @@
                 </h2>
                 <button
                     class="flex text-bitter-theme-light justify-start items-center"
+                    @click="$inertia.visit(`${baseUrl}/soon`)"
                 >
                     <icon
                         class="w-4 h-4 mr-1"
@@ -99,7 +102,7 @@ export default {
                     type: this.currentConfirm.action.replace('write ', '').toLowerCase()
                 });
                 form.post(`${this.baseUrl}/notes`, {
-                    preserveScroll: true,
+                    replace: true,
                 });
             }
         });
@@ -112,14 +115,13 @@ export default {
                 { name: 'Admission Note' },
                 { name: 'Discharge Summary' },
             ],
-            currentConfirm: {}
+            currentConfirm: {},
         };
     },
     methods: {
-        writeNote (type) {
+        writeNote (event, type) {
             // user is author
             let notes = this.notes.filter(n => n.type === type);
-            console.log(notes);
             if (notes.length && notes[0].author_id === this.$page.props.user.id) {
                 this.$inertia.visit(`${this.baseUrl}/forms/${notes[0].slug}/edit`);
                 return;
@@ -138,7 +140,14 @@ export default {
             }
 
             let notes = this.notes.filter(n => n.type === type);
-            return notes.length === 0 || notes[0].author_id === this.$page.props.user.id;
+            return this.$page.props.user.roles.indexOf('md') !== -1 && (notes.length === 0 || notes[0].author_id === this.$page.props.user.id);
+        },
+        userCanRead (type) {
+            if (type === 'refer note') {
+                return true;
+            }
+
+            return this.notes.filter(n => n.type === type).length;
         }
     }
 };

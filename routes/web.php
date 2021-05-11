@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AdmissionNotesController;
 use App\Http\Controllers\AdmissionsController;
 use App\Http\Controllers\APIs\Front\PatientAPIController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\DischargeSummaryNotesController;
 use App\Http\Controllers\ExportReportsController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
@@ -44,7 +46,7 @@ Route::middleware('auth', 'remember')->get('/refer-cases', [ReferCasesController
 Route::middleware('auth')->post('/refer-cases', [ReferCasesController::class, 'store']);
 Route::middleware('auth')->post('/refer-cases/{note}', [ReferCasesController::class, 'update']);
 Route::middleware('auth')->delete('/refer-cases/{case}', [ReferCasesController::class, 'destroy']);
-Route::middleware('auth')->get('/refer-cases/{case:slug}/notes', ReferCaseNotesController::class)->name('notes');
+Route::middleware('auth')->get('/refer-cases/{case:slug}/notes', ReferCaseNotesController::class)->name('case-notes');
 
 // form
 Route::middleware('auth')->post('/notes', [NotesController::class, 'store']);
@@ -67,3 +69,12 @@ Route::middleware('auth')->get('/reports/{note:slug}', [NotesController::class, 
 
 // Export report
 Route::middleware('auth')->get('/reports/refer-cases', ExportReportsController::class);
+
+// admission note
+Route::middleware('auth')->post('/admission-notes/{note}', AdmissionNotesController::class);
+
+// discharge summary
+Route::middleware('auth')->post('/discharge-summary-notes/{note}', DischargeSummaryNotesController::class);
+
+// soon
+Route::middleware('auth')->get('/soon', [PagesController::class, 'soon']);

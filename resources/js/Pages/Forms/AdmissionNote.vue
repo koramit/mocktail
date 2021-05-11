@@ -167,6 +167,22 @@
                 :error="form.errors.o2_sat"
                 @autosave="autosave('vital_signs.o2_sat')"
             />
+            <form-input
+                class="mt-2"
+                label="Level of consciousness"
+                name="level_of_consciousness"
+                v-model="form.vital_signs.level_of_consciousness"
+                :readonly="true"
+            />
+            <small class="text-md text-thick-theme-light italic">๏ ข้อมูลโดยปริยาย</small>
+            <form-input
+                class="mt-2"
+                label="emotional status"
+                name="emotional_status"
+                v-model="form.vital_signs.emotional_status"
+                :readonly="true"
+            />
+            <small class="text-md text-thick-theme-light italic">๏ ข้อมูลโดยปริยาย</small>
         </div>
 
         <template v-if="!form.no_admit">
@@ -424,6 +440,32 @@
             <small class="text-md text-thick-theme-light italic">๏ กรณีบุคลากรทางการแพทย์ศิริราช</small>
         </div>
 
+        <!-- remark -->
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light">
+                เพิ่มเติม
+            </h2>
+            <form-textarea
+                class="mt-2"
+                placeholder="ระบุข้อมูลอื่นๆ"
+                name="remark"
+                v-model="form.remark"
+                @autosave="autosave('remark')"
+            />
+        </div>
+
+        <spinner-button
+            class="btn btn-bitter w-full mt-4 sm:mt-6 md:mt-12"
+            :class="{
+                'btn-dark': !form.submitted,
+                'btn-bitter': form.submitted,
+            }"
+            @click="confirm"
+            :spin="form.processing"
+        >
+            {{ form.submitted ? 'ปรับปรุง':'เผยแพร่โน๊ต' }}
+        </spinner-button>
+
         <form-select-other
             :placeholder="selectOtherPlaceholder"
             ref="selectOther"
@@ -441,15 +483,19 @@ import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
 import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
+import SpinnerButton from '@/Components/Controls/SpinnerButton';
+import FormTextarea from '@/Components/Controls/FormTextarea';
 export default {
-    layout: Layout,
     components: {
         FormCheckbox,
         FormDatetime,
         FormInput,
         FormSelect,
         FormSelectOther,
+        SpinnerButton,
+        FormTextarea,
     },
+    layout: Layout,
     props: {
         contents: { type: Object, required: true },
         formConfigs: { type: Object, required: true }
@@ -591,6 +637,10 @@ export default {
             this.$refs[this.formSelectRef].setOther(val);
         },
         autosave (field) {
+            if (this.form.submitted) {
+                return;
+            }
+
             this.$nextTick(() => {
                 let form = {};
                 if (field.indexOf('symptoms') !== -1 || field.indexOf('diagnosis') !== -1) {
@@ -616,14 +666,9 @@ export default {
         },
         confirm () {
             this.form
-                .transform(data => ({...data, remember: 'on', criterias: this.criterias}))
-                .post(`${this.baseUrl}/refer-cases/${this.configs.note_id}`, {
-                    onSuccess: () => {
-                        if (Object.keys(this.form.errors).length === 0 && !this.criterias && !this.form.submitted) {
-                            this.$refs.confirmRefer.open();
-                            this.criterias = null;
-                        }
-                    },
+                .transform(data => ({...data, remember: 'on'}))
+                .post(`${this.baseUrl}/admission-notes/${this.configs.note_id}`, {
+                    onFinish: () => this.form.processing = false,
                     replace: true,
                 });
         },

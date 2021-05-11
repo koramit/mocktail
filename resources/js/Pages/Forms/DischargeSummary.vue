@@ -58,7 +58,7 @@
             />
             <form-select
                 class="mt-2"
-                label="ชนิด"
+                label="ประเภท"
                 name="discharge_type"
                 v-model="form.discharge.discharge_type"
                 :error="form.errors.discharge_type"
@@ -231,10 +231,6 @@
             <h2 class="font-semibold text-thick-theme-light">
                 Non-OR procedures
             </h2>
-            <small
-                class="my-t text-red-700 text-sm"
-                v-if="form.errors.non_OR_procedures"
-            >{{ form.errors.non_OR_procedures }}</small>
             <form-checkbox
                 class="mt-2"
                 v-model="form.non_OR_procedures.no_non_OR_procedures"
@@ -248,6 +244,7 @@
                     placeholder="ระบุรายละเอียด"
                     name="non_OR_procedures_detail"
                     v-model="form.non_OR_procedures.non_OR_procedures_detail"
+                    :error="form.errors.non_OR_procedures_detail"
                     @autosave="autosave('non_OR_procedures.non_OR_procedures_detail')"
                 />
             </div>
@@ -404,14 +401,14 @@
                 <form-checkbox
                     class="mt-2"
                     v-model="form.appointment.no_appointment"
-                    label="ไม่มี"
+                    label="ไม่นัด"
                     :toggler="true"
                     @autosave="autosave('appointment.no_appointment')"
                 />
                 <div v-if="!form.appointment.no_appointment">
                     <form-datetime
                         class="mt-2"
-                        label="วันที่"
+                        label="วันที่นัด"
                         v-model="form.appointment.date_appointment"
                         :error="form.errors.date_appointment"
                         name="date_appointment"
@@ -419,9 +416,10 @@
                     />
                     <form-input
                         class="mt-2"
-                        placeholder="สถานที่นัด"
+                        label="สถานที่นัด"
                         name="appointment_at"
                         v-model="form.appointment.appointment_at"
+                        :error="form.errors.appointment_at"
                         @autosave="autosave('appointment.appointment_at')"
                     />
                 </div>
@@ -430,7 +428,7 @@
             <!-- repeat_NP_swab -->
             <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
                 <h2 class="font-semibold text-thick-theme-light">
-                    วันนัดครั้งต่อไป
+                    นัดมาทำ NP swab ซ้ำ
                 </h2>
                 <small
                     class="my-t text-red-700 text-sm"
@@ -439,7 +437,7 @@
                 <form-checkbox
                     class="mt-2"
                     v-model="form.repeat_NP_swab.no_repeat_NP_swab"
-                    label="ไม่มี"
+                    label="ไม่นัด"
                     :toggler="true"
                     @autosave="autosave('repeat_NP_swab.no_repeat_NP_swab')"
                 />
@@ -455,6 +453,32 @@
                 </div>
             </div>
         </template>
+
+        <!-- remark -->
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light">
+                เพิ่มเติม
+            </h2>
+            <form-textarea
+                class="mt-2"
+                placeholder="ระบุข้อมูลอื่นๆ"
+                name="remark"
+                v-model="form.remark"
+                @autosave="autosave('remark')"
+            />
+        </div>
+
+        <spinner-button
+            class="btn btn-bitter w-full mt-4 sm:mt-6 md:mt-12"
+            :class="{
+                'btn-dark': !form.submitted,
+                'btn-bitter': form.submitted,
+            }"
+            @click="confirm"
+            :spin="form.processing"
+        >
+            {{ form.submitted ? 'ปรับปรุง':'เผยแพร่โน๊ต' }}
+        </spinner-button>
     </div>
 </template>
 
@@ -462,12 +486,14 @@
 import { useForm } from '@inertiajs/inertia-vue3';
 import lodashGet from 'lodash/get';
 import Layout from '@/Components/Layouts/Layout';
-import FormInput from '../../Components/Controls/FormInput.vue';
-import FormSelect from '../../Components/Controls/FormSelect.vue';
-import FormCheckbox from '../../Components/Controls/FormCheckbox.vue';
-import FormDatetime from '../../Components/Controls/FormDatetime.vue';
+import FormInput from '@/Components/Controls/FormInput';
+import FormSelect from '@/Components/Controls/FormSelect';
+import FormCheckbox from '@/Components/Controls/FormCheckbox';
+import FormDatetime from '@/Components/Controls/FormDatetime';
+import SpinnerButton from '@/Components/Controls/SpinnerButton';
+import FormTextarea from '@/Components/Controls/FormTextarea';
 export default {
-    components: { FormInput, FormSelect, FormCheckbox, FormDatetime },
+    components: { FormInput, FormSelect, FormCheckbox, FormDatetime, SpinnerButton, FormTextarea },
     layout: Layout,
     props: {
         contents: { type: Object, required: true },
@@ -572,26 +598,12 @@ export default {
     },
     methods: {
         autosave (field) {
+            if (this.form.submitted) {
+                return;
+            }
+
             this.$nextTick(() => {
                 let form = {};
-                // if (field.indexOf('symptoms') !== -1 || field.indexOf('diagnosis') !== -1) {
-                //     form['contents->symptoms'] = this.form.symptoms;
-                //     form['contents->diagnosis'] = this.form.diagnosis;
-                // } else if (field.indexOf('adr') !== -1) {
-                //     form['contents->adr'] = this.form.adr;
-                // } else if (field.indexOf('comorbids') !== -1) {
-                //     form['contents->comorbids'] = this.form.comorbids;
-                // } else if (field.indexOf('treatments') !== -1) {
-                //     form['contents->treatments'] = this.form.treatments;
-                // } else if (field === 'no_admit') {
-                //     form['contents->no_admit'] = lodashGet(this.form, field);
-                //     if (form['contents->no_admit']) {
-                //         form['contents->symptoms'] = this.form.symptoms;
-                //         form['contents->diagnosis'] = this.form.diagnosis;
-                //     }
-                // } else {
-                //     form['contents->' + (field.split('.').join('->'))] = lodashGet(this.form, field);
-                // }
                 if (field.indexOf('discharge') !== -1) {
                     form['contents->discharge'] = this.form.discharge;
                     form['contents->diagnosis'] = this.form.diagnosis;
@@ -606,6 +618,14 @@ export default {
 
                 window.axios.patch(this.configs.patchEndpoint, form);
             });
+        },
+        confirm () {
+            this.form
+                .transform(data => ({...data, remember: 'on'}))
+                .post(`${this.baseUrl}/discharge-summary-notes/${this.configs.note_id}`, {
+                    onFinish: () => this.form.processing = false,
+                    replace: true,
+                });
         },
     }
 };

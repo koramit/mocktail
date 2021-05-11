@@ -161,6 +161,22 @@
                 :error="form.errors.o2_sat"
                 @autosave="autosave('vital_signs.o2_sat')"
             />
+            <form-input
+                class="mt-2"
+                label="Level of consciousness"
+                name="level_of_consciousness"
+                v-model="form.vital_signs.level_of_consciousness"
+                :readonly="true"
+            />
+            <small class="text-md text-thick-theme-light italic">๏ ข้อมูลโดยปริยาย</small>
+            <form-input
+                class="mt-2"
+                label="emotional status"
+                name="emotional_status"
+                v-model="form.vital_signs.emotional_status"
+                :readonly="true"
+            />
+            <small class="text-md text-thick-theme-light italic">๏ ข้อมูลโดยปริยาย</small>
         </div>
 
         <template v-if="!form.no_admit">
@@ -471,6 +487,20 @@
             />
         </div>
 
+        <!-- remark -->
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light">
+                เพิ่มเติม
+            </h2>
+            <form-textarea
+                class="mt-2"
+                placeholder="ระบุข้อมูลอื่นๆ"
+                name="remark"
+                v-model="form.remark"
+                @autosave="autosave('remark')"
+            />
+        </div>
+
         <spinner-button
             class="btn btn-bitter w-full mt-4 sm:mt-6 md:mt-12"
             :class="{
@@ -506,21 +536,23 @@ import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
 import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
+import FormTextarea from '@/Components/Controls/FormTextarea';
 import ImageUploader from '@/Components/Controls/ImageUploader';
 import ConfirmRefer from '@/Components/Forms/ConfirmRefer';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 export default {
-    layout: Layout,
     components: {
         FormCheckbox,
         FormDatetime,
         FormInput,
         FormSelect,
         FormSelectOther,
+        FormTextarea,
         ImageUploader,
         ConfirmRefer,
         SpinnerButton,
     },
+    layout: Layout,
     props: {
         contents: { type: Object, required: true },
         formConfigs: { type: Object, required: true }
