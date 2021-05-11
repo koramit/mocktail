@@ -104,6 +104,7 @@ class DischargeSummaryManager extends NoteManager
     {
         return [
             'submitted' => false,
+            'remark' => null,
             'discharge' => [
                 'discharge_status' => null,
                 'discharge_type' => null,

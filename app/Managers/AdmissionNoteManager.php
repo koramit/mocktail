@@ -90,8 +90,15 @@ class AdmissionNoteManager extends NoteManager
                 continue;
             }
             foreach ($value as $index => $data) {
-                $contents[$key][$index] = $referNote[$key][$index];
+                if (isset($referNote[$key][$index])) {
+                    $contents[$key][$index] = $referNote[$key][$index];
+                } else {
+                    $contents[$key][$index] = $this->note->contents[$key][$index];
+                }
             }
+        }
+        if (isset($referNote['remark'])) {
+            $contents['remark'] = $referNote['remark'];
         }
         $this->note->contents = $contents;
 
@@ -102,6 +109,7 @@ class AdmissionNoteManager extends NoteManager
     {
         return [
             'submitted' => false,
+            'remark' => null,
             'patient' => [
                 'sat_code' => null,
                 'insurance' => null,
@@ -119,6 +127,8 @@ class AdmissionNoteManager extends NoteManager
                 'sbp' => null,
                 'dbp' => null,
                 'o2_sat' => null,
+                'level_of_consciousness' => ' Alert, Oriented, Cooperate',
+                'emotional_status' => 'Calm',
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,

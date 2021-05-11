@@ -454,6 +454,20 @@
             </div>
         </template>
 
+        <!-- remark -->
+        <div class="bg-white rounded shadow-sm p-4 mt-4 sm:mt-6 md:mt-12">
+            <h2 class="font-semibold text-thick-theme-light">
+                เพิ่มเติม
+            </h2>
+            <form-textarea
+                class="mt-2"
+                placeholder="ระบุข้อมูลอื่นๆ"
+                name="remark"
+                v-model="form.remark"
+                @autosave="autosave('remark')"
+            />
+        </div>
+
         <spinner-button
             class="btn btn-bitter w-full mt-4 sm:mt-6 md:mt-12"
             :class="{
@@ -477,8 +491,9 @@ import FormSelect from '@/Components/Controls/FormSelect';
 import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import FormDatetime from '@/Components/Controls/FormDatetime';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
+import FormTextarea from '@/Components/Controls/FormTextarea';
 export default {
-    components: { FormInput, FormSelect, FormCheckbox, FormDatetime, SpinnerButton },
+    components: { FormInput, FormSelect, FormCheckbox, FormDatetime, SpinnerButton, FormTextarea },
     layout: Layout,
     props: {
         contents: { type: Object, required: true },

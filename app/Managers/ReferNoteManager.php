@@ -96,6 +96,7 @@ class ReferNoteManager extends NoteManager
         return [
             'submitted' => false,
             'no_admit' => false,
+            'remark' => null,
             'patient' => [
                 'sat_code' => null,
                 'insurance' => null,
@@ -114,6 +115,8 @@ class ReferNoteManager extends NoteManager
                 'sbp' => null,
                 'dbp' => null,
                 'o2_sat' => null,
+                'level_of_consciousness' => ' Alert, Oriented, Cooperate',
+                'emotional_status' => 'Calm',
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,

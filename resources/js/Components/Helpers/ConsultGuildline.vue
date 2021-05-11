@@ -1,5 +1,8 @@
 <template>
-    <div class="flex items-center rounded-tl-lg rounded-tr-lg border-alt-theme-light border-8 border-t-0 border-l-0 border-r-0 shadow p-4">
+    <div
+        v-if="!$page.props.flash.messages"
+        class="flex items-center rounded-tl-lg rounded-tr-lg border-alt-theme-light border-8 border-t-0 border-l-0 border-r-0 shadow p-4"
+    >
         <icon
             class="block w-12 h-12 text-alt-theme-light"
             name="info-circle"
