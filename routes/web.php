@@ -64,11 +64,11 @@ Route::middleware('auth')->post('/admissions', [AdmissionsController::class, 'st
 Route::middleware('auth')->post('/front-api/patient-rencently-admission', [PatientAPIController::class, 'recentlyAdmission']);
 Route::middleware('auth')->post('/front-api/patient', [PatientAPIController::class, 'patient']);
 
-// report
-Route::middleware('auth')->get('/reports/{note:slug}', [NotesController::class, 'show']);
-
 // Export report
 Route::middleware('auth')->get('/reports/refer-cases', ExportReportsController::class);
+
+// report
+Route::middleware('auth')->get('/reports/{note:slug}', [NotesController::class, 'show']);
 
 // admission note
 Route::middleware('auth')->post('/admission-notes/{note}', AdmissionNotesController::class);
