@@ -34,7 +34,7 @@ class AdmissionNoteManager extends NoteManager
 
         Request::session()->flash('main-menu-links', [ // need check abilities
             ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
-            ['icon' => 'clipboard-list', 'label' => 'โน๊ตของเคสนี้', 'route' => 'refer-cases/'.$this->note->admission->referCase->slug.'/notes'],
+            ['icon' => 'folder-open', 'label' => 'โน๊ตของเคสนี้', 'route' => 'refer-cases/'.$this->note->admission->referCase->slug.'/notes'],
         ]);
         Request::session()->flash('action-menu', []);
     }

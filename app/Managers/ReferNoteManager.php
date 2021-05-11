@@ -288,11 +288,13 @@ class ReferNoteManager extends NoteManager
         }
 
         // check candidate keys
-        $count = Note::where('contents->patient->sat_code', $patient['sat_code'])
-                     ->where('contents->patient->date_admit_origin', $patient['date_admit_origin'])
-                     ->count();
-        if ($count > 1) {
-            $errors['sat_code'] = 'เคสซ้ำ โปรดตรวจสอบ SAT CODE และ วันที่รับไว้ในโรงพยาบาล';
+        if (! isset($errors['sat_code'])) {
+            $count = Note::where('contents->patient->sat_code', $patient['sat_code'])
+                        ->where('contents->patient->date_admit_origin', $patient['date_admit_origin'])
+                        ->count();
+            if ($count > 1) {
+                $errors['sat_code'] = 'เคสซ้ำ โปรดตรวจสอบ SAT CODE และ วันที่รับไว้ในโรงพยาบาล';
+            }
         }
 
         if (count($errors) > 0) {

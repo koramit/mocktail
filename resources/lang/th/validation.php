@@ -185,6 +185,17 @@ return [
         'adr_detail' => 'ยา/อาหารที่แพ้ หากไม่มีโปรดเลือกไม่แพ้',
 
         'room_number' => 'หมายเลขห้อง',
+
+        'discharge_status' => 'สถานะการจำหน่าย',
+        'discharge_type' => 'ประเภทการจำหน่าย',
+        'refer_to' => 'โรงพยาบาลที่ส่งไป',
+
+        'non_OR_procedures_detail' => 'รายละเอียด Non-OR procedures',
+
+        'date_appointment' => 'วันที่นัด',
+        'appointment_at' => 'สถานที่นัด',
+
+        'date_repeat_NP_swab' => 'วันนัดทำ NP swab ซ้ำ',
     ],
 
 ];

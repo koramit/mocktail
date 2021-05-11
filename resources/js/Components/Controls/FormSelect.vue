@@ -90,7 +90,7 @@ export default {
     },
     watch: {
         modelValue (val) {
-            if (val === 'Remove') {
+            if (val === 'ยกเลิก') {
                 this.$emit('update:modelValue', '');
                 this.$emit('autosave');
             }

@@ -2,8 +2,11 @@
 
 namespace App\Managers;
 
+use App\Models\Note;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Validator;
 
 class DischargeSummaryManager extends NoteManager
 {
@@ -23,13 +26,16 @@ class DischargeSummaryManager extends NoteManager
             Request::session()->flash('messages', [
                 'status' => 'info',
                 'messages' => [
-                    'สามารถแก้ไขข้อมูลได้จนกว่าจะสรุปแฟ้ม',
+                    'สามารถกลับมาเขียนต่อภายหลังได้',
+                    'เมื่อเขียนเสร็จแล้วให้ <span class="font-semibold">เผยแพร่โน๊ต</span> ท้ายฟอร์ม',
+                    'เมื่อ <span class="font-semibold">เผยแพร่โน๊ต</span> แล้วยังสามารถกลับมาแก้ไขได้จนกว่าจะสรุปแฟ้ม',
                 ],
             ]);
         }
 
         Request::session()->flash('main-menu-links', [ // need check abilities
             ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
+            ['icon' => 'folder-open', 'label' => 'โน๊ตของเคสนี้', 'route' => 'refer-cases/'.$this->note->admission->referCase->slug.'/notes'],
         ]);
         Request::session()->flash('action-menu', []);
     }
@@ -52,7 +58,6 @@ class DischargeSummaryManager extends NoteManager
         return [
             'discharge_status' => ['COMPLETE RECOVERY', 'IMPROVED', 'NOT IMPROVED'],
             'discharge_type' => ['WITH APPROVAL', 'AGAINST ADVICE', 'BY ESCAPE', 'BY REFER'],
-            'center' => $this->note->admission->referCase->center->name,
             'complications' => [
                 ['name' => 'dyspnea', 'label' => 'Dyspnea'],
                 ['name' => 'chest_discomfort', 'label' => 'Chest discomfort'],
@@ -74,6 +79,8 @@ class DischargeSummaryManager extends NoteManager
                 ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
             ],
             'patchEndpoint' => url('/forms/'.$this->note->id),
+            'note_id' => $this->note->id,
+            'center' => $this->note->admission->referCase->center->name,
         ];
     }
 
@@ -87,6 +94,7 @@ class DischargeSummaryManager extends NoteManager
         $referNote = $this->note->admission->notes()->whereType('refer note')->first()->contents;
         $contents = $this->note->contents;
         $contents['comorbids'] = $referNote['comorbids'];
+        $contents['patient'] = $referNote['patient'];
         $this->note->contents = $contents;
 
         return $this->note->save();
@@ -169,5 +177,134 @@ class DischargeSummaryManager extends NoteManager
                 'date_repeat_NP_swab' => null,
             ],
         ];
+    }
+
+    public static function validate(Note $note)
+    {
+        $rules = [
+            'discharge_status' => 'required|string',
+            'discharge_type' => 'required|string',
+            'refer_to' => 'exclude_unless:discharge_type,BY REFER|required|string',
+
+            'temperature_celsius' => 'required|numeric',
+            'pulse_per_minute' => 'required|integer',
+            'respiration_rate_per_minute' => 'required|integer',
+            'sbp' => 'required|integer',
+            'dbp' => 'required|integer',
+            'o2_sat' => 'required|integer',
+
+            'non_OR_procedures_detail' => 'exclude_if:no_non_OR_procedures,true|required|string',
+
+            'date_appointment' => 'exclude_if:no_appointment,true|required|date',
+            'appointment_at' => 'exclude_if:no_appointment,true|required|date',
+
+            'date_repeat_NP_swab' => 'exclude_if:no_repeat_NP_swab,true|required|date',
+        ];
+
+        $errors = [];
+        $data = Request::all();
+        $validator = Validator::make($data['discharge'] + $data['vital_signs'] + $data['non_OR_procedures'] + $data['appointment'] + $data['repeat_NP_swab'], $rules);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+        }
+
+        $patient = $data['patient'];
+
+        // validate diagnosis
+        $diagnosis = $data['diagnosis'];
+        if (! $diagnosis['asymptomatic_diagnosis']) {
+            if (! ($diagnosis['uri'] ||
+                $diagnosis['pneumonia'] ||
+                $diagnosis['gastroenteritis'] ||
+                $diagnosis['other_diagnosis'])
+            ) {
+                $errors['diagnosis'] = 'โปรดระบุการวินิจฉัย';
+            }
+
+            if ($diagnosis['uri']) {
+                if (! $diagnosis['date_uri']) {
+                    $errors['date_uri'] = 'จำเป็นต้องลง วันที่เริ่มมีอาการ URI';
+                } elseif ( // date_uri MUST >= date_symptom_start
+                    ! Carbon::create($diagnosis['date_uri'])->greaterThanOrEqualTo(Carbon::create($patient['date_symptom_start']))
+                ) {
+                    $errors['date_uri'] = 'ข้อมูลไม่สอดคล้องกับ วันแรกที่มีอาการ';
+                }
+            }
+
+            if ($diagnosis['pneumonia']) {
+                if (! $diagnosis['date_pneumonia']) {
+                    $errors['date_pneumonia'] = 'จำเป็นต้องลง วันที่เริ่มมีอาการ PNEUMONIA';
+                } elseif ( // date_pneumonia MUST >= date_symptom_start
+                    ! Carbon::create($diagnosis['date_uri'])->greaterThanOrEqualTo(Carbon::create($patient['date_symptom_start']))
+                ) {
+                    $errors['date_pneumonia'] = 'ข้อมูลไม่สอดคล้องกับ วันแรกที่มีอาการ';
+                }
+            }
+        }
+
+        // validate comorbids
+        $comorbids = $data['comorbids'];
+        if (! $comorbids['no_comorbids']) {
+            if (! ($comorbids['dm'] ||
+                $comorbids['ht'] ||
+                $comorbids['other_comorbids'])
+            ) {
+                $errors['comorbids'] = 'โปรดระบุโรคประจำตัว';
+            }
+        }
+
+        // validate complications
+        $complications = $data['complications'];
+        if (! $complications['no_complications']) {
+            if (! ($complications['dyspnea'] ||
+                $complications['chest_discomfort'] ||
+                $complications['fever'] ||
+                $complications['headache'] ||
+                $complications['diarrhea'] ||
+                $complications['desaturation'] ||
+                $complications['other_complications'])
+            ) {
+                $errors['complications'] = 'โปรดระบุภาวะแทรกซ้อน';
+            } elseif ($complications['desaturation'] && ! $complications['desaturation_specific']) {
+                $errors['desaturation_specific'] = 'โปรดระบุ Desaturation';
+            }
+        }
+
+        // validate symptoms
+        $symptoms = $data['symptoms'];
+        if ($symptoms['asymptomatic_symptom']) {
+            if (! $symptoms['asymptomatic_detail']) {  // if no symtoms then need detail
+                $errors['asymptomatic_detail'] = 'โปรดระบุรายละเอียด';
+            }
+        } else {
+            if (! ($symptoms['fever'] ||
+                $symptoms['cough'] ||
+                $symptoms['sore_throat'] ||
+                $symptoms['rhinorrhoea'] ||
+                $symptoms['sputum'] ||
+                $symptoms['fatigue'] ||
+                $symptoms['anosmia'] ||
+                $symptoms['loss_of_taste'] ||
+                $symptoms['myalgia'] ||
+                $symptoms['diarrhea'] ||
+                $symptoms['other_symptoms'])
+            ) { // if not asymptomatic then need some symptoms
+                $errors['symptoms'] = 'โปรดระบุอาการแสดง หากไม่มีอาการโปรดเลือก Asymptomatic';
+            }
+        }
+
+        // validate problem_list
+        $problem_list = $data['problem_list'];
+        if (! $problem_list['no_problem_list']) {
+            if (! ($problem_list['quarantine'] ||
+                $problem_list['other_problem_list'])
+            ) {
+                $errors['problem_list'] = 'โปรดระบุปัญหา';
+            }
+        }
+
+        if (count($errors) > 0) {
+            return $errors;
+        }
     }
 }

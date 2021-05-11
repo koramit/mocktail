@@ -31,7 +31,7 @@
                     <!-- read -->
                     <inertia-link
                         class="w-full flex text-alt-theme-light justify-start items-center my-2"
-                        href="#"
+                        :href="`${baseUrl}/soon`"
                         v-if="userCanRead(type.name.toLowerCase())"
                     >
                         <icon
@@ -50,6 +50,7 @@
                 </h2>
                 <button
                     class="flex text-bitter-theme-light justify-start items-center"
+                    @click="$inertia.visit(`${baseUrl}/soon`)"
                 >
                     <icon
                         class="w-4 h-4 mr-1"
@@ -66,6 +67,7 @@
                 </h2>
                 <button
                     class="flex text-bitter-theme-light justify-start items-center"
+                    @click="$inertia.visit(`${baseUrl}/soon`)"
                 >
                     <icon
                         class="w-4 h-4 mr-1"
