@@ -43,7 +43,9 @@
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded shadow-sm p-4 mt-8">
+
+        <!-- progress notes -->
+        <!-- <div class="bg-white rounded shadow-sm p-4 mt-8">
             <div class="flex justify-between items-center pb-2 border-b border-dashed text-thick-theme-light">
                 <h2 class="font-semibold">
                     บันทึกความก้าวหน้าของผู้ป่วย
@@ -59,8 +61,10 @@
                     <span class="block">เพิ่ม</span>
                 </button>
             </div>
-        </div>
-        <div class="bg-white rounded shadow-sm p-4 mt-8">
+        </div> -->
+
+        <!-- nurse notes -->
+        <!-- <div class="bg-white rounded shadow-sm p-4 mt-8">
             <div class="flex justify-between items-center pb-2 border-b border-dashed text-thick-theme-light">
                 <h2 class="font-semibold">
                     บันทึกทางการพยาบาล
@@ -76,7 +80,7 @@
                     <span class="block">เพิ่ม</span>
                 </button>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 

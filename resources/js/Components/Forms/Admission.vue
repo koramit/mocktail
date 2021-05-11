@@ -8,7 +8,7 @@
         >
             <template #header>
                 <div class="font-semibold text-dark-theme-light">
-                    รับแอดมิด
+                    รับแอดมิท
                 </div>
             </template>
             <template #body>
@@ -36,7 +36,7 @@
                     <form-input
                         v-if="state === 'try_later'"
                         v-model="try_later"
-                        label="ข้อมูลแอดมิดล่าสุดในระบบเวชระเบียน"
+                        label="ข้อมูลแอดมิทล่าสุดในระบบเวชระเบียน"
                         name="try_later"
                         :readonly="true"
                     />
@@ -72,7 +72,7 @@
                     v-else
                     class="text-sm text-yellow-400 w-full text-center"
                 >
-                    <span class="font-semibold">HN</span> นี้ยังไม่มีข้อมูลแอดมิดใน <span class="font-semibold">{{ wardNameCheck }}</span><br class="sm:hidden"> โปรดลองใหม่ภายหลัง
+                    <span class="font-semibold">HN</span> นี้ยังไม่มีข้อมูลแอดมิทใน <span class="font-semibold">{{ wardNameCheck }}</span><br class="sm:hidden"> โปรดลองใหม่ภายหลัง
                 </p>
             </template>
         </modal>
@@ -139,7 +139,7 @@ export default {
                     console.log(response.data);
                     if (! response.data.found) {
                         this.state = 'try_later';
-                        this.try_later = 'ไม่พบข้อมูลการแอดมิด';
+                        this.try_later = 'ไม่พบข้อมูลการแอดมิท';
                         if (response.data.patient.found) {
                             console.log('found patient');
                             this.form.name = response.data.patient.patient_name;

@@ -54,8 +54,15 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function getPatient($hn)
     {
         $data = $this->brushing($this->pasteLoad('patient', ['hn' => $hn]));
-        if (! $data['found']) {
-            $data['message'] = __('reply_messages.frontend_api.item_not_found', ['item' => 'patient']);
+        if (! $data) { // error: $data = null
+            return [
+                'found' => false,
+                'message' => __('service.failed'),
+            ];
+        }
+
+        if (! $data['found']) { // error: $data = null
+            $data['message'] = __('service.item_not_found', ['item' => 'HN']);
             unset($data['body']);
 
             return $data;
@@ -107,7 +114,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
             return $data;
         }
 
-        $data['message'] = __('reply_messages.frontend_api.item_not_found', ['item' => 'admission']);
+        $data['message'] = __('service.item_not_found', ['item' => 'admission']);
         if (isset($data['patient']) && $data['patient']['found']) { // error not found patient
             $data['patient']['marital_status_name'] = $data['patient']['marital_status'];
             $data['patient']['location'] = $data['patient']['postcode'];
@@ -115,7 +122,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
             return $data;
         }
 
-        $data['patient']['message'] = __('reply_messages.frontend_api.item_not_found', ['item' => 'patient']);
+        $data['patient']['message'] = __('service.item_not_found', ['item' => 'HN']);
 
         return $data;
     }

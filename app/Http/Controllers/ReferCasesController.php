@@ -79,7 +79,7 @@ class ReferCasesController extends Controller
             } else {
                 $result = (new PatientManager())->manage($hn);
                 if (! $result['found']) {
-                    $errors['hn'] = 'ไม่พบ HN นี้ในระบบ';
+                    $errors['hn'] = isset($result['message']) ? $result['message'] : 'ไม่พบ HN นี้ในระบบ';
                 }
             }
         }
