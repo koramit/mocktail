@@ -9,7 +9,7 @@
             :id="name"
             :name="name"
             ref="textarea"
-            @input="$emit('update:modelValue', $refs.textarea.value)"
+            @input="oninput"
             @change="$emit('autosave')"
             :type="type"
             :placeholder="placeholder"
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import autosize from 'autosize';
 export default {
     emits: ['autosave', 'update:modelValue'],
@@ -42,6 +43,9 @@ export default {
         readonly: { type: Boolean },
         error: { type: String, default: '' },
     },
+    created () {
+        this.autosave = debounce(() => this.$emit('autosave'), 2500);
+    },
     mounted () {
         autosize(this.$refs.textarea);
     },
@@ -52,6 +56,10 @@ export default {
         change () {
             this.$emit('autosave');
         },
+        oninput () {
+            this.$emit('update:modelValue', this.$refs.textarea.value);
+            this.autosave();
+        }
     }
 };
 </script>

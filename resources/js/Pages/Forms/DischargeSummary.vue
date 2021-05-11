@@ -376,7 +376,7 @@
                     <form-checkbox
                         class="mt-2"
                         v-model="form.problem_list.quarantine"
-                        label="ต้องกัก🧩ที่บ้าน"
+                        label="ต้องกักตัวต่อที่บ้าน"
                         @autosave="autosave('problem_list.quarantine')"
                     />
                     <form-input
@@ -512,8 +512,13 @@ export default {
     watch: {
         'form.discharge.discharge_status': {
             handler (val) {
+                if (! val) {
+                    return;
+                }
                 if (val === 'NOT IMPROVED') {
                     this.form.diagnosis.asymptomatic_diagnosis = false;
+                } else {
+                    this.form.diagnosis.asymptomatic_diagnosis = true;
                 }
             }
         },
@@ -530,6 +535,9 @@ export default {
             handler(val) {
                 if (!val) {
                     this.form.symptoms.asymptomatic_symptom = false;
+                    if (this.form.discharge.discharge_status !== 'NOT IMPROVED') {
+                        this.form.discharge.discharge_status = null;
+                    }
                     return;
                 }
                 // reset others
@@ -540,6 +548,9 @@ export default {
                 });
 
                 this.form.symptoms.asymptomatic_symptom = true;
+                if (this.form.discharge.discharge_status === 'NOT IMPROVED') {
+                    this.form.discharge.discharge_status = null;
+                }
             }
         },
         'form.complications.no_complications': {
@@ -589,7 +600,7 @@ export default {
                     this.form.diagnosis.gastroenteritis = true;
                 }
 
-                if (!this.form.diagnosis.uri && (symptomsChecked.length > 1 || symptomsChecked[0] !== 'diarrhea')) {
+                if (!this.form.diagnosis.uri && !this.form.diagnosis.asymptomatic_diagnosis && (symptomsChecked.length > 1 || symptomsChecked[0] !== 'diarrhea')) {
                     this.form.diagnosis.uri = true;
                 }
             },
@@ -610,6 +621,7 @@ export default {
                 } else if (field.indexOf('diagnosis') !== -1 || field.indexOf('symptoms') !== -1) {
                     form['contents->diagnosis'] = this.form.diagnosis;
                     form['contents->symptoms'] = this.form.symptoms;
+                    form['contents->discharge'] = this.form.discharge;
                 } else if (field.indexOf('complications') !== -1) {
                     form['contents->complications'] = this.form.complications;
                 } else {

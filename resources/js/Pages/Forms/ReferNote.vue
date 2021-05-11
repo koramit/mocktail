@@ -610,7 +610,7 @@ export default {
                     this.form.diagnosis.gastroenteritis = true;
                 }
 
-                if (!this.form.diagnosis.uri && (symptomsChecked.length > 1 || symptomsChecked[0] !== 'diarrhea')) {
+                if (!this.form.diagnosis.uri && !this.form.diagnosis.asymptomatic_diagnosis && (symptomsChecked.length > 1 || symptomsChecked[0] !== 'diarrhea')) {
                     this.form.diagnosis.uri = true;
                 }
             },
