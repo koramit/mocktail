@@ -114,7 +114,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
             return $data;
         }
 
-        $data['message'] = __('reply_messages.frontend_api.item_not_found', ['item' => 'admission']);
+        $data['message'] = __('service.item_not_found', ['item' => 'admission']);
         if (isset($data['patient']) && $data['patient']['found']) { // error not found patient
             $data['patient']['marital_status_name'] = $data['patient']['marital_status'];
             $data['patient']['location'] = $data['patient']['postcode'];
@@ -122,7 +122,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
             return $data;
         }
 
-        $data['patient']['message'] = __('reply_messages.frontend_api.item_not_found', ['item' => 'patient']);
+        $data['patient']['message'] = __('service.item_not_found', ['item' => 'HN']);
 
         return $data;
     }
