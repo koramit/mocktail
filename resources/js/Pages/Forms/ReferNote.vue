@@ -456,6 +456,10 @@
             <h2 class="font-semibold text-thick-theme-light">
                 แนบรูปถ่าย
             </h2>
+            <small
+                class="my-t text-red-700 text-sm"
+                v-if="$page.props.errors.file"
+            >{{ $page.props.errors.file }}</small>
             <image-uploader
                 class="mt-2"
                 v-if="$page.props.user.center !== 'ศิริราช'"

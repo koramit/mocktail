@@ -10,6 +10,13 @@ class UploadsController extends Controller
 {
     public function store()
     {
+        Request::validate(
+            ['file' => 'required|file'],
+            [
+                'file.required' => 'ผิดพลาด กรุณาลองใหม่ ขออภัยในความไม่สะดวก',
+                'file.file' => 'ผิดพลาด กรุณาลองใหม่ ขออภัยในความไม่สะดวก',
+            ]
+        );
         $path = Request::file('file')->store('uploads');
 
         $note = Note::find(Request::input('note_id'));
