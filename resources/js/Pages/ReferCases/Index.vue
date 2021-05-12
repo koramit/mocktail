@@ -106,7 +106,7 @@
                 <inertia-link
                     class="w-full flex text-alt-theme-light justify-start"
                     v-if="userCan('read', referCase)"
-                    :href="`${baseUrl}/reports/${referCase.note_slug}`"
+                    :href="`${baseUrl}/reports/${referCase.slug}`"
                 >
                     <icon
                         class="w-4 h-4 mr-1"

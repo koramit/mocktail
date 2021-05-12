@@ -16,12 +16,7 @@ class ReferNoteManager extends NoteManager
         // title and menu
         if ($report) {
             Request::session()->flash('page-title', 'ใบส่งตัว: '.($this->note->referCase->name));
-            Request::session()->flash('messages', [
-                'status' => 'info',
-                'messages' => [
-                    'สำหรับอ่านเท่านั้น',
-                ],
-            ]);
+            Request::session()->flash('messages', null);
         } else {
             Request::session()->flash('page-title', 'เขียนใบส่งตัว: '.($this->note->referCase->name));
             if ($this->note->contents['submitted']) {
@@ -51,11 +46,100 @@ class ReferNoteManager extends NoteManager
         ]);
     }
 
-    public function getContents()
+    public function getContents($report = false)
     {
+        if (! $report) {
+            $contents = $this->note->contents;
+            $contents['patient']['name'] = $this->note->referCase->name;
+            $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
+
+            return $contents;
+        }
+
         $contents = $this->note->contents;
-        $contents['patient']['name'] = $this->note->referCase->name;
-        $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
+
+        $symptoms = $contents['symptoms'];
+        if ($symptoms['asymptomatic_symptom']) {
+            $symptoms = 'Asymptomatics '.$symptoms['asymptomatic_detail'];
+        } else {
+            $symptomsList = $this->getConfigs()['symptoms'];
+            $text = '';
+            foreach ($symptomsList as $symptom) {
+                if ($symptoms[$symptom['name']]) {
+                    $text .= "{$symptom['label']} ";
+                }
+            }
+
+            $text .= $symptoms['other_symptoms'];
+            $symptoms = $text;
+        }
+        $contents['symptoms'] = $symptoms;
+
+        $diagnosis = $contents['diagnosis'];
+        if ($diagnosis['asymptomatic_diagnosis']) {
+            $diagnosis = 'Asymptomatics COVID 19 infection';
+        } else {
+            $text = '';
+            if ($diagnosis['uri']) {
+                $text .= ('COVID 19 with URI วันที่เริ่มมีอาการ '.$this->getDateString($diagnosis['date_uri']).'<br>');
+            }
+
+            if ($diagnosis['pneumonia']) {
+                $text .= ('COVID 19 with Pneumonia วันที่เริ่มมีอาการ '.$this->getDateString($diagnosis['date_pneumonia']).'<br>');
+            }
+
+            if ($diagnosis['gastroenteritis']) {
+                $text .= 'COVID 19 with Gastroenteritis<br>';
+            }
+
+            $text .= $diagnosis['other_diagnosis'];
+            $diagnosis = $text;
+        }
+        $contents['diagnosis'] = $diagnosis;
+
+        if ($contents['adr']['no_adr']) {
+            $contents['adr'] = 'ไม่แพ้';
+        } else {
+            $contents['adr'] = $contents['adr']['adr_detail'];
+        }
+
+        $comorbids = $contents['comorbids'];
+        if ($comorbids['no_comorbids']) {
+            $comorbids = 'ไม่มี';
+        } else {
+            $text = '';
+            if ($comorbids['dm']) {
+                $text .= 'เบาหวาน ';
+            }
+
+            if ($comorbids['ht']) {
+                $text .= 'ความดันโลหิตสูง ';
+            }
+
+            $text .= $comorbids['other_comorbids'];
+            $comorbids = $text;
+        }
+        $contents['comorbids'] = $comorbids;
+
+        $contents['meal'] = $contents['patient']['meal'];
+
+        $treatments = $contents['treatments'];
+        if (! $treatments['favipiravir']) {
+            unset($treatments['favipiravir'], $treatments['date_start_favipiravir'], $treatments['date_stop_favipiravir']);
+        } else {
+            $treatments['date_start_favipiravir'] = $this->getDateString($treatments['date_start_favipiravir']);
+            $treatments['date_stop_favipiravir'] = $this->getDateString($treatments['date_stop_favipiravir']);
+        }
+        if (! $treatments['date_repeat_NP_swap']) {
+            unset($treatments['date_repeat_NP_swap']);
+        } else {
+            $treatments['date_repeat_NP_swap'] = $this->getDateString($treatments['date_repeat_NP_swap']);
+        }
+        $contents['treatments'] = $treatments;
+
+        if ($contents['remark']) {
+            $contents['remark'] = str_replace("\n", '<br>', $contents['remark']);
+        }
 
         return $contents;
     }
@@ -64,6 +148,7 @@ class ReferNoteManager extends NoteManager
     {
         return [
             'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคม', '30 บาท', 'ชำระเงินเอง'],
+            'wards' => ['มว ทีม 1', 'มว ทีม 2', 'มว ทีม 3', 'อฎ 12 เหนือ', 'อฎ 12 ใต้', 'อานันทมหิดล 2'],
             'meals' => ['ปกติ', 'อิสลาม', 'มังสวิรัติ'],
             'symptoms' => [
                 ['label' => 'ไข้', 'name' => 'fever'],
@@ -89,6 +174,15 @@ class ReferNoteManager extends NoteManager
     public function getForm()
     {
         return 'Forms/ReferNote';
+    }
+
+    public function getDateString($date)
+    {
+        if (! $date) {
+            return null;
+        }
+
+        return Carbon::create($date)->format('d M Y');
     }
 
     public static function initNote()
