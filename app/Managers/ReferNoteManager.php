@@ -294,6 +294,9 @@ class ReferNoteManager extends NoteManager
         if (! isset($errors['sat_code'])) {
             $count = Note::where('contents->patient->sat_code', $patient['sat_code'])
                         ->where('contents->patient->date_admit_origin', $patient['date_admit_origin'])
+                        ->whereHas('referCase', function ($query) {
+                            $query->where('meta->status', '<>', 'canceled');
+                        })
                         ->count();
             if ($count > 1) {
                 $errors['sat_code'] = 'เคสซ้ำ โปรดตรวจสอบ SAT CODE และ วันที่รับไว้ในโรงพยาบาล';
