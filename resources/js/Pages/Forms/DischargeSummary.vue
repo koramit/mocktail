@@ -29,21 +29,21 @@
             <form-input
                 class="mt-2"
                 name="encountered_at"
-                label="วันเวลาที่แอดมิท"
+                label="วันเวลาที่แอดมิท (ระบบลงให้)"
                 v-model="form.admission.encountered_at"
                 :readonly="true"
             />
             <form-input
                 class="mt-2"
                 name="dismissed_at"
-                label="วันเวลาที่จำหน่าย"
+                :label="`วันเวลาที่จำหน่าย (ระบบ${form.admission.dismissed_at ? '':'จะ'}ลงให้)`"
                 v-model="form.admission.dismissed_at"
                 :readonly="true"
             />
             <form-input
                 class="mt-2"
                 name="length_of_stay"
-                label="จำนวนวันนอน"
+                :label="`จำนวนวันนอน (ระบบ${form.admission.dismissed_at ? '':'จะ'}ลงให้)`"
                 v-model="form.admission.length_of_stay"
                 :readonly="true"
             />
