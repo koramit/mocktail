@@ -112,6 +112,16 @@ class ReferCase extends Model
         return $this->patient ? $this->patient->full_name : ($this->patient_name ?? 'ยังไม่มีชื่อ');
     }
 
+    public function getHnAttribute()
+    {
+        return $this->patient ? $this->patient->hn : ($this->hn ?? null);
+    }
+
+    public function getAnAttribute()
+    {
+        return $this->admission ? $this->admission->an : ($this->an ?? null);
+    }
+
     public function scopeWithFilterUserCenter($query, $userCenterId)
     {
         if ($userCenterId !== config('app.main_center_id')) {

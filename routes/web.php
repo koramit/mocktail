@@ -11,6 +11,7 @@ use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\ReferCaseNotesController;
 use App\Http\Controllers\ReferCasesController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UploadsController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -68,7 +69,7 @@ Route::middleware('auth')->post('/front-api/patient', [PatientAPIController::cla
 Route::middleware('auth')->get('/reports/refer-cases', ExportReportsController::class);
 
 // report
-Route::middleware('auth')->get('/reports/{note:slug}', [NotesController::class, 'show']);
+Route::middleware('auth')->get('/reports/{case:slug}', ReportsController::class);
 
 // admission note
 Route::middleware('auth')->post('/admission-notes/{note}', AdmissionNotesController::class);
