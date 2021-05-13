@@ -127,4 +127,9 @@ class User extends Authenticatable
     {
         return $this->profile['tel_no'];
     }
+
+    public function getPlnAttribute()
+    {
+        return ($this->profile['pln']) ?? null;
+    }
 }
