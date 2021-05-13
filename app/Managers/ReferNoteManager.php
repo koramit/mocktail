@@ -148,7 +148,9 @@ class ReferNoteManager extends NoteManager
         if ($contents['remark']) {
             $lines = explode("\n", $contents['remark']);
             if (count($lines) > 1) {
-                $contents['remark'] = collect($lines)->map(fn ($line) => "<p>{$line}</p>")->join('');
+                $contents['remark'] = collect($lines)->map(function ($line) {
+                    return "<p>{$line}</p>";
+                })->join('');
             }
         }
 
