@@ -4,7 +4,10 @@
             v-if="label"
             class="form-label"
         >{{ label }} :</label>
-        <div v-html="formattedData" />
+        <div
+            class="break-words"
+            v-html="formattedData"
+        />
     </div>
 </template>
 

@@ -18,10 +18,10 @@
                 />
             </div>
 
-            <h3 class="font-normal underline text-dark-theme-light mt-12">
+            <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
                 Vital Signs ล่าสุด
             </h3>
-            <div class="mt-2 sm:grid grid-rows-3 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
+            <div class="mt-2 grid grid-rows-4 sm:grid-rows-3 grid-flow-col gap-1 sm:gap-2 lg:gap-3 xl:gap-4">
                 <display-input
                     v-for="(field, key) in configs.vital_signs"
                     class="mt-2 md:mt-0"
@@ -35,7 +35,7 @@
                 v-for="(topic, key) in configs.topics"
                 :key="key"
             >
-                <h3 class="font-normal underline text-dark-theme-light mt-12">
+                <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
                     {{ topic.label }}
                 </h3>
                 <div class="mt-2">
@@ -46,14 +46,15 @@
                 </div>
             </template>
 
-            <h3 class="font-normal underline text-dark-theme-light mt-12">
+            <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
                 คำสั่งการรักษา
             </h3>
             <div
-                class="mt-2 sm:grid grid-flow-col gap-2 lg:gap-3 xl:gap-4"
+                class="mt-2 grid grid-flow-col gap-2 lg:gap-3 xl:gap-4"
                 :class="{
-                    'grid-rows-1': filteredTreatments.length <= 3,
-                    'grid-rows-2': filteredTreatments.length > 3
+                    'grid-rows-1': filteredTreatments.length <= 2,
+                    'grid-rows-2 sm:grid-rows-1': filteredTreatments.length === 3,
+                    'grid-rows-3 sm:grid-rows-2': filteredTreatments.length > 3
                 }"
             >
                 <display-input
@@ -65,25 +66,29 @@
                 />
             </div>
 
-            <tamplate v-if="contents.remark">
-                <h3 class="font-normal underline text-dark-theme-light mt-12">
+            <template v-if="contents.remark">
+                <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
                     เพิ่มเติม
                 </h3>
-                <div class="mt-2">
-                    <display-input
-                        class="mt-2 md:mt-0"
-                        :data="contents.remark"
-                    />
-                </div>
-            </tamplate>
+                <display-input
+                    class="mt-2 md:mt-0"
+                    :data="contents.remark"
+                />
+            </template>
+
+            <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
+                ผู้เขียน
+            </h3>
+            <contact-card :contact="contents.author" />
         </div>
     </div>
 </template>
 
 <script>
-import DisplayInput from '../../Components/Helpers/DisplayInput.vue';
+import DisplayInput from '@/Components/Helpers/DisplayInput';
+import ContactCard from '@/Components/Helpers/ContactCard';
 export default {
-    components: { DisplayInput },
+    components: { DisplayInput, ContactCard },
     props: {
         contents: { type: Object, required: true },
     },

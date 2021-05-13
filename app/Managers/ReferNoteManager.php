@@ -57,6 +57,14 @@ class ReferNoteManager extends NoteManager
         }
 
         $contents = $this->note->contents;
+        $contents['author'] = [
+            'name' => $this->note->author->full_name,
+            'pln' =>  $this->note->author->pln,
+            'tel_no' =>  $this->note->author->tel_no,
+        ];
+
+        // check new keys, set them if not already set
+        $this->checkNewKeys($contents);
 
         $symptoms = $contents['symptoms'];
         if ($symptoms['asymptomatic_symptom']) {
@@ -81,11 +89,11 @@ class ReferNoteManager extends NoteManager
         } else {
             $text = '';
             if ($diagnosis['uri']) {
-                $text .= ('COVID 19 with URI วันที่เริ่มมีอาการ '.$this->getDateString($diagnosis['date_uri']).'<br>');
+                $text .= ('COVID 19 with URI เมื่อ '.$this->getDateString($diagnosis['date_uri']).'<br>');
             }
 
             if ($diagnosis['pneumonia']) {
-                $text .= ('COVID 19 with Pneumonia วันที่เริ่มมีอาการ '.$this->getDateString($diagnosis['date_pneumonia']).'<br>');
+                $text .= ('COVID 19 with Pneumonia เมื่อ '.$this->getDateString($diagnosis['date_pneumonia']).'<br>');
             }
 
             if ($diagnosis['gastroenteritis']) {
@@ -138,10 +146,26 @@ class ReferNoteManager extends NoteManager
         $contents['treatments'] = $treatments;
 
         if ($contents['remark']) {
-            $contents['remark'] = str_replace("\n", '<br>', $contents['remark']);
+            $lines = explode("\n", $contents['remark']);
+            if (count($lines) > 1) {
+                $contents['remark'] = collect($lines)->map(fn ($line) => "<p>{$line}</p>")->join('');
+            }
         }
 
         return $contents;
+    }
+
+    public function checkNewKeys(&$contents)
+    {
+        if (! isset($contents['remark'])) {
+            $contents['remark'] = null;
+        }
+        if (! isset($contents['vital_signs']['level_of_consciousness'])) {
+            $contents['vital_signs']['level_of_consciousness'] = null;
+        }
+        if (! isset($contents['vital_signs']['emotional_statu'])) {
+            $contents['vital_signs']['emotional_statu'] = null;
+        }
     }
 
     public function getConfigs()
