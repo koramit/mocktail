@@ -25,7 +25,7 @@ class ReportsController extends Controller
         $notes = [];
         // refer note
         // $manager = new ReferNoteManager($case->note);
-        $notes['refer_note'] = (new ReferNoteManager($case->note))->getContents(report: true);
+        $notes['refer_note'] = (new ReferNoteManager($case->note))->getContents(true);
 
         // admission note
 
