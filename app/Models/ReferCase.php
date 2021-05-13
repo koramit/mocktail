@@ -97,6 +97,15 @@ class ReferCase extends Model
         return $statuses[$this->meta['status']];
     }
 
+    public function setStatusAttribute($value)
+    {
+        $meta = $this->meta;
+        $meta['status'] = $value;
+        $this->meta = $meta;
+
+        return $this->save();
+    }
+
     public function getStatusAttribute()
     {
         return $this->meta['status'];
