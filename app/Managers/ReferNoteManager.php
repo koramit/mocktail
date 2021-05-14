@@ -48,18 +48,15 @@ class ReferNoteManager extends NoteManager
 
     public function getContents($report = false)
     {
-        if (! $report) {
-            $contents = $this->note->contents;
-            $contents['patient']['name'] = $this->note->referCase->name;
-            $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
-
-            return $contents;
-        }
-
         $contents = $this->note->contents;
         $contents['patient']['name'] = $this->note->referCase->name;
         $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
-        $contents['center'] = $this->note->referCase->center->name;
+
+        if (! $report) {
+            return $contents;
+        }
+
+        $contents['patient']['center'] = $this->note->referCase->center->name;
         $contents['author'] = [
             'name' => $this->note->author->full_name,
             'pln' =>  $this->note->author->pln,
@@ -69,6 +66,7 @@ class ReferNoteManager extends NoteManager
         // check new keys, set them if not already set
         $this->checkNewKeys($contents);
 
+        // symptoms
         $symptoms = $contents['symptoms'];
         if ($symptoms['asymptomatic_symptom']) {
             $symptoms = 'Asymptomatics '.$symptoms['asymptomatic_detail'];
@@ -86,6 +84,7 @@ class ReferNoteManager extends NoteManager
         }
         $contents['symptoms'] = $symptoms;
 
+        // diagnosis
         $diagnosis = $contents['diagnosis'];
         if ($diagnosis['asymptomatic_diagnosis']) {
             $diagnosis = 'Asymptomatics COVID 19 infection';
@@ -108,12 +107,14 @@ class ReferNoteManager extends NoteManager
         }
         $contents['diagnosis'] = $diagnosis;
 
+        // adr
         if ($contents['adr']['no_adr']) {
             $contents['adr'] = 'ไม่แพ้';
         } else {
             $contents['adr'] = $contents['adr']['adr_detail'];
         }
 
+        // comordibs
         $comorbids = $contents['comorbids'];
         if ($comorbids['no_comorbids']) {
             $comorbids = 'ไม่มี';
@@ -132,8 +133,10 @@ class ReferNoteManager extends NoteManager
         }
         $contents['comorbids'] = $comorbids;
 
+        // meal
         $contents['meal'] = $contents['patient']['meal'];
 
+        // treatment
         $treatments = $contents['treatments'];
         if (! $treatments['favipiravir']) {
             unset($treatments['favipiravir'], $treatments['date_start_favipiravir'], $treatments['date_stop_favipiravir']);
@@ -173,31 +176,78 @@ class ReferNoteManager extends NoteManager
         }
     }
 
-    public function getConfigs()
+    public function getConfigs($report = false)
     {
-        return [
-            'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคม', '30 บาท', 'ชำระเงินเอง'],
-            'wards' => ['มว ทีม 1', 'มว ทีม 2', 'มว ทีม 3', 'อฎ 12 เหนือ', 'อฎ 12 ใต้', 'อานันทมหิดล 2'],
-            'meals' => ['ปกติ', 'อิสลาม', 'มังสวิรัติ'],
-            'symptoms' => [
-                ['label' => 'ไข้', 'name' => 'fever'],
-                ['label' => 'ไอ', 'name' => 'cough'],
-                ['label' => 'เจ็บคอ', 'name' => 'sore_throat'],
-                ['label' => 'มีน้ำมูก', 'name' => 'rhinorrhoea'],
-                ['label' => 'มีเสมหะ', 'name' => 'sputum'],
-                ['label' => 'เหนื่อย', 'name' => 'fatigue'],
-                ['label' => 'จมูกไม่ได้กลิ่น', 'name' => 'anosmia'],
-                ['label' => 'ลิ้นไม่ได้รส', 'name' => 'loss_of_taste'],
-                ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
-                ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
+        if (! $report) {
+            return [
+                'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคม', '30 บาท', 'ชำระเงินเอง'],
+                'wards' => ['มว ทีม 1', 'มว ทีม 2', 'มว ทีม 3', 'อฎ 12 เหนือ', 'อฎ 12 ใต้', 'อานันทมหิดล 2'],
+                'meals' => ['ปกติ', 'อิสลาม', 'มังสวิรัติ'],
+                'symptoms' => [
+                    ['label' => 'ไข้', 'name' => 'fever'],
+                    ['label' => 'ไอ', 'name' => 'cough'],
+                    ['label' => 'เจ็บคอ', 'name' => 'sore_throat'],
+                    ['label' => 'มีน้ำมูก', 'name' => 'rhinorrhoea'],
+                    ['label' => 'มีเสมหะ', 'name' => 'sputum'],
+                    ['label' => 'เหนื่อย', 'name' => 'fatigue'],
+                    ['label' => 'จมูกไม่ได้กลิ่น', 'name' => 'anosmia'],
+                    ['label' => 'ลิ้นไม่ได้รส', 'name' => 'loss_of_taste'],
+                    ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
+                    ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
+                ],
+                'patchEndpoint' => url('/forms/'.$this->note->id),
+                'note_id' => $this->note->id,
+                'author_username' => $this->note->author->name,
+                'author' => $this->note->author->full_name,
+                'contact' => $this->note->author->tel_no,
+                'center' => $this->note->referCase->center->name,
+            ];
+        }
+
+        $configs = [
+            'patient' => [
+                ['label' => 'ส่งตัวจาก', 'name' => 'center'],
+                ['label' => 'sat code', 'name' => 'sat_code'],
+                ['label' => 'hn', 'name' => 'hn'],
+                ['label' => 'ชื่อผู้ป่วย', 'name' => 'name'],
+                ['label' => 'สิทธิ์การรักษา', 'name' => 'insurance'],
+                ['label' => 'วันแรกที่มีอาการ', 'name' => 'date_symptom_start', 'format' => 'date'],
+                ['label' => 'วันที่ตรวจพบเชื้อ', 'name' => 'date_covid_infected', 'format' => 'date'],
+                ['label' => 'วันที่รับไว้ในโรงพยาบาล', 'name' => 'date_admit_origin', 'format' => 'date'],
+                ['label' => 'วันที่ส่งผู้ป่วยไป Hospitel', 'name' => 'date_refer', 'format' => 'date'],
+                ['label' => 'วันที่ครบกำหนดนอนใน hospitel', 'name' => 'date_expect_discharge', 'format' => 'date'],
+                ['label' => 'วันที่ครบกำหนดกำหนดกักตัวต่อที่บ้าน', 'name' => 'date_quarantine_end', 'format' => 'date'],
             ],
-            'patchEndpoint' => url('/forms/'.$this->note->id),
-            'note_id' => $this->note->id,
-            'author_username' => $this->note->author->name,
-            'author' => $this->note->author->full_name,
-            'contact' => $this->note->author->tel_no,
-            'center' => $this->note->referCase->center->name,
+            'vital_signs' => [
+                ['label' => 'Temp (℃)', 'name' => 'temperature_celsius'],
+                ['label' => 'Pulse (min)', 'name' => 'pulse_per_minute'],
+                ['label' => 'RR (min)', 'name' => 'respiration_rate_per_minute'],
+                ['label' => 'SBP (mmHg)', 'name' => 'sbp'],
+                ['label' => 'DBP (mmHg)', 'name' => 'dbp'],
+                ['label' => 'O₂ sat (% RA)', 'name' => 'o2_sat'],
+            ],
+            'topics' => [
+                ['label' => 'บันทึกอาการแสดง', 'name' => 'symptoms'],
+                ['label' => 'วินิจฉัย', 'name' => 'diagnosis'],
+                ['label' => 'ประวัติแพ้ยา/อาหาร ', 'name' => 'adr'],
+                ['label' => 'โรคประจำตัว ', 'name' => 'comorbids'],
+                ['label' => 'อาหาร', 'name' => 'meal'],
+            ],
+            'treatments' => [
+                ['label' => 'Temperature', 'name' => 'temperature_per_day'],
+                ['label' => 'Oxygen sat RA', 'name' => 'oxygen_sat_RA_per_day'],
+                ['label' => 'Favipiravir (วันที่เริ่มยา)', 'name' => 'date_start_favipiravir'],
+                ['label' => 'Favipiravir (กำหนดครบวันที่)', 'name' => 'date_stop_favipiravir'],
+                ['label' => 'นัดมาทำ NP swab ซ้ำ วันที่', 'name' => 'date_repeat_NP_swap'],
+            ],
         ];
+
+        if (isset($this->note->contents['vital_signs']['level_of_consciousness'])) {
+            $configs['vital_signs'][] = ['label' => 'Level of consciousness', 'name' => 'level_of_consciousness'];
+            $configs['vital_signs'][] = ['label' => 'emotional status', 'name' => 'emotional_status'];
+        }
+
+        return $configs;
     }
 
     public function getForm()

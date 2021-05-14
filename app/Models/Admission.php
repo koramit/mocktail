@@ -48,10 +48,10 @@ class Admission extends Model
     {
         $ageInYears = $this->encountered_at->diffInYears($this->patient->dob);
         if ($ageInYears >= 1) {
-            return 'YO';
+            return 'ปี';
         }
 
-        return 'MO';
+        return 'เดือน';
     }
 
     public function getPageTitleAttribute()

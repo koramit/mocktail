@@ -40,7 +40,7 @@ class DischargeSummaryManager extends NoteManager
         Request::session()->flash('action-menu', []);
     }
 
-    public function getContents()
+    public function getContents($report = false)
     {
         $contents = $this->note->contents;
         $contents['admission']['name'] = $this->note->patient->full_name;
@@ -49,39 +49,234 @@ class DischargeSummaryManager extends NoteManager
         $contents['admission']['length_of_stay'] = $this->note->admission->length_of_stay.'';
         $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz(Auth::user()->timezone)->format('d M Y H:i');
         $contents['admission']['dismissed_at'] = $this->note->admission->dismissed_at ? $this->note->admission->dismissed_at->tz(Auth::user()->timezone)->format('d M Y H:i') : null;
+        if (! $report) {
+            return $contents;
+        }
+
+        // admission
+        $contents['admission']['ward'] = $this->note->admission->meta['place_name'];
+        $contents['admission']['attending'] = $this->note->admission->meta['attending'];
+        $contents['admission']['discharge_status'] = $contents['discharge']['discharge_status'];
+        $contents['admission']['discharge_type'] = $contents['discharge']['discharge_type'];
+        $contents['admission']['age'] = $this->note->admission->patient_age_at_encounter.' '.$this->note->admission->patient_age_at_encounter_unit;
+        if ($contents['discharge']['refer_to']) {
+            $contents['admission']['refer_to'] = $contents['discharge']['refer_to'];
+        }
+        unset($contents['discharge']);
+
+        // diagnosis
+        $diagnosis = $contents['diagnosis'];
+        if ($diagnosis['asymptomatic_diagnosis']) {
+            $diagnosis = 'Asymptomatics COVID 19 infection';
+        } else {
+            $text = '';
+            if ($diagnosis['uri']) {
+                $text .= ('COVID 19 with URI เมื่อ '.$this->getDateString($diagnosis['date_uri']).'<br>');
+            }
+
+            if ($diagnosis['pneumonia']) {
+                $text .= ('COVID 19 with Pneumonia เมื่อ '.$this->getDateString($diagnosis['date_pneumonia']).'<br>');
+            }
+
+            if ($diagnosis['gastroenteritis']) {
+                $text .= 'COVID 19 with Gastroenteritis<br>';
+            }
+
+            $text .= $diagnosis['other_diagnosis'];
+            $diagnosis = $text;
+        }
+        $contents['diagnosis'] = $diagnosis;
+
+        // comorbids
+        $comorbids = $contents['comorbids'];
+        if ($comorbids['no_comorbids']) {
+            unset($contents['comorbids']);
+        } else {
+            $text = '';
+            if ($comorbids['dm']) {
+                $text .= 'เบาหวาน ';
+            }
+
+            if ($comorbids['ht']) {
+                $text .= 'ความดันโลหิตสูง ';
+            }
+
+            $text .= $comorbids['other_comorbids'];
+            $contents['comorbids'] = $text;
+        }
+
+        // complications
+        $complications = $contents['complications'];
+        if ($complications['no_complications']) {
+            unset($contents['complications']);
+        } else {
+            $complicationsList = $this->getConfigs()['complications'];
+            $text = '';
+            foreach ($complicationsList as $complication) {
+                if ($complications[$complication['name']]) {
+                    $text .= "{$complication['label']}, ";
+                }
+            }
+
+            $text .= $complications['other_complications'];
+            $contents['complications'] = $text;
+        }
+
+        // non_OR_procedures
+        if ($contents['non_OR_procedures']['no_non_OR_procedures']) {
+            unset($contents['non_OR_procedures']);
+        } else {
+            $contents['non_OR_procedures'] = $contents['non_OR_procedures']['non_OR_procedures_detail'];
+        }
+
+        // symptoms
+        $symptoms = $contents['symptoms'];
+        if ($symptoms['asymptomatic_symptom']) {
+            $symptoms = 'Asymptomatics '.$symptoms['asymptomatic_detail'];
+        } else {
+            $symptomsList = $this->getConfigs()['symptoms'];
+            $text = '';
+            foreach ($symptomsList as $symptom) {
+                if ($symptoms[$symptom['name']]) {
+                    $text .= "{$symptom['label']} ";
+                }
+            }
+
+            $text .= $symptoms['other_symptoms'];
+            $symptoms = $text;
+        }
+        $contents['symptoms'] = $symptoms;
+
+        // problem_list
+        $problem_list = $contents['problem_list'];
+        if ($problem_list['no_problem_list']) {
+            unset($contents['problem_list']);
+        } else {
+            $text = '';
+            if ($problem_list['quarantine']) {
+                $text .= 'ต้องกักตัวต่อที่บ้าน ';
+            }
+
+            $text .= $problem_list['other_problem_list'];
+            $contents['problem_list'] = $text;
+        }
+
+        // appointment
+        $appointment = $contents['appointment'];
+        if ($appointment['no_appointment']) {
+            unset($contents['appointment']);
+        } else {
+            $text = '';
+            $text .= $this->getDateString($appointment['date_appointment']);
+            $text .= $appointment['appointment_at'];
+            $contents['appointment'] = $text;
+        }
+
+        // repeat_NP_swab
+        $repeat_NP_swab = $contents['repeat_NP_swab'];
+        if ($repeat_NP_swab['no_repeat_NP_swab']) {
+            unset($contents['repeat_NP_swab']);
+        } else {
+            $contents['repeat_NP_swab'] = $this->getDateString($repeat_NP_swab['date_repeat_NP_swab']);
+        }
+
+        // author
+        $contents['author'] = [
+            'name' => $this->note->author->full_name,
+            'pln' =>  $this->note->author->pln,
+            'tel_no' =>  $this->note->author->tel_no,
+        ];
 
         return $contents;
     }
 
-    public function getConfigs()
+    public function getConfigs($report = false)
     {
-        return [
-            'discharge_status' => ['COMPLETE RECOVERY', 'IMPROVED', 'NOT IMPROVED'],
-            'discharge_type' => ['WITH APPROVAL', 'AGAINST ADVICE', 'BY ESCAPE', 'BY REFER'],
-            'complications' => [
-                ['name' => 'dyspnea', 'label' => 'Dyspnea'],
-                ['name' => 'chest_discomfort', 'label' => 'Chest discomfort'],
-                ['name' => 'fever', 'label' => 'Fever (T > 37.5 ℃)'],
-                ['name' => 'headache', 'label' => 'Headache'],
-                ['name' => 'diarrhea', 'label' => 'Diarrhea'],
-                ['name' => 'desaturation', 'label' => 'Desaturation'],
+        if (! $report) {
+            return [
+                'discharge_status' => ['COMPLETE RECOVERY', 'IMPROVED', 'NOT IMPROVED'],
+                'discharge_type' => ['WITH APPROVAL', 'AGAINST ADVICE', 'BY ESCAPE', 'BY REFER'],
+                'complications' => [
+                    ['name' => 'dyspnea', 'label' => 'Dyspnea'],
+                    ['name' => 'chest_discomfort', 'label' => 'Chest discomfort'],
+                    ['name' => 'fever', 'label' => 'Fever (T > 37.5 ℃)'],
+                    ['name' => 'headache', 'label' => 'Headache'],
+                    ['name' => 'diarrhea', 'label' => 'Diarrhea'],
+                    ['name' => 'desaturation', 'label' => 'Desaturation'],
+                ],
+                'symptoms' => [
+                    ['label' => 'ไข้', 'name' => 'fever'],
+                    ['label' => 'ไอ', 'name' => 'cough'],
+                    ['label' => 'เจ็บคอ', 'name' => 'sore_throat'],
+                    ['label' => 'มีน้ำมูก', 'name' => 'rhinorrhoea'],
+                    ['label' => 'มีเสมหะ', 'name' => 'sputum'],
+                    ['label' => 'เหนื่อย', 'name' => 'fatigue'],
+                    ['label' => 'จมูกไม่ได้กลิ่น', 'name' => 'anosmia'],
+                    ['label' => 'ลิ้นไม่ได้รส', 'name' => 'loss_of_taste'],
+                    ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
+                    ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
+                ],
+                'patchEndpoint' => url('/forms/'.$this->note->id),
+                'note_id' => $this->note->id,
+                'center' => $this->note->admission->referCase->center->name,
+            ];
+        }
+
+        $configs = [
+            'admission' => [
+                ['label' => 'an', 'name' => 'an'],
+                ['label' => 'hn', 'name' => 'hn'],
+                ['label' => 'ชื่อผู้ป่วย', 'name' => 'name'],
+                ['label' => 'อายุ', 'name' => 'age'],
+                ['label' => 'หอผู้ป่วย', 'name' => 'ward'],
+                ['label' => 'จำนวนวันนอน', 'name' => 'length_of_stay'],
+                ['label' => 'วันเวลาที่แอดมิท', 'name' => 'encountered_at'],
+                ['label' => 'วันเวลาที่จำหน่าย', 'name' => 'dismissed_at'],
+                ['label' => 'สถานะ', 'name' => 'discharge_status'],
+                ['label' => 'ประเภท', 'name' => 'discharge_type'],
             ],
-            'symptoms' => [
-                ['label' => 'ไข้', 'name' => 'fever'],
-                ['label' => 'ไอ', 'name' => 'cough'],
-                ['label' => 'เจ็บคอ', 'name' => 'sore_throat'],
-                ['label' => 'มีน้ำมูก', 'name' => 'rhinorrhoea'],
-                ['label' => 'มีเสมหะ', 'name' => 'sputum'],
-                ['label' => 'เหนื่อย', 'name' => 'fatigue'],
-                ['label' => 'จมูกไม่ได้กลิ่น', 'name' => 'anosmia'],
-                ['label' => 'ลิ้นไม่ได้รส', 'name' => 'loss_of_taste'],
-                ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
-                ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
+            'topics_a' => [
+                ['label' => 'วินิจฉัย', 'name' => 'diagnosis'],
             ],
-            'patchEndpoint' => url('/forms/'.$this->note->id),
-            'note_id' => $this->note->id,
-            'center' => $this->note->admission->referCase->center->name,
+            'vital_signs' => [
+                ['label' => 'Temp (℃)', 'name' => 'temperature_celsius'],
+                ['label' => 'Pulse (min)', 'name' => 'pulse_per_minute'],
+                ['label' => 'RR (min)', 'name' => 'respiration_rate_per_minute'],
+                ['label' => 'SBP (mmHg)', 'name' => 'sbp'],
+                ['label' => 'DBP (mmHg)', 'name' => 'dbp'],
+                ['label' => 'O₂ sat (% RA)', 'name' => 'o2_sat'],
+            ],
         ];
+
+        // admission
+        if ($this->note->contents['discharge']['discharge_type'] === 'BY REFER') {
+            $configs['admission'][] = ['label' => 'โรงพยาบาลที่ส่งไป', 'name' => 'refer_to'];
+        }
+        $configs['admission'][] = ['label' => 'แพทย์เจ้าของไข้', 'name' => 'attending'];
+
+        // topics
+        if (! $this->note->contents['comorbids']['no_comorbids']) {
+            $configs['topics_a'][] = ['label' => 'โรคประจำตัว', 'name' => 'comorbids'];
+        }
+        if (! $this->note->contents['complications']['no_complications']) {
+            $configs['topics_a'][] = ['label' => 'ภาวะแทรกซ้อน', 'name' => 'complications'];
+        }
+        if (! $this->note->contents['non_OR_procedures']['no_non_OR_procedures']) {
+            $configs['topics_a'][] = ['label' => 'Non-OR procedures', 'name' => 'non_OR_procedures'];
+        }
+
+        $configs['topics_b'][] = ['label' => 'อาการแสดงวันจำหน่าย', 'name' => 'symptoms'];
+        if (! $this->note->contents['problem_list']['no_problem_list']) {
+            $configs['topics_b'][] = ['label' => 'ปัญหาที่ต้องดูแลต่อเนื่อง', 'name' => 'problem_list'];
+        }
+        if (! $this->note->contents['appointment']['no_appointment']) {
+            $configs['topics_b'][] = ['label' => 'วันนัดครั้งต่อไป', 'name' => 'appointment'];
+        }
+        if (! $this->note->contents['repeat_NP_swab']['no_repeat_NP_swab']) {
+            $configs['topics_b'][] = ['label' => 'นัดมาทำ NP swab ซ้ำ', 'name' => 'repeat_NP_swab'];
+        }
+
+        return $configs;
     }
 
     public function getForm()
@@ -98,6 +293,27 @@ class DischargeSummaryManager extends NoteManager
         $this->note->contents = $contents;
 
         return $this->note->save();
+    }
+
+    public function getDateString($date)
+    {
+        if (! $date) {
+            return null;
+        }
+
+        return Carbon::create($date)->format('d M Y');
+    }
+
+    public function checkDischarge()
+    {
+        if ($this->note->admission->referCase->status !== 'admitted') {
+            return;
+        }
+
+        $admission = (new AdmissionManager())->manage($this->note->admission->an);
+        if ($admission['found'] && $admission['admission']->dismissed_at) {
+            $this->note->admission->referCase->status = 'discharged';
+        }
     }
 
     public static function initNote()

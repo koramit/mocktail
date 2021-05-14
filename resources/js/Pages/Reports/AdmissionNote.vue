@@ -2,7 +2,7 @@
     <div>
         <div class="bg-white rounded shadow-sm p-4 mt-8">
             <h2 class="font-semibold pb-2 border-b-2 border-dashed text-thick-theme-light text-xl flex justify-center items-baseline">
-                <p>ใบส่งตัว</p>
+                <p>Admission Note</p>
                 <p
                     v-if="! contents.submitted"
                     class="ml-6 text-sm font-normal"
@@ -22,10 +22,25 @@
                     พิมพ์
                 </a>
             </h2>
+
             <h3 class="font-normal underline text-dark-theme-light mt-6">
-                ข้อมูลเบื้องต้น
+                ข้อมูลการแอดมิท
             </h3>
-            <div class="mt-2 sm:grid grid-rows-6 xl:grid-rows-4 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
+            <div class="mt-2 sm:grid grid-rows-4 xl:grid-rows-3 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
+                <display-input
+                    v-for="(field, key) in configs.admission"
+                    class="mt-2 md:mt-0"
+                    :key="key"
+                    :label="field.label"
+                    :data="contents.admission[field.name]"
+                    :format="field.format ?? ''"
+                />
+            </div>
+
+            <h3 class="font-normal underline text-dark-theme-light mt-6">
+                ข้อมูลจากใบส่งตัว
+            </h3>
+            <div class="mt-2 sm:grid grid-rows-3 xl:grid-rows-2 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
                 <display-input
                     v-for="(field, key) in configs.patient"
                     class="mt-2 md:mt-0"
@@ -95,27 +110,6 @@
             </template>
 
             <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
-                เอกสารแนบ
-            </h3>
-            <image-uploader
-                class="mt-2"
-                v-if="contents.patient.center !== 'ศิริราช'"
-                label="๏  Film Chest ล่าสุด"
-                name="contents->uploads->film"
-                :note-id="0"
-                v-model="uploads.film"
-                :readonly="true"
-            />
-            <image-uploader
-                class="mt-2"
-                label="๏  ใบรายงานผล COVID"
-                name="contents->uploads->lab"
-                :note-id="0"
-                v-model="uploads.lab"
-                :readonly="true"
-            />
-
-            <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
                 ผู้เขียน
             </h3>
             <contact-card :contact="contents.author" />
@@ -126,10 +120,9 @@
 <script>
 import DisplayInput from '@/Components/Helpers/DisplayInput';
 import ContactCard from '@/Components/Helpers/ContactCard';
-import ImageUploader from '@/Components/Controls/ImageUploader';
 import Icon from '@/Components/Helpers/Icon';
 export default {
-    components: { DisplayInput, ContactCard, ImageUploader, Icon },
+    components: { DisplayInput, ContactCard, Icon },
     props: {
         contents: { type: Object, required: true },
         configs: { type: Object, required: true },
@@ -145,11 +138,6 @@ export default {
             });
             return treatments;
         }
-    },
-    data () {
-        return {
-            uploads: this.contents.uploads,
-        };
     },
 };
 </script>

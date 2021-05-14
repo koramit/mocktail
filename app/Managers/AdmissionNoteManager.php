@@ -21,7 +21,7 @@ class AdmissionNoteManager extends NoteManager
                 ],
             ]);
         } else {
-            Request::session()->flash('page-title', 'เขียน Admission note: '.($this->note->patient->full_name));
+            Request::session()->flash('page-title', 'Admission note: '.($this->note->patient->full_name));
             Request::session()->flash('messages', [
                 'status' => 'info',
                 'messages' => [
@@ -39,7 +39,7 @@ class AdmissionNoteManager extends NoteManager
         Request::session()->flash('action-menu', []);
     }
 
-    public function getContents()
+    public function getContents($report = false)
     {
         $contents = $this->note->contents;
         $contents['admission']['name'] = $this->note->patient->full_name;
@@ -47,37 +47,215 @@ class AdmissionNoteManager extends NoteManager
         $contents['admission']['an'] = $this->note->admission->an;
         $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz(Auth::user()->timezone)->format('d M Y H:i');
 
+        if (! $report) {
+            return $contents;
+        }
+
+        // check new keys, set them if not already set
+        $this->checkNewKeys($contents);
+
+        // admission
+        $contents['admission']['ward'] = $this->note->admission->meta['place_name'];
+        $contents['admission']['attending'] = $this->note->admission->meta['attending'];
+        $contents['admission']['age'] = $this->note->admission->patient_age_at_encounter.' '.$this->note->admission->patient_age_at_encounter_unit;
+
+        $contents['author'] = [
+            'name' => $this->note->author->full_name,
+            'pln' =>  $this->note->author->pln,
+            'tel_no' =>  $this->note->author->tel_no,
+        ];
+
+        // symptoms
+        $symptoms = $contents['symptoms'];
+        if ($symptoms['asymptomatic_symptom']) {
+            $symptoms = 'Asymptomatics '.$symptoms['asymptomatic_detail'];
+        } else {
+            $symptomsList = $this->getConfigs()['symptoms'];
+            $text = '';
+            foreach ($symptomsList as $symptom) {
+                if ($symptoms[$symptom['name']]) {
+                    $text .= "{$symptom['label']} ";
+                }
+            }
+
+            $text .= $symptoms['other_symptoms'];
+            $symptoms = $text;
+        }
+        $contents['symptoms'] = $symptoms;
+
+        // diagnosis
+        $diagnosis = $contents['diagnosis'];
+        if ($diagnosis['asymptomatic_diagnosis']) {
+            $diagnosis = 'Asymptomatics COVID 19 infection';
+        } else {
+            $text = '';
+            if ($diagnosis['uri']) {
+                $text .= ('COVID 19 with URI เมื่อ '.$this->getDateString($diagnosis['date_uri']).'<br>');
+            }
+
+            if ($diagnosis['pneumonia']) {
+                $text .= ('COVID 19 with Pneumonia เมื่อ '.$this->getDateString($diagnosis['date_pneumonia']).'<br>');
+            }
+
+            if ($diagnosis['gastroenteritis']) {
+                $text .= 'COVID 19 with Gastroenteritis<br>';
+            }
+
+            $text .= $diagnosis['other_diagnosis'];
+            $diagnosis = $text;
+        }
+        $contents['diagnosis'] = $diagnosis;
+
+        // adr
+        if ($contents['adr']['no_adr']) {
+            $contents['adr'] = 'ไม่แพ้';
+        } else {
+            $contents['adr'] = $contents['adr']['adr_detail'];
+        }
+
+        // comordibs
+        $comorbids = $contents['comorbids'];
+        if ($comorbids['no_comorbids']) {
+            $comorbids = 'ไม่มี';
+        } else {
+            $text = '';
+            if ($comorbids['dm']) {
+                $text .= 'เบาหวาน ';
+            }
+
+            if ($comorbids['ht']) {
+                $text .= 'ความดันโลหิตสูง ';
+            }
+
+            $text .= $comorbids['other_comorbids'];
+            $comorbids = $text;
+        }
+        $contents['comorbids'] = $comorbids;
+
+        // treatment
+        $treatments = $contents['treatments'];
+        if (! $treatments['favipiravir']) {
+            unset($treatments['favipiravir'], $treatments['date_start_favipiravir'], $treatments['date_stop_favipiravir']);
+        } else {
+            $treatments['date_start_favipiravir'] = $this->getDateString($treatments['date_start_favipiravir']);
+            $treatments['date_stop_favipiravir'] = $this->getDateString($treatments['date_stop_favipiravir']);
+        }
+        if (! $treatments['date_repeat_NP_swap']) {
+            unset($treatments['date_repeat_NP_swap']);
+        } else {
+            $treatments['date_repeat_NP_swap'] = $this->getDateString($treatments['date_repeat_NP_swap']);
+        }
+        $contents['treatments'] = $treatments;
+
+        if ($contents['remark']) {
+            $lines = explode("\n", $contents['remark']);
+            if (count($lines) > 1) {
+                $contents['remark'] = collect($lines)->map(function ($line) {
+                    return "<p>{$line}</p>";
+                })->join('');
+            }
+        }
+
         return $contents;
     }
 
-    public function getConfigs()
+    public function checkNewKeys(&$contents)
     {
-        return [
-            'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคม', '30 บาท', 'ชำระเงินเอง'],
-            'symptoms' => [
-                ['label' => 'ไข้', 'name' => 'fever'],
-                ['label' => 'ไอ', 'name' => 'cough'],
-                ['label' => 'เจ็บคอ', 'name' => 'sore_throat'],
-                ['label' => 'มีน้ำมูก', 'name' => 'rhinorrhoea'],
-                ['label' => 'มีเสมหะ', 'name' => 'sputum'],
-                ['label' => 'เหนื่อย', 'name' => 'fatigue'],
-                ['label' => 'จมูกไม่ได้กลิ่น', 'name' => 'anosmia'],
-                ['label' => 'ลิ้นไม่ได้รส', 'name' => 'loss_of_taste'],
-                ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
-                ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
+        if (! isset($contents['remark'])) {
+            $contents['remark'] = null;
+        }
+        if (! isset($contents['vital_signs']['level_of_consciousness'])) {
+            $contents['vital_signs']['level_of_consciousness'] = null;
+        }
+        if (! isset($contents['vital_signs']['emotional_statu'])) {
+            $contents['vital_signs']['emotional_statu'] = null;
+        }
+    }
+
+    public function getConfigs($report = false)
+    {
+        if (! $report) {
+            return [
+                'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคม', '30 บาท', 'ชำระเงินเอง'],
+                'symptoms' => [
+                    ['label' => 'ไข้', 'name' => 'fever'],
+                    ['label' => 'ไอ', 'name' => 'cough'],
+                    ['label' => 'เจ็บคอ', 'name' => 'sore_throat'],
+                    ['label' => 'มีน้ำมูก', 'name' => 'rhinorrhoea'],
+                    ['label' => 'มีเสมหะ', 'name' => 'sputum'],
+                    ['label' => 'เหนื่อย', 'name' => 'fatigue'],
+                    ['label' => 'จมูกไม่ได้กลิ่น', 'name' => 'anosmia'],
+                    ['label' => 'ลิ้นไม่ได้รส', 'name' => 'loss_of_taste'],
+                    ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
+                    ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
+                ],
+                'patchEndpoint' => url('/forms/'.$this->note->id),
+                'note_id' => $this->note->id,
+            ];
+        }
+
+        $configs = [
+            'patient' => [
+                // ['label' => 'sat code', 'name' => 'sat_code'],
+                // ['label' => 'hn', 'name' => 'hn'],
+                // ['label' => 'ชื่อผู้ป่วย', 'name' => 'name'],
+                // ['label' => 'สิทธิ์การรักษา', 'name' => 'insurance'],
+                ['label' => 'วันแรกที่มีอาการ', 'name' => 'date_symptom_start', 'format' => 'date'],
+                ['label' => 'วันที่ตรวจพบเชื้อ', 'name' => 'date_covid_infected', 'format' => 'date'],
+                ['label' => 'วันที่รับไว้ในโรงพยาบาล', 'name' => 'date_admit_origin', 'format' => 'date'],
+                ['label' => 'วันที่ส่งผู้ป่วยไป Hospitel', 'name' => 'date_refer', 'format' => 'date'],
+                ['label' => 'วันที่ครบกำหนดนอนใน hospitel', 'name' => 'date_expect_discharge', 'format' => 'date'],
+                ['label' => 'วันที่ครบกำหนดกำหนดกักตัวต่อที่บ้าน', 'name' => 'date_quarantine_end', 'format' => 'date'],
             ],
-            'patchEndpoint' => url('/forms/'.$this->note->id),
-            'note_id' => $this->note->id,
-            // 'author_username' => $this->note->author->name,
-            // 'author' => $this->note->author->full_name,
-            // 'contact' => $this->note->author->tel_no,
-            // 'center' => $this->note->center->name,
+            'admission' => [
+                ['label' => 'an', 'name' => 'an'],
+                ['label' => 'hn', 'name' => 'hn'],
+                ['label' => 'ชื่อผู้ป่วย', 'name' => 'name'],
+                ['label' => 'อายุ', 'name' => 'age'],
+                ['label' => 'วันเวลาที่แอดมิท', 'name' => 'encountered_at'],
+                ['label' => 'หอผู้ป่วย', 'name' => 'ward'],
+                ['label' => 'แพทย์เจ้าของไข้', 'name' => 'attending'],
+            ],
+            'vital_signs' => [
+                ['label' => 'Temp (℃)', 'name' => 'temperature_celsius'],
+                ['label' => 'Pulse (min)', 'name' => 'pulse_per_minute'],
+                ['label' => 'RR (min)', 'name' => 'respiration_rate_per_minute'],
+                ['label' => 'SBP (mmHg)', 'name' => 'sbp'],
+                ['label' => 'DBP (mmHg)', 'name' => 'dbp'],
+                ['label' => 'O₂ sat (% RA)', 'name' => 'o2_sat'],
+                ['label' => 'Level of consciousness', 'name' => 'level_of_consciousness'],
+                ['label' => 'emotional status', 'name' => 'emotional_status'],
+            ],
+            'topics' => [
+                ['label' => 'บันทึกอาการแสดง', 'name' => 'symptoms'],
+                ['label' => 'วินิจฉัย', 'name' => 'diagnosis'],
+                ['label' => 'ประวัติแพ้ยา/อาหาร ', 'name' => 'adr'],
+                ['label' => 'โรคประจำตัว ', 'name' => 'comorbids'],
+            ],
+            'treatments' => [
+                ['label' => 'Temperature', 'name' => 'temperature_per_day'],
+                ['label' => 'Oxygen sat RA', 'name' => 'oxygen_sat_RA_per_day'],
+                ['label' => 'Favipiravir (วันที่เริ่มยา)', 'name' => 'date_start_favipiravir'],
+                ['label' => 'Favipiravir (กำหนดครบวันที่)', 'name' => 'date_stop_favipiravir'],
+                ['label' => 'นัดมาทำ NP swab ซ้ำ วันที่', 'name' => 'date_repeat_NP_swap'],
+            ],
         ];
+
+        return $configs;
     }
 
     public function getForm()
     {
         return 'Forms/AdmissionNote';
+    }
+
+    public function getDateString($date)
+    {
+        if (! $date) {
+            return null;
+        }
+
+        return Carbon::create($date)->format('d M Y');
     }
 
     public function transferData()

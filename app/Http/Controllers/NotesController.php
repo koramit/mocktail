@@ -81,6 +81,7 @@ class NotesController extends Controller
             $manager = new AdmissionNoteManager($note);
         } elseif ($note->type === 'discharge summary') {
             $manager = new DischargeSummaryManager($note);
+            $manager->checkDischarge();
         }
         $manager->setFlashData();
 
