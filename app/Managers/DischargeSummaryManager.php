@@ -40,7 +40,7 @@ class DischargeSummaryManager extends NoteManager
         Request::session()->flash('action-menu', []);
     }
 
-    public function getContents()
+    public function getContents($report = false)
     {
         $contents = $this->note->contents;
         $contents['admission']['name'] = $this->note->patient->full_name;
@@ -49,39 +49,55 @@ class DischargeSummaryManager extends NoteManager
         $contents['admission']['length_of_stay'] = $this->note->admission->length_of_stay.'';
         $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz(Auth::user()->timezone)->format('d M Y H:i');
         $contents['admission']['dismissed_at'] = $this->note->admission->dismissed_at ? $this->note->admission->dismissed_at->tz(Auth::user()->timezone)->format('d M Y H:i') : null;
+        if (! $report) {
+            return $contents;
+        }
+
+        $contents['admission']['ward'] = $this->note->admission->meta['place_name'];
+        $contents['admission']['attending'] = $this->note->admission->meta['attending'];
+        $contents['admission']['discharge_status'] = $contents['discharge']['discharge_status'];
+        $contents['admission']['discharge_type'] = $contents['discharge']['discharge_type'];
+        if ($contents['discharge']['refer_to']) {
+            $contents['admission']['refer_to'] = $contents['discharge']['refer_to'];
+        }
+        unset($contents['discharge']);
 
         return $contents;
     }
 
-    public function getConfigs()
+    public function getConfigs($report = false)
     {
-        return [
-            'discharge_status' => ['COMPLETE RECOVERY', 'IMPROVED', 'NOT IMPROVED'],
-            'discharge_type' => ['WITH APPROVAL', 'AGAINST ADVICE', 'BY ESCAPE', 'BY REFER'],
-            'complications' => [
-                ['name' => 'dyspnea', 'label' => 'Dyspnea'],
-                ['name' => 'chest_discomfort', 'label' => 'Chest discomfort'],
-                ['name' => 'fever', 'label' => 'Fever (T > 37.5 ℃)'],
-                ['name' => 'headache', 'label' => 'Headache'],
-                ['name' => 'diarrhea', 'label' => 'Diarrhea'],
-                ['name' => 'desaturation', 'label' => 'Desaturation'],
-            ],
-            'symptoms' => [
-                ['label' => 'ไข้', 'name' => 'fever'],
-                ['label' => 'ไอ', 'name' => 'cough'],
-                ['label' => 'เจ็บคอ', 'name' => 'sore_throat'],
-                ['label' => 'มีน้ำมูก', 'name' => 'rhinorrhoea'],
-                ['label' => 'มีเสมหะ', 'name' => 'sputum'],
-                ['label' => 'เหนื่อย', 'name' => 'fatigue'],
-                ['label' => 'จมูกไม่ได้กลิ่น', 'name' => 'anosmia'],
-                ['label' => 'ลิ้นไม่ได้รส', 'name' => 'loss_of_taste'],
-                ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
-                ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
-            ],
-            'patchEndpoint' => url('/forms/'.$this->note->id),
-            'note_id' => $this->note->id,
-            'center' => $this->note->admission->referCase->center->name,
-        ];
+        if (! $report) {
+            return [
+                'discharge_status' => ['COMPLETE RECOVERY', 'IMPROVED', 'NOT IMPROVED'],
+                'discharge_type' => ['WITH APPROVAL', 'AGAINST ADVICE', 'BY ESCAPE', 'BY REFER'],
+                'complications' => [
+                    ['name' => 'dyspnea', 'label' => 'Dyspnea'],
+                    ['name' => 'chest_discomfort', 'label' => 'Chest discomfort'],
+                    ['name' => 'fever', 'label' => 'Fever (T > 37.5 ℃)'],
+                    ['name' => 'headache', 'label' => 'Headache'],
+                    ['name' => 'diarrhea', 'label' => 'Diarrhea'],
+                    ['name' => 'desaturation', 'label' => 'Desaturation'],
+                ],
+                'symptoms' => [
+                    ['label' => 'ไข้', 'name' => 'fever'],
+                    ['label' => 'ไอ', 'name' => 'cough'],
+                    ['label' => 'เจ็บคอ', 'name' => 'sore_throat'],
+                    ['label' => 'มีน้ำมูก', 'name' => 'rhinorrhoea'],
+                    ['label' => 'มีเสมหะ', 'name' => 'sputum'],
+                    ['label' => 'เหนื่อย', 'name' => 'fatigue'],
+                    ['label' => 'จมูกไม่ได้กลิ่น', 'name' => 'anosmia'],
+                    ['label' => 'ลิ้นไม่ได้รส', 'name' => 'loss_of_taste'],
+                    ['label' => 'ปวดเมื่อยกล้ามเนื้อ', 'name' => 'myalgia'],
+                    ['label' => 'ท้องเสีย', 'name' => 'diarrhea'],
+                ],
+                'patchEndpoint' => url('/forms/'.$this->note->id),
+                'note_id' => $this->note->id,
+                'center' => $this->note->admission->referCase->center->name,
+            ];
+        }
+
+
     }
 
     public function getForm()

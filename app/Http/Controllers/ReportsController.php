@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Managers\DischargeSummaryManager;
 use App\Managers\ReferNoteManager;
 use App\Models\ReferCase;
 use Illuminate\Support\Facades\Request;
@@ -23,9 +24,23 @@ class ReportsController extends Controller
         ];
 
         $notes = [];
+
         // refer note
-        // $manager = new ReferNoteManager($case->note);
-        $notes['refer_note'] = (new ReferNoteManager($case->note))->getContents(true);
+        $manager = new ReferNoteManager($case->note);
+        $notes['refer_note'] = [
+            'contents' => $manager->getContents(true),
+            'configs' => $manager->getConfigs(true),
+        ];
+
+        // discharge summary
+        $note = $case->admission->notes()->whereType('discharge summary')->first();
+        if ($note) {
+            $manager = new DischargeSummaryManager($note);
+            $notes['discharge_summary'] = [
+                'contents' => $manager->getContents(true),
+                'configs' => $manager->getConfigs(true),
+            ];
+        }
 
         // admission note
 
