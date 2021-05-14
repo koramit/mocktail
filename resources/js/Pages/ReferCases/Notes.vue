@@ -31,7 +31,7 @@
                     <!-- read -->
                     <inertia-link
                         class="w-full flex text-alt-theme-light justify-start items-center my-2"
-                        :href="`${baseUrl}/soon`"
+                        :href="`${baseUrl}/reports/${referCase.slug}#${type.name.split(' ').join('-').toLowerCase()}`"
                         v-if="userCanRead(type.name.toLowerCase())"
                     >
                         <icon
