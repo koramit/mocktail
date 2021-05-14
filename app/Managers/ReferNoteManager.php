@@ -57,6 +57,9 @@ class ReferNoteManager extends NoteManager
         }
 
         $contents = $this->note->contents;
+        $contents['patient']['name'] = $this->note->referCase->name;
+        $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
+        $contents['center'] = $this->note->referCase->center->name;
         $contents['author'] = [
             'name' => $this->note->author->full_name,
             'pln' =>  $this->note->author->pln,
