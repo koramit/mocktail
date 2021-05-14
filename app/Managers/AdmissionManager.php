@@ -18,11 +18,10 @@ class AdmissionManager
             $meta['discharge_type'] = $admissionData['discharge_type_name'] ?? null;
             $meta['discharge_status'] = $admissionData['discharge_status_name'] ?? null;
             $admission->update([
-                'dismissed_at' => $admissionData['dismissed_at'],
+                'dismissed_at' => $admissionData['dismissed_at'] ?? null,
                 'meta' => $meta,
             ]);
 
-            // return $admission;
             return [
                 'found' => true,
                 'admission' => $admission,
