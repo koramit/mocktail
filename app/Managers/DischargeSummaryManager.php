@@ -61,6 +61,11 @@ class DischargeSummaryManager extends NoteManager
             $contents['admission']['refer_to'] = $contents['discharge']['refer_to'];
         }
         unset($contents['discharge']);
+        $contents['author'] = [
+            'name' => $this->note->author->full_name,
+            'pln' =>  $this->note->author->pln,
+            'tel_no' =>  $this->note->author->tel_no,
+        ];
 
         return $contents;
     }
@@ -97,7 +102,16 @@ class DischargeSummaryManager extends NoteManager
             ];
         }
 
-
+        return [
+            'admission' => [
+                ['label' => 'Admitted on', 'name' => 'encountered_at'],
+                ['label' => 'Discharged on', 'name' => 'dismissed_at'],
+                ['label' => 'Ward', 'name' => 'ward'],
+                ['label' => 'Attending', 'name' => 'attending'],
+                ['label' => 'Discharge status', 'name' => 'discharge_status'],
+                ['label' => 'Discharge type', 'name' => 'discharge_type'],
+            ],
+        ];
     }
 
     public function getForm()

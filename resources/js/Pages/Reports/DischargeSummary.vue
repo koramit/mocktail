@@ -17,6 +17,10 @@
                     :format="field.format ?? ''"
                 />
             </div>
+            <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
+                ผู้เขียน
+            </h3>
+            <contact-card :contact="contents.author" />
         </div>
     </div>
 </template>

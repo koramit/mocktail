@@ -7,7 +7,7 @@
             <h3 class="font-normal underline text-dark-theme-light mt-6">
                 ข้อมูลเบื้องต้น
             </h3>
-            <div class="mt-2 sm:grid grid-rows-4 xl:grid-rows-3 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
+            <div class="mt-2 sm:grid grid-rows-5 xl:grid-rows-3 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
                 <display-input
                     v-for="(field, key) in configs.patient"
                     class="mt-2 md:mt-0"

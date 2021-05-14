@@ -33,7 +33,7 @@ class ReportsController extends Controller
         ];
 
         // discharge summary
-        $note = $case->admission->notes()->whereType('discharge summary')->first();
+        $note = $case->admission ? $case->admission->notes()->whereType('discharge summary')->first() : null;
         if ($note) {
             $manager = new DischargeSummaryManager($note);
             $notes['discharge_summary'] = [
