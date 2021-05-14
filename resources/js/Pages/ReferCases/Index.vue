@@ -247,12 +247,11 @@ export default {
             case 'edit':
                 return referCase.referer === this.$page.props.user.name && referCase.status === 'submitted';
             case 'read':
-                return referCase.status !== 'canceled' && (referCase.referer !== this.$page.props.user.name || referCase.status === 'admitted');
+                return referCase.status !== 'canceled';
             case 'admit':
                 return this.abilities.includes('admit_patient') && referCase.status === 'submitted';
             case 'note':
                 return this.$page.props.user.roles.indexOf('md') !== -1 && ['admitted', 'discharged'].includes(referCase.status); // nurse not write note, for now
-                // return this.abilities.includes('create_note') && referCase.status === 'admitted'; // demo only
             case 'delete':
                 return !['admitted', 'discharged', 'canceled'].includes(referCase.status) && (this.abilities.includes('admit_patient') || referCase.referer === this.$page.props.user.name);
             default:
