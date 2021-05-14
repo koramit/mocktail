@@ -2,7 +2,7 @@
     <div>
         <div class="bg-white rounded shadow-sm p-4 mt-8">
             <h2 class="font-semibold pb-2 border-b-2 border-dashed text-thick-theme-light text-xl flex justify-center items-baseline">
-                <p>Discharge Summary</p>
+                <p>Admission Note</p>
                 <p
                     v-if="! contents.submitted"
                     class="ml-6 text-sm font-normal"
@@ -26,7 +26,7 @@
             <h3 class="font-normal underline text-dark-theme-light mt-6">
                 ข้อมูลการแอดมิท
             </h3>
-            <div class="mt-2 sm:grid grid-rows-6 xl:grid-rows-4 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
+            <div class="mt-2 sm:grid grid-rows-4 xl:grid-rows-3 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
                 <display-input
                     v-for="(field, key) in configs.admission"
                     class="mt-2 md:mt-0"
@@ -37,20 +37,19 @@
                 />
             </div>
 
-            <template
-                v-for="(topic, key) in configs.topics_a"
-                :key="key"
-            >
-                <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
-                    {{ topic.label }}
-                </h3>
-                <div class="mt-2">
-                    <display-input
-                        class="mt-2 md:mt-0"
-                        :data="contents[topic.name]"
-                    />
-                </div>
-            </template>
+            <h3 class="font-normal underline text-dark-theme-light mt-6">
+                ข้อมูลจากใบส่งตัว
+            </h3>
+            <div class="mt-2 sm:grid grid-rows-3 xl:grid-rows-2 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
+                <display-input
+                    v-for="(field, key) in configs.patient"
+                    class="mt-2 md:mt-0"
+                    :key="key"
+                    :label="field.label"
+                    :data="contents.patient[field.name]"
+                    :format="field.format ?? ''"
+                />
+            </div>
 
             <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
                 Vital Signs ล่าสุด
@@ -66,7 +65,7 @@
             </div>
 
             <template
-                v-for="(topic, key) in configs.topics_b"
+                v-for="(topic, key) in configs.topics"
                 :key="key"
             >
                 <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
@@ -79,6 +78,26 @@
                     />
                 </div>
             </template>
+
+            <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
+                คำสั่งการรักษา
+            </h3>
+            <div
+                class="mt-2 grid grid-flow-col gap-2 lg:gap-3 xl:gap-4"
+                :class="{
+                    'grid-rows-1': filteredTreatments.length <= 2,
+                    'grid-rows-2 sm:grid-rows-1': filteredTreatments.length === 3,
+                    'grid-rows-3 sm:grid-rows-2': filteredTreatments.length > 3
+                }"
+            >
+                <display-input
+                    v-for="(field, key) in filteredTreatments"
+                    class="mt-2 md:mt-0"
+                    :key="key"
+                    :label="field.label"
+                    :data="contents.treatments[field.name]"
+                />
+            </div>
 
             <template v-if="contents.remark">
                 <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
@@ -107,6 +126,18 @@ export default {
     props: {
         contents: { type: Object, required: true },
         configs: { type: Object, required: true },
+    },
+    computed: {
+        filteredTreatments () {
+            let treatments = [];
+            Object.keys(this.contents.treatments).forEach(key => {
+                let index = this.configs.treatments.findIndex(t => t.name === key);
+                if (index !== -1) {
+                    treatments.push(this.configs.treatments[index]);
+                }
+            });
+            return treatments;
+        }
     },
 };
 </script>

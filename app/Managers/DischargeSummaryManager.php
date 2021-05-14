@@ -58,6 +58,7 @@ class DischargeSummaryManager extends NoteManager
         $contents['admission']['attending'] = $this->note->admission->meta['attending'];
         $contents['admission']['discharge_status'] = $contents['discharge']['discharge_status'];
         $contents['admission']['discharge_type'] = $contents['discharge']['discharge_type'];
+        $contents['admission']['age'] = $this->note->admission->patient_age_at_encounter.' '.$this->note->admission->patient_age_at_encounter_unit;
         if ($contents['discharge']['refer_to']) {
             $contents['admission']['refer_to'] = $contents['discharge']['refer_to'];
         }
@@ -223,10 +224,14 @@ class DischargeSummaryManager extends NoteManager
 
         $configs = [
             'admission' => [
+                ['label' => 'an', 'name' => 'an'],
+                ['label' => 'hn', 'name' => 'hn'],
+                ['label' => 'ชื่อผู้ป่วย', 'name' => 'name'],
+                ['label' => 'อายุ', 'name' => 'age'],
+                ['label' => 'หอผู้ป่วย', 'name' => 'ward'],
+                ['label' => 'จำนวนวันนอน', 'name' => 'length_of_stay'],
                 ['label' => 'วันเวลาที่แอดมิท', 'name' => 'encountered_at'],
                 ['label' => 'วันเวลาที่จำหน่าย', 'name' => 'dismissed_at'],
-                ['label' => 'หอผู้ป่วย', 'name' => 'ward'],
-                ['label' => 'แพทย์เจ้าของไข้', 'name' => 'attending'],
                 ['label' => 'สถานะ', 'name' => 'discharge_status'],
                 ['label' => 'ประเภท', 'name' => 'discharge_type'],
             ],
@@ -247,7 +252,7 @@ class DischargeSummaryManager extends NoteManager
         if ($this->note->contents['discharge']['discharge_type'] === 'BY REFER') {
             $configs['admission'][] = ['label' => 'โรงพยาบาลที่ส่งไป', 'name' => 'refer_to'];
         }
-        $configs['admission'][] = ['label' => 'จำนวนวันนอน', 'name' => 'length_of_stay'];
+        $configs['admission'][] = ['label' => 'แพทย์เจ้าของไข้', 'name' => 'attending'];
 
         // topics
         if (! $this->note->contents['comorbids']['no_comorbids']) {

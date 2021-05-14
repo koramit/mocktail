@@ -48,18 +48,15 @@ class ReferNoteManager extends NoteManager
 
     public function getContents($report = false)
     {
-        if (! $report) {
-            $contents = $this->note->contents;
-            $contents['patient']['name'] = $this->note->referCase->name;
-            $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
-
-            return $contents;
-        }
-
         $contents = $this->note->contents;
         $contents['patient']['name'] = $this->note->referCase->name;
         $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
-        $contents['center'] = $this->note->referCase->center->name;
+
+        if (! $report) {
+            return $contents;
+        }
+
+        $contents['patient']['center'] = $this->note->referCase->center->name;
         $contents['author'] = [
             'name' => $this->note->author->full_name,
             'pln' =>  $this->note->author->pln,
@@ -136,8 +133,10 @@ class ReferNoteManager extends NoteManager
         }
         $contents['comorbids'] = $comorbids;
 
+        // meal
         $contents['meal'] = $contents['patient']['meal'];
 
+        // treatment
         $treatments = $contents['treatments'];
         if (! $treatments['favipiravir']) {
             unset($treatments['favipiravir'], $treatments['date_start_favipiravir'], $treatments['date_stop_favipiravir']);
@@ -205,10 +204,12 @@ class ReferNoteManager extends NoteManager
             ];
         }
 
-        return [
+        $configs = [
             'patient' => [
+                ['label' => 'ส่งตัวจาก', 'name' => 'center'],
                 ['label' => 'sat code', 'name' => 'sat_code'],
                 ['label' => 'hn', 'name' => 'hn'],
+                ['label' => 'ชื่อผู้ป่วย', 'name' => 'name'],
                 ['label' => 'สิทธิ์การรักษา', 'name' => 'insurance'],
                 ['label' => 'วันแรกที่มีอาการ', 'name' => 'date_symptom_start', 'format' => 'date'],
                 ['label' => 'วันที่ตรวจพบเชื้อ', 'name' => 'date_covid_infected', 'format' => 'date'],
@@ -224,8 +225,6 @@ class ReferNoteManager extends NoteManager
                 ['label' => 'SBP (mmHg)', 'name' => 'sbp'],
                 ['label' => 'DBP (mmHg)', 'name' => 'dbp'],
                 ['label' => 'O₂ sat (% RA)', 'name' => 'o2_sat'],
-                ['label' => 'Level of consciousness', 'name' => 'level_of_consciousness'],
-                ['label' => 'emotional status', 'name' => 'emotional_status'],
             ],
             'topics' => [
                 ['label' => 'บันทึกอาการแสดง', 'name' => 'symptoms'],
@@ -242,6 +241,13 @@ class ReferNoteManager extends NoteManager
                 ['label' => 'นัดมาทำ NP swab ซ้ำ วันที่', 'name' => 'date_repeat_NP_swap'],
             ],
         ];
+
+        if (isset($this->note->contents['vital_signs']['level_of_consciousness'])) {
+            $configs['vital_signs'][] = ['label' => 'Level of consciousness', 'name' => 'level_of_consciousness'];
+            $configs['vital_signs'][] = ['label' => 'emotional status', 'name' => 'emotional_status'];
+        }
+
+        return $configs;
     }
 
     public function getForm()

@@ -1,13 +1,31 @@
 <template>
     <div>
         <div class="bg-white rounded shadow-sm p-4 mt-8">
-            <h2 class="font-semibold pb-2 border-b-2 border-dashed text-thick-theme-light text-center text-xl">
-                ใบส่งตัว
+            <h2 class="font-semibold pb-2 border-b-2 border-dashed text-thick-theme-light text-xl flex justify-center items-baseline">
+                <p>ใบส่งตัว</p>
+                <p
+                    v-if="! contents.submitted"
+                    class="ml-6 text-sm font-normal"
+                >
+                    (ยังเขียนไม่เสร็จ)
+                </p>
+                <a
+                    v-else
+                    :href="`${$page.props.app.baseUrl}/soon`"
+                    class="ml-6 text-sm font-normal text-dark-theme-light flex"
+                    target="_blank"
+                >
+                    <icon
+                        class="mr-2 h-4 w-4"
+                        name="print"
+                    />
+                    พิมพ์
+                </a>
             </h2>
             <h3 class="font-normal underline text-dark-theme-light mt-6">
                 ข้อมูลเบื้องต้น
             </h3>
-            <div class="mt-2 sm:grid grid-rows-5 xl:grid-rows-3 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
+            <div class="mt-2 sm:grid grid-rows-6 xl:grid-rows-4 grid-flow-col gap-2 lg:gap-3 xl:gap-4">
                 <display-input
                     v-for="(field, key) in configs.patient"
                     class="mt-2 md:mt-0"
@@ -81,7 +99,7 @@
             </h3>
             <image-uploader
                 class="mt-2"
-                v-if="contents.center !== 'ศิริราช'"
+                v-if="contents.patient.center !== 'ศิริราช'"
                 label="๏  Film Chest ล่าสุด"
                 name="contents->uploads->film"
                 :note-id="0"
@@ -108,9 +126,10 @@
 <script>
 import DisplayInput from '@/Components/Helpers/DisplayInput';
 import ContactCard from '@/Components/Helpers/ContactCard';
-import ImageUploader from '../../Components/Controls/ImageUploader.vue';
+import ImageUploader from '@/Components/Controls/ImageUploader';
+import Icon from '@/Components/Helpers/Icon';
 export default {
-    components: { DisplayInput, ContactCard, ImageUploader },
+    components: { DisplayInput, ContactCard, ImageUploader, Icon },
     props: {
         contents: { type: Object, required: true },
         configs: { type: Object, required: true },
