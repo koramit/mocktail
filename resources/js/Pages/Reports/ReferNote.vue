@@ -77,6 +77,27 @@
             </template>
 
             <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
+                เอกสารแนบ
+            </h3>
+            <image-uploader
+                class="mt-2"
+                v-if="contents.center !== 'ศิริราช'"
+                label="๏  Film Chest ล่าสุด"
+                name="contents->uploads->film"
+                :note-id="0"
+                v-model="uploads.film"
+                :readonly="true"
+            />
+            <image-uploader
+                class="mt-2"
+                label="๏  ใบรายงานผล COVID"
+                name="contents->uploads->lab"
+                :note-id="0"
+                v-model="uploads.lab"
+                :readonly="true"
+            />
+
+            <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
                 ผู้เขียน
             </h3>
             <contact-card :contact="contents.author" />
@@ -87,8 +108,9 @@
 <script>
 import DisplayInput from '@/Components/Helpers/DisplayInput';
 import ContactCard from '@/Components/Helpers/ContactCard';
+import ImageUploader from '../../Components/Controls/ImageUploader.vue';
 export default {
-    components: { DisplayInput, ContactCard },
+    components: { DisplayInput, ContactCard, ImageUploader },
     props: {
         contents: { type: Object, required: true },
     },
@@ -104,10 +126,16 @@ export default {
             return treatments;
         }
     },
+    data () {
+        return {
+            uploads: this.contents.uploads,
+        };
+    },
     created () {
         this.configs = {
             patient: [
                 { label: 'sat code', name: 'sat_code' },
+                { label: 'hn', name: 'hn' },
                 { label: 'สิทธิ์การรักษา', name: 'insurance' },
                 { label: 'วันแรกที่มีอาการ', name: 'date_symptom_start', format: 'date' },
                 { label: 'วันที่ตรวจพบเชื้อ', name: 'date_covid_infected', format: 'date' },
