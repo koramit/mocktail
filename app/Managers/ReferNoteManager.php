@@ -69,6 +69,7 @@ class ReferNoteManager extends NoteManager
         // check new keys, set them if not already set
         $this->checkNewKeys($contents);
 
+        // symptoms
         $symptoms = $contents['symptoms'];
         if ($symptoms['asymptomatic_symptom']) {
             $symptoms = 'Asymptomatics '.$symptoms['asymptomatic_detail'];
@@ -86,6 +87,7 @@ class ReferNoteManager extends NoteManager
         }
         $contents['symptoms'] = $symptoms;
 
+        // diagnosis
         $diagnosis = $contents['diagnosis'];
         if ($diagnosis['asymptomatic_diagnosis']) {
             $diagnosis = 'Asymptomatics COVID 19 infection';
@@ -108,12 +110,14 @@ class ReferNoteManager extends NoteManager
         }
         $contents['diagnosis'] = $diagnosis;
 
+        // adr
         if ($contents['adr']['no_adr']) {
             $contents['adr'] = 'ไม่แพ้';
         } else {
             $contents['adr'] = $contents['adr']['adr_detail'];
         }
 
+        // comordibs
         $comorbids = $contents['comorbids'];
         if ($comorbids['no_comorbids']) {
             $comorbids = 'ไม่มี';

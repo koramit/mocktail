@@ -15,6 +15,9 @@ class ReportsController extends Controller
         Request::session()->flash('page-title', 'เวชระเบียน '.($case->an ? ' AN'.$case->an : '').' '.$case->name);
         Request::session()->flash('main-menu-links', [ // need check abilities
             ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
+            ['icon' => 'slack-hash', 'label' => 'ใบส่งตัว', 'route' => '#refer-note'],
+            ['icon' => 'slack-hash', 'label' => 'Admission Note', 'route' => '#admission-note'],
+            ['icon' => 'slack-hash', 'label' => 'Discharge Summary', 'route' => '#discharge-summary'],
         ]);
         $referCase = [
             'hn' => $case->hn,
