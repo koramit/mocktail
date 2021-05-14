@@ -102,7 +102,7 @@ class DischargeSummaryManager extends NoteManager
             ];
         }
 
-        return [
+        $configs = [
             'admission' => [
                 ['label' => 'Admitted on', 'name' => 'encountered_at'],
                 ['label' => 'Discharged on', 'name' => 'dismissed_at'],
@@ -112,6 +112,14 @@ class DischargeSummaryManager extends NoteManager
                 ['label' => 'Discharge type', 'name' => 'discharge_type'],
             ],
         ];
+
+        if ($this->note->contents['discharge']['discharge_type'] === 'BY REFER') {
+            $configs['admission'][] = ['label' => 'refer to', 'name' => 'refer_to'];
+        }
+
+        $configs['admission'][] = ['label' => 'Length of Stay', 'name' => 'length_of_stay'];
+
+        return $configs;
     }
 
     public function getForm()
