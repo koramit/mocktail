@@ -14,29 +14,30 @@ class ReportsController extends Controller
 {
     public function __invoke(ReferCase $case)
     {
+        $referCase = [
+            'slug' => $case->slug,
+            'hn' => $case->hn,
+            'patient_name' => $case->name,
+            'an' => $case->an,
+            'center' => $case->center->name,
+        ];
+
         $mainCenterUser = Auth::user()->center->id === config('app.main_center_id');
 
         Request::session()->flash('page-title', 'เวชระเบียน '.($case->an ? ' AN'.$case->an : '').' '.$case->name);
 
-        if ($mainCenterUser) {
+        if (! $mainCenterUser || ! $referCase['an']) {
+            Request::session()->flash('main-menu-links', [ // need check abilities
+                ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
+            ]);
+        } else {
             Request::session()->flash('main-menu-links', [ // need check abilities
                 ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
                 ['icon' => 'slack-hash', 'label' => 'ใบส่งตัว', 'route' => '#refer-note'],
                 ['icon' => 'slack-hash', 'label' => 'Admission Note', 'route' => '#admission-note'],
                 ['icon' => 'slack-hash', 'label' => 'Discharge Summary', 'route' => '#discharge-summary'],
             ]);
-        } else {
-            Request::session()->flash('main-menu-links', [ // need check abilities
-                ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
-            ]);
         }
-
-        $referCase = [
-            'hn' => $case->hn,
-            'patient_name' => $case->name,
-            'an' => $case->an,
-            'center' => $case->center->name,
-        ];
 
         $notes = [];
 
@@ -47,7 +48,7 @@ class ReportsController extends Controller
             'configs' => $manager->getConfigs(true),
         ];
 
-        if (! $mainCenterUser) {
+        if (! $mainCenterUser || ! $referCase['an']) {
             return Inertia::render('Reports/Folder', [
                 'referCase' => $referCase,
                 'notes' => $notes,

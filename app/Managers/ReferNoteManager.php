@@ -16,7 +16,7 @@ class ReferNoteManager extends NoteManager
     {
         // title and menu
         if ($report) {
-            Request::session()->flash('page-title', 'ใบส่งตัว: '.($this->note->referCase->name));
+            Request::session()->flash('page-title', 'ใบส่งตัว: '.($this->note->referCase->name).' วันที่ '.$this->getDateString($this->note->contents['patient']['date_refer']));
             Request::session()->flash('messages', null);
         } else {
             Request::session()->flash('page-title', 'เขียนใบส่งตัว: '.($this->note->referCase->name));
@@ -53,6 +53,9 @@ class ReferNoteManager extends NoteManager
         $contents['patient']['name'] = $this->note->referCase->name;
         $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
 
+        // check new keys, set them if not already set
+        $this->checkNewKeys($contents);
+
         if (! $report) {
             return $contents;
         }
@@ -64,9 +67,6 @@ class ReferNoteManager extends NoteManager
             'tel_no' =>  $this->note->author->tel_no,
             'updated_at' => $this->note->updated_at->tz(Auth::user()->timezone)->format('d M Y H:i:s'),
         ];
-
-        // check new keys, set them if not already set
-        $this->checkNewKeys($contents);
 
         // symptoms
         $symptoms = $contents['symptoms'];
@@ -258,7 +258,7 @@ class ReferNoteManager extends NoteManager
         return 'Forms/ReferNote';
     }
 
-    public function getPrintput()
+    public function getPrintout()
     {
         return 'Printouts/ReferNote';
     }

@@ -3,26 +3,38 @@
         <template #default>
             <div class="px-12 py-6 print-p-0">
                 <h2 class="font-semibold pb-2 border-b-2 border-dashed text-xl text-center">
-                    ใบส่งตัว
+                    Discharge Summary
                 </h2>
 
                 <h3 class="font-normal underline mt-4">
-                    ข้อมูลเบื้องต้น
+                    ข้อมูลการแอดมิท
                 </h3>
                 <div class="mt-1 grid grid-rows-4 grid-flow-col gap-2">
                     <display-input
-                        v-for="(field, key) in configs.patient"
+                        v-for="(field, key) in configs.admission"
                         :key="key"
                         :label="field.label"
-                        :data="contents.patient[field.name]"
+                        :data="contents.admission[field.name]"
                         :format="field.format ?? ''"
                     />
                 </div>
 
+                <template
+                    v-for="(topic, key) in configs.topics_a"
+                    :key="key"
+                >
+                    <h3 class="font-normal underline mt-4">
+                        {{ topic.label }}
+                    </h3>
+                    <div class="mt-1">
+                        <display-input :data="contents[topic.name]" />
+                    </div>
+                </template>
+
                 <h3 class="font-normal underline mt-4">
                     Vital Signs ล่าสุด
                 </h3>
-                <div class="mt-1 grid grid-rows-3 grid-flow-col gap-2">
+                <div class="mt-1 grid grid-rows-3 grid-flow-col gap-1">
                     <display-input
                         v-for="(field, key) in configs.vital_signs"
                         :key="key"
@@ -32,48 +44,23 @@
                 </div>
 
                 <template
-                    v-for="(topic, key) in configs.topics"
+                    v-for="(topic, key) in configs.topics_b"
                     :key="key"
                 >
                     <h3 class="font-normal underline mt-4">
                         {{ topic.label }}
                     </h3>
                     <div class="mt-1">
-                        <display-input
-                            :data="contents[topic.name]"
-                        />
+                        <display-input :data="contents[topic.name]" />
                     </div>
                 </template>
 
-                <h3 class="font-normal underline mt-4">
-                    คำสั่งการรักษา
-                </h3>
-                <div
-                    class="mt-1 grid grid-flow-col gap-2"
-                    :class="{
-                        'grid-rows-1': filteredTreatments.length <= 3,
-                        'grid-rows-2': filteredTreatments.length > 3
-                    }"
-                >
-                    <display-input
-                        v-for="(field, key) in filteredTreatments"
-                        :key="key"
-                        :label="field.label"
-                        :data="contents.treatments[field.name]"
-                    />
-                </div>
-
-                <div
-                    v-if="contents.remark"
-                    class="avoid-page-break"
-                >
+                <template v-if="contents.remark">
                     <h3 class="font-normal underline mt-4">
                         เพิ่มเติม
                     </h3>
-                    <display-input
-                        :data="contents.remark"
-                    />
-                </div>
+                    <display-input :data="contents.remark" />
+                </template>
             </div>
         </template>
         <template #footer-right>
@@ -94,18 +81,6 @@ export default {
     props: {
         contents: { type: Object, required: true },
         configs: { type: Object, required: true },
-    },
-    computed: {
-        filteredTreatments () {
-            let treatments = [];
-            Object.keys(this.contents.treatments).forEach(key => {
-                let index = this.configs.treatments.findIndex(t => t.name === key);
-                if (index !== -1) {
-                    treatments.push(this.configs.treatments[index]);
-                }
-            });
-            return treatments;
-        }
     },
 };
 </script>

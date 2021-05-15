@@ -3,13 +3,26 @@
         <template #default>
             <div class="px-12 py-6 print-p-0">
                 <h2 class="font-semibold pb-2 border-b-2 border-dashed text-xl text-center">
-                    ใบส่งตัว
+                    Admission Note
                 </h2>
 
                 <h3 class="font-normal underline mt-4">
-                    ข้อมูลเบื้องต้น
+                    ข้อมูลการแอดมิท
                 </h3>
-                <div class="mt-1 grid grid-rows-4 grid-flow-col gap-2">
+                <div class="mt-1 grid grid-rows-3 grid-flow-col gap-2">
+                    <display-input
+                        v-for="(field, key) in configs.admission"
+                        :key="key"
+                        :label="field.label"
+                        :data="contents.admission[field.name]"
+                        :format="field.format ?? ''"
+                    />
+                </div>
+
+                <h3 class="font-normal underline mt-4">
+                    ข้อมูลจากใบส่งตัว
+                </h3>
+                <div class="mt-1 grid grid-rows-2 grid-flow-col gap-2">
                     <display-input
                         v-for="(field, key) in configs.patient"
                         :key="key"
@@ -22,7 +35,7 @@
                 <h3 class="font-normal underline mt-4">
                     Vital Signs ล่าสุด
                 </h3>
-                <div class="mt-1 grid grid-rows-3 grid-flow-col gap-2">
+                <div class="mt-1 grid grid-rows-3 grid-flow-col gap-1">
                     <display-input
                         v-for="(field, key) in configs.vital_signs"
                         :key="key"
@@ -39,9 +52,7 @@
                         {{ topic.label }}
                     </h3>
                     <div class="mt-1">
-                        <display-input
-                            :data="contents[topic.name]"
-                        />
+                        <display-input :data="contents[topic.name]" />
                     </div>
                 </template>
 

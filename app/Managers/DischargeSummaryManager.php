@@ -14,7 +14,7 @@ class DischargeSummaryManager extends NoteManager
     {
         // title and menu
         if ($report) {
-            Request::session()->flash('page-title', 'Discharge Summary: '.($this->note->patient->full_name));
+            Request::session()->flash('page-title', 'Discharge Summary: AN '.$this->note->admission->an.' '.($this->note->patient->full_name));
             Request::session()->flash('messages', null);
         } else {
             Request::session()->flash('page-title', 'Discharge Summary: '.($this->note->patient->full_name));
@@ -51,9 +51,20 @@ class DischargeSummaryManager extends NoteManager
         $contents['admission']['length_of_stay'] = $this->note->admission->length_of_stay.'';
         $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz(Auth::user()->timezone)->format('d M Y H:i');
         $contents['admission']['dismissed_at'] = $this->note->admission->dismissed_at ? $this->note->admission->dismissed_at->tz(Auth::user()->timezone)->format('d M Y H:i') : null;
+
+        // check new keys, set them if not already set
+        $this->checkNewKeys($contents);
         if (! $report) {
             return $contents;
         }
+
+        // author
+        $contents['author'] = [
+            'name' => $this->note->author->full_name,
+            'pln' =>  $this->note->author->pln,
+            'tel_no' =>  $this->note->author->tel_no,
+            'updated_at' => $this->note->updated_at->tz(Auth::user()->timezone)->format('d M Y H:i:s'),
+        ];
 
         // admission
         $contents['admission']['ward'] = $this->note->admission->meta['place_name'];
@@ -121,7 +132,7 @@ class DischargeSummaryManager extends NoteManager
             }
 
             $text .= $complications['other_complications'];
-            $contents['complications'] = $text;
+            $contents['complications'] = trim($text, ', ');
         }
 
         // non_OR_procedures
@@ -182,14 +193,23 @@ class DischargeSummaryManager extends NoteManager
             $contents['repeat_NP_swab'] = $this->getDateString($repeat_NP_swab['date_repeat_NP_swab']);
         }
 
-        // author
-        $contents['author'] = [
-            'name' => $this->note->author->full_name,
-            'pln' =>  $this->note->author->pln,
-            'tel_no' =>  $this->note->author->tel_no,
-        ];
+        if ($contents['remark']) {
+            $lines = explode("\n", $contents['remark']);
+            if (count($lines) > 1) {
+                $contents['remark'] = collect($lines)->map(function ($line) {
+                    return "<p>{$line}</p>";
+                })->join('');
+            }
+        }
 
         return $contents;
+    }
+
+    public function checkNewKeys(&$contents)
+    {
+        if (! isset($contents['remark'])) {
+            $contents['remark'] = null;
+        }
     }
 
     public function getConfigs($report = false)
@@ -225,6 +245,7 @@ class DischargeSummaryManager extends NoteManager
         }
 
         $configs = [
+            'note_slug' => $this->note->slug,
             'admission' => [
                 ['label' => 'an', 'name' => 'an'],
                 ['label' => 'hn', 'name' => 'hn'],
@@ -284,6 +305,11 @@ class DischargeSummaryManager extends NoteManager
     public function getForm()
     {
         return 'Forms/DischargeSummary';
+    }
+
+    public function getPrintout()
+    {
+        return 'Printouts/DischargeSummary';
     }
 
     public function transferData()

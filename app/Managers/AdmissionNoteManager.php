@@ -13,7 +13,7 @@ class AdmissionNoteManager extends NoteManager
     {
         // title and menu
         if ($report) {
-            Request::session()->flash('page-title', 'Admission note: '.($this->note->patient->full_name));
+            Request::session()->flash('page-title', 'Admission note: AN '.$this->note->admission->an.' '.($this->note->patient->full_name));
             Request::session()->flash('messages', null);
         } else {
             Request::session()->flash('page-title', 'Admission note: '.($this->note->patient->full_name));
@@ -49,12 +49,12 @@ class AdmissionNoteManager extends NoteManager
         $contents['admission']['an'] = $this->note->admission->an;
         $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz(Auth::user()->timezone)->format('d M Y H:i');
 
+        // check new keys, set them if not already set
+        $this->checkNewKeys($contents);
+
         if (! $report) {
             return $contents;
         }
-
-        // check new keys, set them if not already set
-        $this->checkNewKeys($contents);
 
         // admission
         $contents['admission']['ward'] = $this->note->admission->meta['place_name'];
@@ -65,6 +65,7 @@ class AdmissionNoteManager extends NoteManager
             'name' => $this->note->author->full_name,
             'pln' =>  $this->note->author->pln,
             'tel_no' =>  $this->note->author->tel_no,
+            'updated_at' => $this->note->updated_at->tz(Auth::user()->timezone)->format('d M Y H:i:s'),
         ];
 
         // symptoms
@@ -191,6 +192,7 @@ class AdmissionNoteManager extends NoteManager
         }
 
         $configs = [
+            'note_slug' => $this->note->slug,
             'patient' => [
                 ['label' => 'วันแรกที่มีอาการ', 'name' => 'date_symptom_start', 'format' => 'date'],
                 ['label' => 'วันที่ตรวจพบเชื้อ', 'name' => 'date_covid_infected', 'format' => 'date'],
@@ -239,6 +241,11 @@ class AdmissionNoteManager extends NoteManager
     public function getForm()
     {
         return 'Forms/AdmissionNote';
+    }
+
+    public function getPrintout()
+    {
+        return 'Printouts/AdmissionNote';
     }
 
     public function getDateString($date)
