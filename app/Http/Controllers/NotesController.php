@@ -17,6 +17,7 @@ class NotesController extends Controller
 {
     public function store()
     {
+        // every notes except refer note
         Request::validate([
             'refer_case_id' => 'required|exists:refer_cases,id',
             'type' => 'required|in:admission note,discharge summary,progress note,nurse note',
@@ -54,23 +55,6 @@ class NotesController extends Controller
         }
 
         return  Redirect::route('note.form', ['note' => $note]);
-    }
-
-    public function show(Note $note)
-    {
-        if ($note->type === 'refer note') {
-            $manager = new ReferNoteManager($note);
-        }
-
-        // if ($note->type === 'refer note') {
-        //     $manager = new ReferNoteManager($note);
-        // }
-        $manager->setFlashData(true);
-
-        return Inertia::render('Reports/ReferNote', [
-            'contents' => $manager->getContents(),
-            'formConfigs' => $manager->getConfigs(),
-        ]);
     }
 
     public function edit(Note $note)

@@ -13,23 +13,25 @@ class AdmissionNoteManager extends NoteManager
     {
         // title and menu
         if ($report) {
-            Request::session()->flash('page-title', 'Admission note: '.($this->note->patient->full_name));
-            Request::session()->flash('messages', [
-                'status' => 'info',
-                'messages' => [
-                    'สำหรับอ่านเท่านั้น',
-                ],
-            ]);
+            Request::session()->flash('page-title', 'Admission note: AN '.$this->note->admission->an.' '.($this->note->patient->full_name));
+            Request::session()->flash('messages', null);
         } else {
             Request::session()->flash('page-title', 'Admission note: '.($this->note->patient->full_name));
-            Request::session()->flash('messages', [
-                'status' => 'info',
-                'messages' => [
-                    'สามารถกลับมาเขียนต่อภายหลังได้',
-                    'เมื่อเขียนเสร็จแล้วให้ <span class="font-semibold">เผยแพร่โน๊ต</span> ท้ายฟอร์ม',
-                    'เมื่อ <span class="font-semibold">เผยแพร่โน๊ต</span> แล้วยังสามารถกลับมาแก้ไขได้จนกว่าจะสรุปแฟ้ม',
-                ],
-            ]);
+            if ($this->note->contents['submitted']) {
+                Request::session()->flash('messages', [
+                    'status' => 'warning',
+                    'messages' => ['โปรดกด <span class="font-semibold">ปรับปรุง</span> ทุกครั้งหลังแก้ไขข้อมูล'],
+                ]);
+            } else {
+                Request::session()->flash('messages', [
+                    'status' => 'info',
+                    'messages' => [
+                        'สามารถกลับมาเขียนต่อภายหลังได้',
+                        'เมื่อเขียนเสร็จแล้วให้ <span class="font-semibold">เผยแพร่โน๊ต</span> ท้ายฟอร์ม',
+                        'เมื่อ <span class="font-semibold">เผยแพร่โน๊ต</span> แล้วยังสามารถกลับมาแก้ไขได้จนกว่าจะสรุปแฟ้ม',
+                    ],
+                ]);
+            }
         }
 
         Request::session()->flash('main-menu-links', [ // need check abilities
@@ -47,12 +49,12 @@ class AdmissionNoteManager extends NoteManager
         $contents['admission']['an'] = $this->note->admission->an;
         $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz(Auth::user()->timezone)->format('d M Y H:i');
 
+        // check new keys, set them if not already set
+        $this->checkNewKeys($contents);
+
         if (! $report) {
             return $contents;
         }
-
-        // check new keys, set them if not already set
-        $this->checkNewKeys($contents);
 
         // admission
         $contents['admission']['ward'] = $this->note->admission->meta['place_name'];
@@ -63,12 +65,13 @@ class AdmissionNoteManager extends NoteManager
             'name' => $this->note->author->full_name,
             'pln' =>  $this->note->author->pln,
             'tel_no' =>  $this->note->author->tel_no,
+            'updated_at' => $this->note->updated_at->tz(Auth::user()->timezone)->format('d M Y H:i:s'),
         ];
 
         // symptoms
         $symptoms = $contents['symptoms'];
         if ($symptoms['asymptomatic_symptom']) {
-            $symptoms = 'Asymptomatics '.$symptoms['asymptomatic_detail'];
+            $symptoms = 'Asymptomatic '.$symptoms['asymptomatic_detail'];
         } else {
             $symptomsList = $this->getConfigs()['symptoms'];
             $text = '';
@@ -86,7 +89,7 @@ class AdmissionNoteManager extends NoteManager
         // diagnosis
         $diagnosis = $contents['diagnosis'];
         if ($diagnosis['asymptomatic_diagnosis']) {
-            $diagnosis = 'Asymptomatics COVID 19 infection';
+            $diagnosis = 'Asymptomatic COVID 19 infection';
         } else {
             $text = '';
             if ($diagnosis['uri']) {
@@ -164,12 +167,6 @@ class AdmissionNoteManager extends NoteManager
         if (! isset($contents['remark'])) {
             $contents['remark'] = null;
         }
-        if (! isset($contents['vital_signs']['level_of_consciousness'])) {
-            $contents['vital_signs']['level_of_consciousness'] = null;
-        }
-        if (! isset($contents['vital_signs']['emotional_statu'])) {
-            $contents['vital_signs']['emotional_statu'] = null;
-        }
     }
 
     public function getConfigs($report = false)
@@ -195,11 +192,8 @@ class AdmissionNoteManager extends NoteManager
         }
 
         $configs = [
+            'note_slug' => $this->note->slug,
             'patient' => [
-                // ['label' => 'sat code', 'name' => 'sat_code'],
-                // ['label' => 'hn', 'name' => 'hn'],
-                // ['label' => 'ชื่อผู้ป่วย', 'name' => 'name'],
-                // ['label' => 'สิทธิ์การรักษา', 'name' => 'insurance'],
                 ['label' => 'วันแรกที่มีอาการ', 'name' => 'date_symptom_start', 'format' => 'date'],
                 ['label' => 'วันที่ตรวจพบเชื้อ', 'name' => 'date_covid_infected', 'format' => 'date'],
                 ['label' => 'วันที่รับไว้ในโรงพยาบาล', 'name' => 'date_admit_origin', 'format' => 'date'],
@@ -247,6 +241,11 @@ class AdmissionNoteManager extends NoteManager
     public function getForm()
     {
         return 'Forms/AdmissionNote';
+    }
+
+    public function getPrintout()
+    {
+        return 'Printouts/AdmissionNote';
     }
 
     public function getDateString($date)

@@ -74,6 +74,12 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function getAdmission($an)
     {
         $data = $this->brushing($this->pasteLoad('admission', ['an' => $an]));
+        if (! $data) { // error: $data = null
+            return [
+                'found' => false,
+                'message' => __('service.failed'),
+            ];
+        }
 
         if ($data['found']) {
             $data['patient']['found'] = true;

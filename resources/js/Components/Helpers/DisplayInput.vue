@@ -2,10 +2,10 @@
     <div class="w-full">
         <label
             v-if="label"
-            class="form-label"
+            class="form-label text-print-size"
         >{{ label }} :</label>
         <div
-            class="break-words"
+            class="break-words text-print-size"
             v-html="formattedData"
         />
     </div>

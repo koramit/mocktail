@@ -23,17 +23,20 @@ class AdmissionNotesController extends Controller
         unset($data['patient']['hn']);
         unset($data['patient']['name']);
 
-        $data['submitted'] = true;
+        $isUpdate = true;
+        if (! $data['submitted']) {
+            $data['submitted'] = true;
+            $isUpdate = false;
+        }
+
         $note->contents = $data;
         $note->save();
 
         return Redirect::route('case-notes', ['case' => $note->admission->referCase])->with('messages', [
             'status' => 'success',
             'messages' => [
-                'เผยแพร่ admission note '.$note->admission->referCase->name.' สำเร็จ',
+                ($isUpdate ? 'ปรับปรุง' : 'เผยแพร่').' admission note '.$note->admission->referCase->name.' สำเร็จ',
             ],
         ]);
-
-        // return 'OK🥳';
     }
 }

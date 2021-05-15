@@ -11,7 +11,7 @@
                 </p>
                 <a
                     v-else
-                    :href="`${$page.props.app.baseUrl}/soon`"
+                    :href="`${$page.props.app.baseUrl}/printouts/${configs.note_slug}`"
                     class="ml-6 text-sm font-normal text-dark-theme-light flex"
                     target="_blank"
                 >

@@ -9,6 +9,8 @@ use App\Http\Controllers\DischargeSummaryNotesController;
 use App\Http\Controllers\ExportReportsController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\PrintDefaultAdmissionNote;
+use App\Http\Controllers\PrintoutsController;
 use App\Http\Controllers\ReferCaseNotesController;
 use App\Http\Controllers\ReferCasesController;
 use App\Http\Controllers\ReportsController;
@@ -61,6 +63,12 @@ Route::middleware('auth')->get('/uploads/{path}', [UploadsController::class, 'sh
 //admit case
 Route::middleware('auth')->post('/admissions', [AdmissionsController::class, 'store']);
 
+// admission note
+Route::middleware('auth')->post('/admission-notes/{note}', AdmissionNotesController::class);
+
+// discharge summary
+Route::middleware('auth')->post('/discharge-summary-notes/{note}', DischargeSummaryNotesController::class);
+
 // front api
 Route::middleware('auth')->post('/front-api/patient-rencently-admission', [PatientAPIController::class, 'recentlyAdmission']);
 Route::middleware('auth')->post('/front-api/patient', [PatientAPIController::class, 'patient']);
@@ -71,11 +79,10 @@ Route::middleware('auth')->get('/reports/refer-cases', ExportReportsController::
 // report
 Route::middleware('auth')->get('/reports/{case:slug}', ReportsController::class);
 
-// admission note
-Route::middleware('auth')->post('/admission-notes/{note}', AdmissionNotesController::class);
+// printout
+Route::middleware('auth')->get('/printouts/{note:slug}', PrintoutsController::class);
+Route::middleware('auth')->get('/print-default-admission-note/{case:slug}', PrintDefaultAdmissionNote::class);
 
-// discharge summary
-Route::middleware('auth')->post('/discharge-summary-notes/{note}', DischargeSummaryNotesController::class);
 
 // soon
 Route::middleware('auth')->get('/soon', [PagesController::class, 'soon']);
