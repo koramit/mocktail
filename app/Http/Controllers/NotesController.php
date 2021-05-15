@@ -17,6 +17,7 @@ class NotesController extends Controller
 {
     public function store()
     {
+        // every notes except refer note
         Request::validate([
             'refer_case_id' => 'required|exists:refer_cases,id',
             'type' => 'required|in:admission note,discharge summary,progress note,nurse note',

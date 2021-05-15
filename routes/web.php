@@ -1,14 +1,13 @@
 <?php
 
-use App\Http\Controllers\AdmissionNotesController;
 use App\Http\Controllers\AdmissionsController;
 use App\Http\Controllers\APIs\Front\PatientAPIController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\DischargeSummaryNotesController;
 use App\Http\Controllers\ExportReportsController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\PrintoutsController;
 use App\Http\Controllers\ReferCaseNotesController;
 use App\Http\Controllers\ReferCasesController;
 use App\Http\Controllers\ReportsController;
@@ -71,11 +70,12 @@ Route::middleware('auth')->get('/reports/refer-cases', ExportReportsController::
 // report
 Route::middleware('auth')->get('/reports/{case:slug}', ReportsController::class);
 
-// admission note
-Route::middleware('auth')->post('/admission-notes/{note}', AdmissionNotesController::class);
-
-// discharge summary
-Route::middleware('auth')->post('/discharge-summary-notes/{note}', DischargeSummaryNotesController::class);
+// printout
+Route::middleware('auth')->get('/printouts/{note:slug}', PrintoutsController::class);
 
 // soon
 Route::middleware('auth')->get('/soon', [PagesController::class, 'soon']);
+
+// Route::get('/paper', function () {
+//     return Inertia\Inertia::render('Printouts/ReferNote');
+// });

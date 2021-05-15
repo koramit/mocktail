@@ -4,6 +4,7 @@ namespace App\Managers;
 
 use App\Models\Note;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
@@ -61,6 +62,7 @@ class ReferNoteManager extends NoteManager
             'name' => $this->note->author->full_name,
             'pln' =>  $this->note->author->pln,
             'tel_no' =>  $this->note->author->tel_no,
+            'updated_at' => $this->note->updated_at->tz(Auth::user()->timezone)->format('d M Y H:i:s'),
         ];
 
         // check new keys, set them if not already set
@@ -205,6 +207,7 @@ class ReferNoteManager extends NoteManager
         }
 
         $configs = [
+            'note_slug' => $this->note->slug,
             'patient' => [
                 ['label' => 'ส่งตัวจาก', 'name' => 'center'],
                 ['label' => 'sat code', 'name' => 'sat_code'],
@@ -253,6 +256,11 @@ class ReferNoteManager extends NoteManager
     public function getForm()
     {
         return 'Forms/ReferNote';
+    }
+
+    public function getPrintput()
+    {
+        return 'Printouts/ReferNote';
     }
 
     public function getDateString($date)
