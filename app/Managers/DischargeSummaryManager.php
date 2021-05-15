@@ -15,22 +15,24 @@ class DischargeSummaryManager extends NoteManager
         // title and menu
         if ($report) {
             Request::session()->flash('page-title', 'Discharge Summary: '.($this->note->patient->full_name));
-            Request::session()->flash('messages', [
-                'status' => 'info',
-                'messages' => [
-                    'สำหรับอ่านเท่านั้น',
-                ],
-            ]);
+            Request::session()->flash('messages', null);
         } else {
             Request::session()->flash('page-title', 'Discharge Summary: '.($this->note->patient->full_name));
-            Request::session()->flash('messages', [
-                'status' => 'info',
-                'messages' => [
-                    'สามารถกลับมาเขียนต่อภายหลังได้',
-                    'เมื่อเขียนเสร็จแล้วให้ <span class="font-semibold">เผยแพร่โน๊ต</span> ท้ายฟอร์ม',
-                    'เมื่อ <span class="font-semibold">เผยแพร่โน๊ต</span> แล้วยังสามารถกลับมาแก้ไขได้จนกว่าจะสรุปแฟ้ม',
-                ],
-            ]);
+            if ($this->note->contents['submitted']) {
+                Request::session()->flash('messages', [
+                    'status' => 'warning',
+                    'messages' => ['โปรดกด <span class="font-semibold">ปรับปรุง</span> ทุกครั้งหลังแก้ไขข้อมูล'],
+                ]);
+            } else {
+                Request::session()->flash('messages', [
+                    'status' => 'info',
+                    'messages' => [
+                        'สามารถกลับมาเขียนต่อภายหลังได้',
+                        'เมื่อเขียนเสร็จแล้วให้ <span class="font-semibold">เผยแพร่โน๊ต</span> ท้ายฟอร์ม',
+                        'เมื่อ <span class="font-semibold">เผยแพร่โน๊ต</span> แล้วยังสามารถกลับมาแก้ไขได้จนกว่าจะสรุปแฟ้ม',
+                    ],
+                ]);
+            }
         }
 
         Request::session()->flash('main-menu-links', [ // need check abilities

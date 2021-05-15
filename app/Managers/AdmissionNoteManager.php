@@ -14,22 +14,24 @@ class AdmissionNoteManager extends NoteManager
         // title and menu
         if ($report) {
             Request::session()->flash('page-title', 'Admission note: '.($this->note->patient->full_name));
-            Request::session()->flash('messages', [
-                'status' => 'info',
-                'messages' => [
-                    'สำหรับอ่านเท่านั้น',
-                ],
-            ]);
+            Request::session()->flash('messages', null);
         } else {
             Request::session()->flash('page-title', 'Admission note: '.($this->note->patient->full_name));
-            Request::session()->flash('messages', [
-                'status' => 'info',
-                'messages' => [
-                    'สามารถกลับมาเขียนต่อภายหลังได้',
-                    'เมื่อเขียนเสร็จแล้วให้ <span class="font-semibold">เผยแพร่โน๊ต</span> ท้ายฟอร์ม',
-                    'เมื่อ <span class="font-semibold">เผยแพร่โน๊ต</span> แล้วยังสามารถกลับมาแก้ไขได้จนกว่าจะสรุปแฟ้ม',
-                ],
-            ]);
+            if ($this->note->contents['submitted']) {
+                Request::session()->flash('messages', [
+                    'status' => 'warning',
+                    'messages' => ['โปรดกด <span class="font-semibold">ปรับปรุง</span> ทุกครั้งหลังแก้ไขข้อมูล'],
+                ]);
+            } else {
+                Request::session()->flash('messages', [
+                    'status' => 'info',
+                    'messages' => [
+                        'สามารถกลับมาเขียนต่อภายหลังได้',
+                        'เมื่อเขียนเสร็จแล้วให้ <span class="font-semibold">เผยแพร่โน๊ต</span> ท้ายฟอร์ม',
+                        'เมื่อ <span class="font-semibold">เผยแพร่โน๊ต</span> แล้วยังสามารถกลับมาแก้ไขได้จนกว่าจะสรุปแฟ้ม',
+                    ],
+                ]);
+            }
         }
 
         Request::session()->flash('main-menu-links', [ // need check abilities
@@ -164,12 +166,6 @@ class AdmissionNoteManager extends NoteManager
         if (! isset($contents['remark'])) {
             $contents['remark'] = null;
         }
-        if (! isset($contents['vital_signs']['level_of_consciousness'])) {
-            $contents['vital_signs']['level_of_consciousness'] = null;
-        }
-        if (! isset($contents['vital_signs']['emotional_statu'])) {
-            $contents['vital_signs']['emotional_statu'] = null;
-        }
     }
 
     public function getConfigs($report = false)
@@ -196,10 +192,6 @@ class AdmissionNoteManager extends NoteManager
 
         $configs = [
             'patient' => [
-                // ['label' => 'sat code', 'name' => 'sat_code'],
-                // ['label' => 'hn', 'name' => 'hn'],
-                // ['label' => 'ชื่อผู้ป่วย', 'name' => 'name'],
-                // ['label' => 'สิทธิ์การรักษา', 'name' => 'insurance'],
                 ['label' => 'วันแรกที่มีอาการ', 'name' => 'date_symptom_start', 'format' => 'date'],
                 ['label' => 'วันที่ตรวจพบเชื้อ', 'name' => 'date_covid_infected', 'format' => 'date'],
                 ['label' => 'วันที่รับไว้ในโรงพยาบาล', 'name' => 'date_admit_origin', 'format' => 'date'],
