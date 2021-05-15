@@ -67,7 +67,7 @@ class DischargeSummaryManager extends NoteManager
         // diagnosis
         $diagnosis = $contents['diagnosis'];
         if ($diagnosis['asymptomatic_diagnosis']) {
-            $diagnosis = 'Asymptomatics COVID 19 infection';
+            $diagnosis = 'Asymptomatic COVID 19 infection';
         } else {
             $text = '';
             if ($diagnosis['uri']) {
@@ -132,7 +132,7 @@ class DischargeSummaryManager extends NoteManager
         // symptoms
         $symptoms = $contents['symptoms'];
         if ($symptoms['asymptomatic_symptom']) {
-            $symptoms = 'Asymptomatics '.$symptoms['asymptomatic_detail'];
+            $symptoms = 'Asymptomatic '.$symptoms['asymptomatic_detail'];
         } else {
             $symptomsList = $this->getConfigs()['symptoms'];
             $text = '';

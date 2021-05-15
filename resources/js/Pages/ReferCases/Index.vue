@@ -139,7 +139,7 @@
                         class="w-4 h-4 mr-1"
                         name="clipboard-list"
                     />
-                    <span class="block font-normal text-thick-theme-light">โน็ต</span>
+                    <span class="block font-normal text-thick-theme-light">โน๊ต</span>
                 </inertia-link>
 
                 <!-- cancel -->
