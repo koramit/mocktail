@@ -21,7 +21,6 @@
                 :error="form.errors.sat_code"
                 @autosave="autosave('patient.sat_code')"
             />
-            <!-- next feature -->
             <form-input
                 class="mt-2"
                 name="tel_no"
@@ -63,7 +62,7 @@
             <form-select
                 v-if="$page.props.user.center === 'ศิริราช'"
                 class="mt-2"
-                label="Ward ศิริราช"
+                label="หอผู้ป่วย"
                 v-model="form.patient.ward"
                 :error="form.errors.ward"
                 name="ward"
@@ -704,6 +703,18 @@ export default {
                 this.$refs.selectOther.open();
             }
         },
+        'form.patient.ward': {
+            handler (val) {
+                if (val !== 'other') {
+                    return;
+                }
+
+                this.selectOtherPlaceholder = 'ระบุหอผู้ป่วยอื่นๆ';
+                this.configsRef = 'wards';
+                this.formSelectRef = 'ward';
+                this.$refs.selectOther.open();
+            }
+        },
         'form.patient.meal': {
             handler (val) {
                 if (val !== 'other') {
@@ -724,6 +735,10 @@ export default {
 
         if (this.form.patient.meal && !this.configs.meals.includes(this.form.patient.meal)) {
             this.configs.meals.push(this.form.patient.meal);
+        }
+
+        if (this.form.patient.ward && !this.configs.wards.includes(this.form.patient.ward)) {
+            this.configs.wards.push(this.form.patient.ward);
         }
     },
     mounted() {
