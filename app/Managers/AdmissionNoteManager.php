@@ -12,11 +12,10 @@ class AdmissionNoteManager extends NoteManager
     public function setFlashData($report = false)
     {
         // title and menu
+        Request::session()->flash('page-title', 'Admission note: AN '.$this->note->admission->an.' '.($this->note->patient->full_name));
         if ($report) {
-            Request::session()->flash('page-title', 'Admission note: AN '.$this->note->admission->an.' '.($this->note->patient->full_name));
             Request::session()->flash('messages', null);
         } else {
-            Request::session()->flash('page-title', 'Admission note: '.($this->note->patient->full_name));
             if ($this->note->contents['submitted']) {
                 Request::session()->flash('messages', [
                     'status' => 'warning',
@@ -71,7 +70,7 @@ class AdmissionNoteManager extends NoteManager
         // symptoms
         $symptoms = $contents['symptoms'];
         if ($symptoms['asymptomatic_symptom']) {
-            $symptoms = 'Asymptomatic '.$symptoms['asymptomatic_detail'];
+            $contents['symptoms'] = 'Asymptomatic '.$symptoms['asymptomatic_detail'];
         } else {
             $symptomsList = $this->getConfigs()['symptoms'];
             $text = '';
@@ -82,14 +81,13 @@ class AdmissionNoteManager extends NoteManager
             }
 
             $text .= $symptoms['other_symptoms'];
-            $symptoms = $text;
+            $contents['symptoms'] = $text;
         }
-        $contents['symptoms'] = $symptoms;
 
         // diagnosis
         $diagnosis = $contents['diagnosis'];
         if ($diagnosis['asymptomatic_diagnosis']) {
-            $diagnosis = 'Asymptomatic COVID 19 infection';
+            $contents['diagnosis'] = 'Asymptomatic COVID 19 infection';
         } else {
             $text = '';
             if ($diagnosis['uri']) {
@@ -105,9 +103,8 @@ class AdmissionNoteManager extends NoteManager
             }
 
             $text .= $diagnosis['other_diagnosis'];
-            $diagnosis = $text;
+            $contents['diagnosis'] = $text;
         }
-        $contents['diagnosis'] = $diagnosis;
 
         // adr
         if ($contents['adr']['no_adr']) {
@@ -119,7 +116,7 @@ class AdmissionNoteManager extends NoteManager
         // comordibs
         $comorbids = $contents['comorbids'];
         if ($comorbids['no_comorbids']) {
-            $comorbids = 'ไม่มี';
+            $contents['comorbids'] = 'ไม่มี';
         } else {
             $text = '';
             if ($comorbids['dm']) {
@@ -131,9 +128,8 @@ class AdmissionNoteManager extends NoteManager
             }
 
             $text .= $comorbids['other_comorbids'];
-            $comorbids = $text;
+            $contents['comorbids'] = $text;
         }
-        $contents['comorbids'] = $comorbids;
 
         // treatment
         $treatments = $contents['treatments'];
@@ -150,6 +146,7 @@ class AdmissionNoteManager extends NoteManager
         }
         $contents['treatments'] = $treatments;
 
+        // remark
         if ($contents['remark']) {
             $lines = explode("\n", $contents['remark']);
             if (count($lines) > 1) {
@@ -236,25 +233,6 @@ class AdmissionNoteManager extends NoteManager
         ];
 
         return $configs;
-    }
-
-    public function getForm()
-    {
-        return 'Forms/AdmissionNote';
-    }
-
-    public function getPrintout()
-    {
-        return 'Printouts/AdmissionNote';
-    }
-
-    public function getDateString($date)
-    {
-        if (! $date) {
-            return null;
-        }
-
-        return Carbon::create($date)->format('d M Y');
     }
 
     public function transferData()

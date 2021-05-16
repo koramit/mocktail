@@ -26,6 +26,7 @@ class ExportReportsController extends Controller
                                   'วันที่ Discharge' => $this->castDate($case->note->contents['patient']['date_expect_discharge']),
                                   'รพ. ต้นทาง' => $case->center->name,
                                   'สถานะ' => $case->status_label,
+                                  'หมายเลขห้อง' => $case->room_number,
                               ];
                           });
         $filename = 'รายงานแบบบันทึกการส่งต่อผู้ป่วย@'.now()->tz(Auth::user()->timezone)->format('d-m-Y').'.xlsx';

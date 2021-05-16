@@ -11,9 +11,7 @@ class DischargeSummaryNotesController extends Controller
 {
     public function __invoke(Note $note)
     {
-        $errors = DischargeSummaryManager::validate($note);
-
-        if ($errors) {
+        if ($errors = DischargeSummaryManager::validate($note)) {
             return back()->withErrors($errors);
         }
 
