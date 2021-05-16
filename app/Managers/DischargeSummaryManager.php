@@ -125,12 +125,19 @@ class DischargeSummaryManager extends NoteManager
             $text = '';
             foreach ($complicationsList as $complication) {
                 if ($complications[$complication['name']]) {
-                    $text .= "{$complication['label']}, ";
+                    if ($complication['name'] === 'Fever') {
+                        $text .= 'Fever, ';
+                    } elseif ($complication['name'] === 'Desaturation') {
+                        $text .= "{$complications['desaturation_specific']}, ";
+                    } else {
+                        $text .= "{$complication['label']}, ";
+                    }
                 }
             }
 
+            $text = trim($text, ', ');
             $text .= $complications['other_complications'];
-            $contents['complications'] = trim($text, ', ');
+            $contents['complications'] = $text;
         }
 
         // non_OR_procedures
