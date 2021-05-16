@@ -3,7 +3,8 @@
         <p>{{ contact.name }}</p>
         <button
             @click="showContact = !showContact"
-            class="mx-4 text-alt-theme-light"
+            class="text-alt-theme-light"
+            :class="{ 'mx-4': contact.name, 'mr-4': !contact.name }"
         >
             <icon
                 class="w-4 h-4"

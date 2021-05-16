@@ -18,7 +18,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         $password = str_replace('=', 'TaOkUbSiGn', $password);
 
         $data = $this->brushing($this->pasteLoad('authenticate', ['login' => $login, 'password' => $password]));
-        if (! $data) { // error: $data = null
+        if (! $data || ! isset($data['found'])) { // error: $data = null
             return [
                 'found' => false,
                 'message' => __('service.failed'),
@@ -54,7 +54,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function getPatient($hn)
     {
         $data = $this->brushing($this->pasteLoad('patient', ['hn' => $hn]));
-        if (! $data) { // error: $data = null
+        if (! $data || ! isset($data['found'])) { // error: $data = null
             return [
                 'found' => false,
                 'message' => __('service.failed'),
@@ -74,7 +74,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function getAdmission($an)
     {
         $data = $this->brushing($this->pasteLoad('admission', ['an' => $an]));
-        if (! $data) { // error: $data = null
+        if (! $data || ! isset($data['found'])) { // error: $data = null
             return [
                 'found' => false,
                 'message' => __('service.failed'),
@@ -100,7 +100,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function recentlyAdmission($hn)
     {
         $data = $this->brushing($this->pasteLoad('recently_admit', ['hn' => $hn]));
-        if (! $data) { // error: $data = null
+        if (! $data || ! isset($data['found'])) { // error: $data = null
             return [
                 'found' => false,
                 'message' => __('service.failed'),
