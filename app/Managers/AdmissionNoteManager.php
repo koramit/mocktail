@@ -3,7 +3,6 @@
 namespace App\Managers;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -46,7 +45,7 @@ class AdmissionNoteManager extends NoteManager
         $contents['admission']['name'] = $this->note->patient->full_name;
         $contents['admission']['hn'] = $this->note->patient->hn;
         $contents['admission']['an'] = $this->note->admission->an;
-        $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz(Auth::user()->timezone)->format('d M Y H:i');
+        $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz($this->user->timezone)->format('d M Y H:i');
 
         // check new keys, set them if not already set
         $this->checkNewKeys($contents);
@@ -64,7 +63,7 @@ class AdmissionNoteManager extends NoteManager
             'name' => $this->note->author->full_name,
             'pln' =>  $this->note->author->pln,
             'tel_no' =>  $this->note->author->tel_no,
-            'updated_at' => $this->note->updated_at->tz(Auth::user()->timezone)->format('d M Y H:i:s'),
+            'updated_at' => $this->note->updated_at->tz($this->user->timezone)->format('d M Y H:i:s'),
         ];
 
         // symptoms

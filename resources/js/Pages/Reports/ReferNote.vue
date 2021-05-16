@@ -115,6 +115,13 @@
                 :readonly="true"
             />
 
+            <template v-if="contents.patient.tel_no">
+                <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
+                    หมายเลขโทรศัพท์ของผู้ป่วย
+                </h3>
+                <contact-card :contact="{name: '', tel_no: contents.patient.tel_no }" />
+            </template>
+
             <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
                 ผู้เขียน
             </h3>

@@ -90,6 +90,10 @@ class NotesController extends Controller
                 $note->referCase->update(['patient_name' => $data['contents->patient->name']]);
 
                 return 'ok';
+            } elseif (array_key_first($data) === 'contents->patient->tel_no') {
+                $note->referCase->tel_no = $data['contents->patient->tel_no'];
+
+                return 'ok';
             }
         }
 

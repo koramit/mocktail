@@ -3,16 +3,20 @@
 namespace App\Managers;
 
 use App\Models\Note;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class NoteManager
 {
     protected $note;
+    protected $user;
 
-    public function __construct(Note $note)
+    public function __construct(Note $note, User $user = null)
     {
         $this->note = $note;
+        $this->user = $user ?? Auth::user();
     }
 
     public function getDateString($date)
