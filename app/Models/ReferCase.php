@@ -111,6 +111,11 @@ class ReferCase extends Model
         return $this->meta['status'];
     }
 
+    public function getRoomNumberAttribute()
+    {
+        return $this->meta['room_number'] ?? null;
+    }
+
     public function getUpdatedAtForHumansAttribute()
     {
         return $this->updated_at->locale('th_TH')->diffForHumans(now());

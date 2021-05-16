@@ -13,11 +13,10 @@ class DischargeSummaryManager extends NoteManager
     public function setFlashData($report = false)
     {
         // title and menu
+        Request::session()->flash('page-title', 'Discharge Summary: AN '.$this->note->admission->an.' '.($this->note->patient->full_name));
         if ($report) {
-            Request::session()->flash('page-title', 'Discharge Summary: AN '.$this->note->admission->an.' '.($this->note->patient->full_name));
             Request::session()->flash('messages', null);
         } else {
-            Request::session()->flash('page-title', 'Discharge Summary: '.($this->note->patient->full_name));
             if ($this->note->contents['submitted']) {
                 Request::session()->flash('messages', [
                     'status' => 'warning',
@@ -80,7 +79,7 @@ class DischargeSummaryManager extends NoteManager
         // diagnosis
         $diagnosis = $contents['diagnosis'];
         if ($diagnosis['asymptomatic_diagnosis']) {
-            $diagnosis = 'Asymptomatic COVID 19 infection';
+            $contents['diagnosis'] = 'Asymptomatic COVID 19 infection';
         } else {
             $text = '';
             if ($diagnosis['uri']) {
@@ -96,9 +95,8 @@ class DischargeSummaryManager extends NoteManager
             }
 
             $text .= $diagnosis['other_diagnosis'];
-            $diagnosis = $text;
+            $contents['diagnosis'] = $text;
         }
-        $contents['diagnosis'] = $diagnosis;
 
         // comorbids
         $comorbids = $contents['comorbids'];
@@ -145,7 +143,7 @@ class DischargeSummaryManager extends NoteManager
         // symptoms
         $symptoms = $contents['symptoms'];
         if ($symptoms['asymptomatic_symptom']) {
-            $symptoms = 'Asymptomatic '.$symptoms['asymptomatic_detail'];
+            $contents['symptoms'] = 'Asymptomatic '.$symptoms['asymptomatic_detail'];
         } else {
             $symptomsList = $this->getConfigs()['symptoms'];
             $text = '';
@@ -156,9 +154,8 @@ class DischargeSummaryManager extends NoteManager
             }
 
             $text .= $symptoms['other_symptoms'];
-            $symptoms = $text;
+            $contents['symptoms'] = $text;
         }
-        $contents['symptoms'] = $symptoms;
 
         // problem_list
         $problem_list = $contents['problem_list'];
@@ -193,6 +190,7 @@ class DischargeSummaryManager extends NoteManager
             $contents['repeat_NP_swab'] = $this->getDateString($repeat_NP_swab['date_repeat_NP_swab']);
         }
 
+        // remark
         if ($contents['remark']) {
             $lines = explode("\n", $contents['remark']);
             if (count($lines) > 1) {
@@ -302,16 +300,6 @@ class DischargeSummaryManager extends NoteManager
         return $configs;
     }
 
-    public function getForm()
-    {
-        return 'Forms/DischargeSummary';
-    }
-
-    public function getPrintout()
-    {
-        return 'Printouts/DischargeSummary';
-    }
-
     public function transferData()
     {
         $referNote = $this->note->admission->notes()->whereType('refer note')->first()->contents;
@@ -321,15 +309,6 @@ class DischargeSummaryManager extends NoteManager
         $this->note->contents = $contents;
 
         return $this->note->save();
-    }
-
-    public function getDateString($date)
-    {
-        if (! $date) {
-            return null;
-        }
-
-        return Carbon::create($date)->format('d M Y');
     }
 
     public function checkDischarge()

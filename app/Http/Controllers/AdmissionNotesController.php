@@ -11,14 +11,11 @@ class AdmissionNotesController extends Controller
 {
     public function __invoke(Note $note)
     {
-        $errors = AdmissionNoteManager::validate($note);
-
-        if ($errors) {
+        if ($errors = AdmissionNoteManager::validate($note)) {
             return back()->withErrors($errors);
         }
 
         $data = Request::all();
-
         unset($data['remember']);
         unset($data['patient']['hn']);
         unset($data['patient']['name']);

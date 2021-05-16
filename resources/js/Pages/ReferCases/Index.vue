@@ -50,7 +50,7 @@
                         />
                     </button>
                     <button
-                        class="text-sm shadow-sm italic px-2 rounded-xl"
+                        class="text-sm shadow-sm italic px-2 rounded-xl mr-1"
                         :class="{
                             'bg-purple-200 text-purple-400 ': referCase.status === 'discharged',
                             'bg-gray-200 text-thick-theme-light': referCase.status === 'draft',
@@ -67,12 +67,20 @@
                             v-if="referCase.status === filters.status"
                         />
                     </button>
+                    <span
+                        v-if="referCase.status === 'admitted'"
+                        class="text-sm text-thick-theme-light"
+                    >
+                        #{{ referCase.room_number }}
+                    </span>
                 </p>
-                <p class="p-1 text-lg pt-0">
-                    {{ referCase.patient_name }}
-                </p>
+                <div class="flex items-baseline">
+                    <p class="p-1 text-lg pt-0">
+                        {{ referCase.patient_name }}
+                    </p>
+                </div>
                 <p class="px-1 text-xs text-dark-theme-light italic">
-                    โดย {{ referCase.referer }} เมื่อ {{ referCase.updated_at_for_humans }}
+                    ปรับปรุงล่าสุด {{ referCase.updated_at_for_humans }}
                 </p>
             </div>
             <!-- right menu -->

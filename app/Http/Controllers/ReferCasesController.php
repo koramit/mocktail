@@ -18,8 +18,6 @@ class ReferCasesController extends Controller
     public function index()
     {
         Request::session()->flash('page-title', 'รายการเคส'.(Session::get('center')->name === config('app.main_center') ? '' : (' '.Session::get('center')->name)));
-        // dd(Request::session()->get('messages'));
-        // Request::session()->flash('messages', Request::session()->has('messages') ? Request::session()->pull('messages') : null);
         Request::session()->flash('main-menu-links', []);
         Request::session()->flash('action-menu', Auth::user()->abilities->contains('refer_case') ? [
             ['icon' => 'ambulance', 'label' => 'เพิ่มเคสใหม่', 'action' => 'create-new-case'],
@@ -28,6 +26,7 @@ class ReferCasesController extends Controller
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
                           ->filter(Request::only('status', 'center'))
+                          ->orderBy('updated_at', 'desc')
                           ->paginate()
                           ->withQueryString()
                           ->through(function ($case) { // transform() will "transform" paginate->data and paginate->link
@@ -41,6 +40,7 @@ class ReferCasesController extends Controller
                                   'center' => $case->center->name,
                                   'status' => $case->status,
                                   'status_label' => $case->status_label,
+                                  'room_number' => $case->room_number,
                                   'referer' => $case->referer->name,
                                   'updated_at_for_humans' => $case->updated_at_for_humans,
                               ];
@@ -130,9 +130,7 @@ class ReferCasesController extends Controller
 
     public function update(Note $note)
     {
-        $errors = ReferNoteManager::validate($note);
-
-        if ($errors) {
+        if ($errors = ReferNoteManager::validate($note)) {
             return back()->withErrors($errors);
         }
 
@@ -141,15 +139,15 @@ class ReferCasesController extends Controller
         }
 
         $data = Request::all();
-        $hn = $data['patient']['hn'];
 
+        $hn = $data['patient']['hn'];
         if (! $note->referCase->updateHn($hn)) {
             return back()->withErrors(['hn' => 'ไม่พบ HN นี้ในระบบ']);
         }
-        $meta = $note->referCase->meta;
-        $meta['status'] = 'submitted';
-        $note->referCase->meta = $meta;
-        $note->referCase->save();
+
+        if ($note->referCase->status === 'draft') {
+            $note->referCase->status = 'submitted';
+        }
 
         unset($data['remember']);
         unset($data['patient']['hn']);

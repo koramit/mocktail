@@ -15,9 +15,9 @@ use Inertia\Inertia;
 
 class NotesController extends Controller
 {
+    // every notes except refer note
     public function store()
     {
-        // every notes except refer note
         Request::validate([
             'refer_case_id' => 'required|exists:refer_cases,id',
             'type' => 'required|in:admission note,discharge summary,progress note,nurse note',
@@ -51,7 +51,9 @@ class NotesController extends Controller
         if ($type === 'admission note') {
             (new AdmissionNoteManager($note))->transferData();
         } elseif ($type === 'discharge summary') {
-            (new DischargeSummaryManager($note))->transferData();
+            $manager = new DischargeSummaryManager($note);
+            $manager->transferData();
+            $manager->checkDischarge();
         }
 
         return  Redirect::route('note.form', ['note' => $note]);
@@ -75,18 +77,22 @@ class NotesController extends Controller
         ]);
     }
 
+    // update if not already submitted
     public function update(Note $note)
     {
         $data = Request::all();
-        if (array_key_first($data) === 'contents->patient->hn') {
-            $note->referCase->update(['hn' => $data['contents->patient->hn']]);
+        if ($note->type === 'refer note') {
+            if (array_key_first($data) === 'contents->patient->hn') {
+                $note->referCase->update(['hn' => $data['contents->patient->hn']]);
 
-            return 'ok';
-        } elseif (array_key_first($data) === 'contents->patient->name') {
-            $note->referCase->update(['patient_name' => $data['contents->patient->name']]);
+                return 'ok';
+            } elseif (array_key_first($data) === 'contents->patient->name') {
+                $note->referCase->update(['patient_name' => $data['contents->patient->name']]);
 
-            return 'ok';
+                return 'ok';
+            }
         }
+
         $note->forceFill($data);
         $note->save();
 
