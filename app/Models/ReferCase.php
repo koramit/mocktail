@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReferCase extends Model
 {
-    use HasFactory, SoftDeletes, DataCryptable;
+    use HasFactory, SoftDeletes, DataCryptable, DataCryptable;
 
     protected $guarded = [];
 
@@ -134,6 +134,17 @@ class ReferCase extends Model
     public function getAnAttribute()
     {
         return $this->admission ? $this->admission->an : ($this->an ?? null);
+    }
+
+    public function setTelNoAttribute($value)
+    {
+        $this->forceFill(['meta->tel_no' => $this->encryptField($value)]);
+        $this->save();
+    }
+
+    public function getTelNoAttribute()
+    {
+        return $this->decryptField($this->meta['tel_no'] ?? null);
     }
 
     public function scopeWithFilterUserCenter($query, $userCenterId)

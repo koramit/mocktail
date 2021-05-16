@@ -22,7 +22,7 @@
                 @autosave="autosave('patient.sat_code')"
             />
             <!-- next feature -->
-            <!-- <form-input
+            <form-input
                 class="mt-2"
                 name="tel_no"
                 type="tel"
@@ -30,7 +30,7 @@
                 v-model="form.patient.tel_no"
                 :error="form.errors.tel_no"
                 @autosave="autosave('patient.tel_no')"
-            /> -->
+            />
             <form-input
                 class="mt-2"
                 name="hn"
@@ -60,7 +60,8 @@
                 @autosave="autosave('patient.insurance')"
             />
             <!-- next feature -->
-            <!-- <form-select
+            <form-select
+                v-if="$page.props.user.center === 'ศิริราช'"
                 class="mt-2"
                 label="Ward ศิริราช"
                 v-model="form.patient.ward"
@@ -70,7 +71,7 @@
                 :allow-other="true"
                 ref="ward"
                 @autosave="autosave('patient.ward')"
-            /> -->
+            />
             <form-datetime
                 v-if="!form.no_admit"
                 class="mt-2"
@@ -784,6 +785,7 @@ export default {
                             this.criterias = null;
                         }
                     },
+                    onFinish: () => this.form.processing = false,
                     replace: true,
                 });
         },
@@ -804,9 +806,6 @@ export default {
                         this.autosave('patient.name');
                     });
             }
-        },
-        confirmUpdate () {
-
         }
     }
 };

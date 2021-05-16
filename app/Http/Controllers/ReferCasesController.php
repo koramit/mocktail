@@ -149,9 +149,12 @@ class ReferCasesController extends Controller
             $note->referCase->status = 'submitted';
         }
 
+        $note->referCase->tel_no = $data['patient']['tel_no'];
+
         unset($data['remember']);
         unset($data['patient']['hn']);
         unset($data['patient']['name']);
+        unset($data['patient']['tel_no']);
 
         $data['submitted'] = true;
         $note->contents = $data;

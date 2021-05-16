@@ -4,7 +4,6 @@ namespace App\Managers;
 
 use App\Models\Note;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
@@ -46,6 +45,7 @@ class ReferNoteManager extends NoteManager
     {
         $contents = $this->note->contents;
         $contents['patient']['name'] = $this->note->referCase->name;
+        $contents['patient']['tel_no'] = $this->note->referCase->tel_no;
         $contents['patient']['hn'] = $this->note->referCase->patient ? $this->note->referCase->patient->hn : $this->note->referCase->hn;
 
         // check new keys, set them if not already set
@@ -55,12 +55,18 @@ class ReferNoteManager extends NoteManager
             return $contents;
         }
 
-        $contents['patient']['center'] = $this->note->referCase->center->name;
+        if ($this->note->referCase->center->name === config('app.main_center')) {
+            $ward = $this->note->contents['patient']['ward'] ?? null;
+            $contents['patient']['center'] = $this->note->referCase->center->name.($ward ? " ({$ward})" : '');
+        } else {
+            $contents['patient']['center'] = $this->note->referCase->center->name;
+        }
+
         $contents['author'] = [
             'name' => $this->note->author->full_name,
             'pln' =>  $this->note->author->pln,
             'tel_no' =>  $this->note->author->tel_no,
-            'updated_at' => $this->note->updated_at->tz(Auth::user()->timezone)->format('d M Y H:i:s'),
+            'updated_at' => $this->note->updated_at->tz($this->user->timezone)->format('d M Y H:i:s'),
         ];
 
         // symptoms
@@ -168,6 +174,11 @@ class ReferNoteManager extends NoteManager
             $contents['vital_signs']['level_of_consciousness'] = null;
             $contents['vital_signs']['emotional_status'] = null;
         }
+
+        if (! isset($contents['patient']['tel_no'])) {
+            $contents['patient']['tel_no'] = null;
+            $contents['patient']['ward'] = null;
+        }
     }
 
     public function getConfigs($report = false)
@@ -253,7 +264,9 @@ class ReferNoteManager extends NoteManager
             'remark' => null,
             'patient' => [
                 'sat_code' => null,
+                'tel_no' => null,
                 'insurance' => null,
+                'ward' => null,
                 'date_symptom_start' => null,
                 'date_covid_infected' => null,
                 'date_admit_origin' => null,
@@ -501,6 +514,7 @@ class ReferNoteManager extends NoteManager
     {
         $rules = [
             'sat_code' => 'required|alpha_num|size:18',
+            'tel_no' => 'required|digits_between:9,10',
             'insurance' => 'required|string',
             'date_covid_infected' => 'required|date',
             'date_refer' => 'required|date',
@@ -529,6 +543,7 @@ class ReferNoteManager extends NoteManager
 
         if (Session::get('center')->id === config('app.main_center_id')) {
             $rules['hn'] = 'required|digits:8';
+            $rules['ward'] = 'required|string';
         }
 
         return $rules;

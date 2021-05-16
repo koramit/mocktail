@@ -4,7 +4,6 @@ namespace App\Managers;
 
 use App\Models\Note;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -48,8 +47,8 @@ class DischargeSummaryManager extends NoteManager
         $contents['admission']['hn'] = $this->note->patient->hn;
         $contents['admission']['an'] = $this->note->admission->an;
         $contents['admission']['length_of_stay'] = $this->note->admission->length_of_stay.'';
-        $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz(Auth::user()->timezone)->format('d M Y H:i');
-        $contents['admission']['dismissed_at'] = $this->note->admission->dismissed_at ? $this->note->admission->dismissed_at->tz(Auth::user()->timezone)->format('d M Y H:i') : null;
+        $contents['admission']['encountered_at'] = $this->note->admission->encountered_at->tz($this->user->timezone)->format('d M Y H:i');
+        $contents['admission']['dismissed_at'] = $this->note->admission->dismissed_at ? $this->note->admission->dismissed_at->tz($this->user->timezone)->format('d M Y H:i') : null;
 
         // check new keys, set them if not already set
         $this->checkNewKeys($contents);
@@ -62,7 +61,7 @@ class DischargeSummaryManager extends NoteManager
             'name' => $this->note->author->full_name,
             'pln' =>  $this->note->author->pln,
             'tel_no' =>  $this->note->author->tel_no,
-            'updated_at' => $this->note->updated_at->tz(Auth::user()->timezone)->format('d M Y H:i:s'),
+            'updated_at' => $this->note->updated_at->tz($this->user->timezone)->format('d M Y H:i:s'),
         ];
 
         // admission
