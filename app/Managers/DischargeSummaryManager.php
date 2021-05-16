@@ -177,7 +177,7 @@ class DischargeSummaryManager extends NoteManager
             unset($contents['appointment']);
         } else {
             $text = '';
-            $text .= $this->getDateString($appointment['date_appointment']);
+            $text .= "{$this->getDateString($appointment['date_appointment'])} ";
             $text .= $appointment['appointment_at'];
             $contents['appointment'] = $text;
         }
