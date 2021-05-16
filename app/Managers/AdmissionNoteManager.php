@@ -238,7 +238,7 @@ class AdmissionNoteManager extends NoteManager
     public function transferData()
     {
         $referNote = $this->note->admission->notes()->whereType('refer note')->first()->contents;
-        $contents = [];
+        $contents = $this->note->contents;
 
         foreach ($this->note->contents as $key => $value) {
             if (! collect(['array', 'object'])->contains(gettype($value))) {

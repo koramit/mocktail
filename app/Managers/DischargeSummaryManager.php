@@ -420,7 +420,7 @@ class DischargeSummaryManager extends NoteManager
             'non_OR_procedures_detail' => 'exclude_if:no_non_OR_procedures,true|required|string',
 
             'date_appointment' => 'exclude_if:no_appointment,true|required|date',
-            'appointment_at' => 'exclude_if:no_appointment,true|required|date',
+            'appointment_at' => 'exclude_if:no_appointment,true|required|string',
 
             'date_repeat_NP_swab' => 'exclude_if:no_repeat_NP_swab,true|required|date',
         ];
