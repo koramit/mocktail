@@ -196,6 +196,8 @@ return [
         'appointment_at' => 'สถานที่นัด',
 
         'date_repeat_NP_swab' => 'วันนัดทำ NP swab ซ้ำ',
+
+        'ward' => 'หอผู้ป่วย',
     ],
 
 ];
