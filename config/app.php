@@ -245,4 +245,7 @@ return [
     'main_center_id' => 1,
     'main_center' => 'ศิริราช',
 
+    'GATECENTER_API_SERVICE_TOKEN' => env('GATECENTER_API_SERVICE_TOKEN'),
+    'GATECENTER_API_SERVICE_URL' => env('GATECENTER_API_SERVICE_URL'),
+
 ];
