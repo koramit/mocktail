@@ -10,6 +10,11 @@ class DischargeCases
 {
     public function __invoke()
     {
+        $workHours = collect([1, 3, 5, 7, 9, 11]);
+        if (! $workHours->contains(now()->hour)) {
+            return;
+        }
+
         $cases = ReferCase::with('admission')
                           ->whereNotNull('admission_id')
                           ->where('meta->status', 'admitted')
@@ -32,6 +37,6 @@ class DischargeCases
             }
         }
 
-        Log::notice("DISCHARGE CASE : {$cases->count()} casesa checking, $caseCount discharged.");
+        Log::notice("DISCHARGE CASE : {$cases->count()} cases checked, $caseCount discharged.");
     }
 }
