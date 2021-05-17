@@ -12,5 +12,5 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 
-/public/js/*.LICENSE.txt
+/public/js/*
 .psysh.php

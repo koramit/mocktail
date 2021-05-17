@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
 
-class ToothpasteAPI implements PatientAPI, AuthenticationAPI
+class HannahAPI implements  AuthenticationAPI, PatientAPI
 {
     public function authenticate($login, $password)
     {
@@ -17,44 +17,52 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         $password = str_replace('&', 'LaEsIgN', $password);
         $password = str_replace('=', 'TaOkUbSiGn', $password);
 
-        $data = $this->brushing($this->pasteLoad('authenticate', ['login' => $login, 'password' => $password]));
-        if (! $data || ! isset($data['found'])) { // error: $data = null
-            return [
-                'found' => false,
-                'message' => __('service.failed'),
-            ];
+        $headers = ['token' => config('app.GATECENTER_API_SERVICE_TOKEN')];
+        $options = ['timeout' => 8.0, 'verify' => false];
+        $url = config('app.GATECENTER_API_SERVICE_URL');
+        $response = Http::withHeaders($headers)->withOptions($options)
+                         ->post($url, ['name' => $login, 'pwd' => $password]);
+        
+        $data = json_decode($response->getBody(),true);
+ 
+        if($response->status()!=200){
+            return ['reply_code' => '1', 'reply_text' => 'request failed','found'=>'false'];
         }
-
-        if (! $data['ok'] || ! $data['found']) {
-            $data['found'] = false;
-            $data['message'] = $data['message'] ?? __('auth.failed');
-            unset($data['UserInfo']);
-            unset($data['body']);
-
-            return $data;
+      
+        if(!$data['found']) {
+            return ['reply_code' => '1', 'reply_text' => $data['body'],'found'=>'false'];
         }
+       
 
         return [
-            'ok' => $data['ok'],
-            'found' => $data['found'],
-            'username' => $data['login'],
-            'name' => $data['full_name'],
-            'name_en' => $data['full_name_en'],
-            'email' => $data['email'],
-            'org_id' => $data['org_id'],
-            'tel_no' => $data['tel_no'] ?? null,
-            'document_id' => null,
-            'org_division_name' => $data['division_name'],
-            'org_position_title' => $data['position_name'],
-            'remark' => $data['remark'],
-            'password_expires_in_days' => $data['password_expires_in_days'],
-        ];
+                    'ok' => $data['found'], 
+                    'found' => $data['found'],
+                    'username' => $data['UserInfo']['UserData']['username'],
+                    'name' => $data['UserInfo']['UserData']['full_name'],
+                    'name_en' => $data['UserInfo']['UserData']['eng_name'],
+                    'email' => $data['UserInfo']['UserData']['email'],
+                    'org_id' => $data['UserInfo']['UserData']['sapid'],
+                    'tel_no' => $data['UserInfo']['UserData']['ipPhone'] ?? null,
+                    'document_id' => null,
+                    'org_division_name' => $data['UserInfo']['UserData']['department'],
+                    'org_position_title' => $data['UserInfo']['UserData']['position'],
+                    'remark' => $data['UserInfo']['UserData']['office'],
+                    'password_expires_in_days' => $data['UserInfo']['UserData']['daysLeft'],
+                ];
+
+     
     }
 
-    public function getPatient($hn)
-    {
-        \Log::info('xxxx');
-        $data = $this->brushing($this->pasteLoad('patient', ['hn' => $hn]));
+    public function getPatient($hn) {
+
+        $headers = ['app' => config('app.HAN_API_SERVICE_SECRET'), 'token' => config('app.HANNAH_API_SERVICE_TOKEN')];
+        $options = ['timeout' => 5.0, 'verify' => false];
+        $url = config('app.HANNAH_API_SERVICE_URL') . 'patient';
+        $response = Http::withHeaders($headers)->withOptions($options)
+                         ->post($url, ['hn' => $hn]);
+        
+        $data = json_decode($response->getBody(),true);
+
         if (! $data || ! isset($data['found'])) { // error: $data = null
             return [
                 'found' => false,
@@ -68,13 +76,19 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
 
             return $data;
         }
-
         return $data;
     }
 
-    public function getAdmission($an)
-    {
-        $data = $this->brushing($this->pasteLoad('admission', ['an' => $an]));
+    public function getAdmission($an) {
+   
+        $headers = ['app' => config('app.HAN_API_SERVICE_SECRET'), 'token' => config('app.HANNAH_API_SERVICE_TOKEN')];
+        $options = ['timeout' => 5.0, 'verify' => false];
+        $url = config('app.HANNAH_API_SERVICE_URL') . 'admission';
+        $response = Http::withHeaders($headers)->withOptions($options)
+                         ->post($url, ['an' => $an]);
+                    
+        $data = json_decode($response->getBody(),true);
+        
         if (! $data || ! isset($data['found'])) { // error: $data = null
             return [
                 'found' => false,
@@ -98,9 +112,18 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         return $data;
     }
 
-    public function recentlyAdmission($hn)
-    {
-        $data = $this->brushing($this->pasteLoad('recently_admit', ['hn' => $hn]));
+    public function recentlyAdmission($hn) {
+
+        $headers = ['app' => config('app.HAN_API_SERVICE_SECRET'), 'token' => config('app.HANNAH_API_SERVICE_TOKEN')];
+        $options = ['timeout' => 5.0, 'verify' => false];
+        $url = config('app.HANNAH_API_SERVICE_URL') . 'patient-recently-admit';
+        $response = Http::withHeaders($headers)->withOptions($options)
+                         ->post($url, ['hn' => $hn]);
+        
+        $data = json_decode($response->getBody(),true);
+
+        return $data;
+
         if (! $data || ! isset($data['found'])) { // error: $data = null
             return [
                 'found' => false,
@@ -134,41 +157,5 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         return $data;
     }
 
-    protected function brushing($data)
-    {
-        try {
-            $response = Http::timeout(5)
-                        ->withOptions(['verify' => false])
-                        ->asForm()
-                        ->post(config('services.toothpaste.url'), ['payload' => $data]);
-        } catch (Exception $e) {
-            return [
-                'ok' => false,
-                'found' => false,
-                'message' => __('service.failed'),
-            ];
-        }
 
-        return $response->json();
-    }
-
-    protected function pasteLoad($service, $data)
-    {
-        $config = config('services.toothpaste')[$service];
-        $data = [
-            'endpoint' => $config['endpoint'],
-            'data' => $data,
-            'callgate_token' => config('services.toothpaste.token'),
-            'callgate_appname' => 'mocktail',
-        ];
-
-        if ($config['auth'] === 'token_secret') {
-            $data['api_app'] = $config['app'];
-            $data['api_token'] = $config['token'];
-        } else {
-            $data['bearer'] = $config['bearer'];
-        }
-
-        return json_encode($data);
-    }
 }
