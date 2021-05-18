@@ -17,37 +17,54 @@ class HannahAPI implements  AuthenticationAPI, PatientAPI
         $password = str_replace('&', 'LaEsIgN', $password);
         $password = str_replace('=', 'TaOkUbSiGn', $password);
 
-        $headers = ['token' => config('app.GATECENTER_API_SERVICE_TOKEN')];
+        $headers = ['app' => config('app.HAN_API_SERVICE_SECRET'),'token' => config('app.HANNAH_API_SERVICE_TOKEN')];
         $options = ['timeout' => 8.0, 'verify' => false];
-        $url = config('app.GATECENTER_API_SERVICE_URL');
+        $url = config('app.HANNAH_API_SERVICE_URL').'auth';
         $response = Http::withHeaders($headers)->withOptions($options)
-                         ->post($url, ['name' => $login, 'pwd' => $password]);
+                         ->post($url, ['login' => $login, 'password' => $password]);
         
         $data = json_decode($response->getBody(),true);
        // return $data;
-        if($response->status()!=200){
-            return ['reply_code' => '1', 'reply_text' => 'request failed','found'=>'false'];
-        }
+    //    \Log::info('Hannah return-------------');
+    //    \Log::info($data);
+        // if($response->status()!=200){
+        //     return ['reply_code' => '1', 'reply_text' => 'request failed','found'=>'false'];
+        // }
       
-        if(!$data['found']) {
-            return ['reply_code' => '1', 'reply_text' => $data['body'],'found'=>'false'];
+        // if(!$data['found']) {
+        //     return ['reply_code' => '1', 'reply_text' => $data['body'],'found'=>'false'];
+        // }
+
+        if (! $data || ! isset($data['found'])) { // error: $data = null
+            return [
+                'found' => false,
+                'message' => __('service.failed'),
+            ];
+        }
+
+        if (! $data['ok'] || ! $data['found']) {
+            $data['found'] = false;
+            $data['message'] = $data['message'] ?? __('auth.failed');
+            unset($data['UserInfo']);
+            unset($data['body']);
+
+            return $data;
         }
        
-
         return [
-                    'ok' => $data['found'], 
+                    'ok' => $data['ok'], 
                     'found' => $data['found'],
-                    'username' => $data['UserInfo']['UserData']['username'],
-                    'name' => $data['UserInfo']['UserData']['full_name'],
-                    'name_en' => $data['UserInfo']['UserData']['eng_name'],
-                    'email' => $data['UserInfo']['UserData']['email'],
-                    'org_id' => $data['UserInfo']['UserData']['sapid'],
-                    'tel_no' => $data['UserInfo']['UserData']['ipPhone'] ?? null,
+                    'username' => $data['login'],
+                    'name' => $data['full_name'],
+                    'name_en' => $data['full_name_en'],
+                    'email' => $data['email'],
+                    'org_id' => $data['org_id'],
+                    'tel_no' => $data['phone'] ?? null,
                     'document_id' => null,
-                    'org_division_name' => $data['UserInfo']['UserData']['department'],
-                    'org_position_title' => $data['UserInfo']['UserData']['position'],
-                    'remark' => $data['UserInfo']['UserData']['office'],
-                    'password_expires_in_days' => $data['UserInfo']['UserData']['daysLeft'],
+                    'org_division_name' => $data['division_name'],
+                    'org_position_title' => $data['position_name'],
+                    'remark' => $data['remark'],
+                    'password_expires_in_days' => $data['password_expires_in_days'],
                 ];
 
      

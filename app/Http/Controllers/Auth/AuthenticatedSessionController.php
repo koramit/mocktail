@@ -44,7 +44,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         $data = $api->authenticate(Request::input('login'), Request::input('password'));
-
+     
         if (! $data['found']) {
             return back()->withErrors([
                 'login' => $data['message'],
