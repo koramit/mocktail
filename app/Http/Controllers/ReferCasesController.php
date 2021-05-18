@@ -134,11 +134,11 @@ class ReferCasesController extends Controller
             return back()->withErrors($errors);
         }
 
-        if (! Request::input('criterias') && ! $note->contents['submitted']) {
+        $data = Request::all();
+        // criteria V1/V2 is OK for this condition
+        if (! $data['criterias']['diagnosis'] && ! $note->contents['submitted']) {
             return back();
         }
-
-        $data = Request::all();
 
         $hn = $data['patient']['hn'];
         if (! $note->referCase->updateHn($hn)) {
@@ -147,6 +147,7 @@ class ReferCasesController extends Controller
 
         if ($note->referCase->status === 'draft') {
             $note->referCase->status = 'submitted';
+            $data['submitted'] = true;
         }
 
         $note->referCase->tel_no = $data['patient']['tel_no'];
@@ -156,7 +157,6 @@ class ReferCasesController extends Controller
         unset($data['patient']['name']);
         unset($data['patient']['tel_no']);
 
-        $data['submitted'] = true;
         $note->contents = $data;
         $note->save();
 

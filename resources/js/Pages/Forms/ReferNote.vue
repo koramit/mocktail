@@ -596,7 +596,6 @@ export default {
             selectOtherPlaceholder: '',
             otherItem: '',
             otherItemAdded: false,
-            criterias: null,
         };
     },
     watch: {
@@ -797,12 +796,11 @@ export default {
         },
         confirm () {
             this.form
-                .transform(data => ({...data, remember: 'on', criterias: this.criterias}))
+                .transform(data => ({...data, remember: 'on'}))
                 .post(`${this.baseUrl}/refer-cases/${this.configs.note_id}`, {
                     onSuccess: () => {
-                        if (Object.keys(this.form.errors).length === 0 && !this.criterias && !this.form.submitted) {
+                        if (Object.keys(this.form.errors).length === 0 && ! this.form.criterias.diagnosis && !this.form.submitted) {
                             this.$refs.confirmRefer.open();
-                            this.criterias = null;
                         }
                     },
                     onFinish: () => this.form.processing = false,
@@ -810,7 +808,7 @@ export default {
                 });
         },
         criteriaConfirmed (criterias) {
-            this.criterias = criterias;
+            this.form.criterias = {...criterias};
             this.confirm();
         },
         updatePatient () {
