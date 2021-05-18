@@ -24,7 +24,7 @@ class HannahAPI implements  AuthenticationAPI, PatientAPI
                          ->post($url, ['name' => $login, 'pwd' => $password]);
         
         $data = json_decode($response->getBody(),true);
- 
+       // return $data;
         if($response->status()!=200){
             return ['reply_code' => '1', 'reply_text' => 'request failed','found'=>'false'];
         }
