@@ -155,6 +155,10 @@ class AdmissionNoteManager extends NoteManager
             }
         }
 
+        // criterias form
+        $contents['criterias'] = $this->note->admission->referCase->note->contents['criterias'];
+        $contents['criterias']['patient_label'] = 'HN '.$this->note->admission->patient->hn.' '.$this->note->admission->patient->full_name.' วันที่ส่งตัว '.Carbon::create($this->note->contents['patient']['date_refer'])->format('d M Y');
+
         return $contents;
     }
 

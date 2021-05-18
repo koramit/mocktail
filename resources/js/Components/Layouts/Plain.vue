@@ -43,37 +43,3 @@ export default {
     },
 };
 </script>
-<style>
-@media print {
-    @page {
-        /* margin: 0.5cm 1cm 0.5cm 1cm; */
-        margin: 1cm;
-        padding: 0;
-    }
-
-    body {
-        margin: 0;
-        width: 210mm;
-        height: 296mm;
-    }
-
-    .print-p-0 {
-        padding: 0;
-    }
-
-    .text-print-size {
-        font-size: 10pt!important;
-    }
-
-    .avoid-page-break {
-        display: block;
-        page-break-inside: avoid;
-    }
-
-    label.form-label {
-        font-size: 10pt!important;
-        padding-bottom: .25rem;
-        font-weight: 400;
-    }
-}
-</style>

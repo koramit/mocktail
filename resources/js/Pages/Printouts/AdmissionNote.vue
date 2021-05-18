@@ -85,6 +85,17 @@
                         :data="contents.remark"
                     />
                 </div>
+
+                <div class="new-page">
+                    <criteria-v-1
+                        v-if="contents.criterias.version === 1"
+                        :criterias="contents.criterias"
+                    />
+                    <criteria-v-2
+                        v-else-if="contents.criterias.version === 2"
+                        :criterias="contents.criterias"
+                    />
+                </div>
             </div>
         </template>
         <template #footer-right>
@@ -99,9 +110,11 @@
 import DisplayInput from '@/Components/Helpers/DisplayInput';
 import Plain from '@/Components/Layouts/Plain';
 import Paper from '@/Components/Layouts/Paper';
+import CriteriaV1 from '@/Components/Printouts/CriteriaV1';
+import CriteriaV2 from '@/Components/Printouts/CriteriaV2';
 export default {
     layout: Plain,
-    components: { DisplayInput, Paper },
+    components: { DisplayInput, Paper, CriteriaV1, CriteriaV2 },
     props: {
         contents: { type: Object, required: true },
         configs: { type: Object, required: true },
