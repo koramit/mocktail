@@ -376,12 +376,8 @@ class ReferNoteManager extends NoteManager
         if (! Carbon::create($patient['date_admit_origin'])->greaterThanOrEqualTo(Carbon::create($patient['date_covid_infected']))) { // timeline fails
             $errors['date_admit_origin'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ตรวจพบเชื้อ';
         }
-        // date_refer MUST > date_admit_origin if no admit
-        if ($patient['ward'] && strpos($patient['ward'], 'ARI') !== false) {
-            if (! Carbon::create($patient['date_refer'])->greaterThanOrEqualTo(Carbon::create($patient['date_admit_origin']))) { // timeline fails
-                $errors['date_refer'] = 'ข้อมูลไม่สอดคล้องกับ วันที่รับไว้ในโรงพยาบาล';
-            }
-        } elseif (! Carbon::create($patient['date_refer'])->greaterThan(Carbon::create($patient['date_admit_origin']))) { // timeline fails
+        // date_refer MUST >= date_admit_origin (admitted at 2am refer at 8am)
+        if (! Carbon::create($patient['date_refer'])->greaterThanOrEqualTo(Carbon::create($patient['date_admit_origin']))) { // timeline fails
             $errors['date_refer'] = 'ข้อมูลไม่สอดคล้องกับ วันที่รับไว้ในโรงพยาบาล';
         }
         // date_expect_discharge MUST > date_refer
