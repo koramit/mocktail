@@ -98,6 +98,10 @@
                 name="date_admit_origin"
                 @autosave="autosave('patient.date_admit_origin')"
             />
+            <small
+                v-if="$page.props.user.center === 'ศิริราช'"
+                class="text-md text-thick-theme-light italic"
+            >๏ กรณีไม่ได้รับไว้ในโรงพยาบาล ให้ใส่วันที่คัดกรอง</small>
             <form-datetime
                 class="mt-2"
                 label="วันที่ส่งผู้ป่วยไป Hospitel"
@@ -106,10 +110,6 @@
                 name="date_refer"
                 @autosave="autosave('patient.date_refer')"
             />
-            <small
-                v-if="$page.props.user.center === 'ศิริราช'"
-                class="text-md text-thick-theme-light italic"
-            >๏ กรณีไม่ได้รับไว้ในโรงพยาบาล ให้ใส่วันที่คัดกรอง</small>
             <form-datetime
                 class="mt-2"
                 label="วันที่ครบกำหนดนอนใน hospitel"
