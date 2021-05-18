@@ -141,6 +141,7 @@ export default {
     },
     created () {
         document.title = 'Mocktail: ลงทะเบียน';
+        alert('profile.org_id='+this.profile.org_id)
         if (this.profile.org_id !== undefined) {
             this.form.full_name = this.profile.name;
         }
