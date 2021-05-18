@@ -65,7 +65,7 @@
         </template>
         <template #footer-right>
             <p class="text-print-size">
-                {{ contents.author.name }} ว. {{ contents.author.pln }} เมื่อ {{ contents.author.updated_at }}
+                Electronic Signed by {{ contents.author.name }} ว. {{ contents.author.pln }} เมื่อ {{ contents.author.updated_at }}
             </p>
         </template>
     </paper>

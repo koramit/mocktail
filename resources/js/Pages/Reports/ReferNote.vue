@@ -114,6 +114,15 @@
                 v-model="uploads.lab"
                 :readonly="true"
             />
+            <image-uploader
+                v-if="contents.uploads.id_document"
+                class="mt-2"
+                label="๏ รูปถ่ายหน้าบัตรประชาชน"
+                name="contents->uploads->id_document"
+                :note-id="0"
+                v-model="uploads.id_document"
+                :readonly="true"
+            />
 
             <template v-if="contents.patient.tel_no">
                 <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">
