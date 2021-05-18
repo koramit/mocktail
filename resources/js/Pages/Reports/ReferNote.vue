@@ -99,7 +99,7 @@
             </h3>
             <image-uploader
                 class="mt-2"
-                v-if="contents.patient.center !== 'ศิริราช'"
+                v-if="contents.patient.center.indexOf('ศิริราช') === -1"
                 label="๏  Film Chest ล่าสุด"
                 name="contents->uploads->film"
                 :note-id="0"

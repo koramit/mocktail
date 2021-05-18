@@ -80,7 +80,7 @@
                 name="date_symptom_start"
                 @autosave="autosave('patient.date_symptom_start')"
             />
-            <small class="text-md text-thick-theme-light italic">๏ หากไม่มีอาการให้ลงวันที่ตรวจพบเชื้อ</small>
+            <small class="text-md text-thick-theme-light italic">๏ หากไม่มีอาการให้ใส่วันที่ตรวจพบเชื้อ</small>
             <form-datetime
                 class="mt-2"
                 label="วันที่ตรวจพบเชื้อ"
@@ -106,6 +106,10 @@
                 name="date_refer"
                 @autosave="autosave('patient.date_refer')"
             />
+            <small
+                v-if="$page.props.user.center === 'ศิริราช'"
+                class="text-md text-thick-theme-light italic"
+            >๏ กรณีไม่ได้รับไว้ในโรงพยาบาล ให้ใส่วันที่คัดกรอง</small>
             <form-datetime
                 class="mt-2"
                 label="วันที่ครบกำหนดนอนใน hospitel"
@@ -278,7 +282,7 @@
                             name="date_uri"
                             @autosave="autosave('diagnosis.date_uri')"
                         />
-                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ลงวันที่ตรวจพบเชื้อแทน</small>
+                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ใส่วันที่ตรวจพบเชื้อแทน</small>
                     </template>
                     <form-checkbox
                         class="mt-2"
@@ -295,7 +299,7 @@
                             name="date_pneumonia"
                             @autosave="autosave('diagnosis.date_pneumonia')"
                         />
-                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ลงวันที่ตรวจพบเชื้อแทน</small>
+                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ใส่วันที่ตรวจพบเชื้อแทน</small>
                     </template>
                     <form-checkbox
                         class="mt-2"
@@ -548,6 +552,7 @@
         <confirm-refer
             ref="confirmRefer"
             :patient="form.patient.name"
+            :version="contents.criterias.version"
             @confirmed="criteriaConfirmed"
         />
     </div>

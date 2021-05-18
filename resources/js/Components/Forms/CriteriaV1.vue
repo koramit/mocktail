@@ -1,10 +1,10 @@
 <template>
-    <div class="px-12 py-6 print-p-0">
-        <h2 class="font-semibold pb-2 border-b-2 border-dashed text-xl text-center">
-            เกณฑ์การรับผู้ป่วยเข้าในหอผู้ป่วยเฉพาะกิจ (Hospitel)
-        </h2>
+    <div class="max-h-70 overflow-y-scroll py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
+        <p class="font-semibold underline">
+            ใบส่งตัว {{ patient }}
+        </p>
         <p class="font-semibold text-dark-theme-light mt-4">
-            {{ criterias.patient_label }} เข้าเกณฑ์ทุกข้อดังต่อไปนี้
+            ต้องเข้าเกณฑ์ทุกข้อดังต่อไปนี้
         </p>
         <div class="flex my-2  text-sm font-normal">
             <p>1.</p>
@@ -15,7 +15,39 @@
         <div class="flex my-2  text-sm font-normal">
             <p>2.</p>
             <p class="px-2 tracking-wide leading-5">
-                ได้รับการประเมินจากแพทย์แล้วว่าสามารถส่งตัวไปหอผู้ป่วยเฉพาะกิจได้ <br class="mb-2"> โดยต้องรักษาตัวอยู่ในโรงพยาบาลอย่างน้อย 96 ชม. กรณีที่ มีปัจจัยเสี่ยงต่อไปนี้อย่างน้อย 1 ข้อ ได้แก่
+                รักษาตัวอยู่ในโรงพยาบาล (<span class=" underline">โปรดเลือก</span>)
+            </p>
+        </div>
+        <div class="flex my-2 pl-4 text-sm font-normal">
+            <p>
+                <input
+                    type="radio"
+                    name="admit"
+                    value="los_2_days"
+                    v-model="form.admit"
+                >
+            </p>
+            <p
+                class="px-2 tracking-wide leading-5 italic cursor-pointer"
+                @click="form.admit = 'los_2_days'"
+            >
+                อย่างน้อย 48 ชม. ในผู้ป่วยที่ไม่มีปัจจัยเสี่ยง หรือ
+            </p>
+        </div>
+        <div class="flex my-2 pl-4 text-sm font-normal">
+            <p>
+                <input
+                    type="radio"
+                    name="admit"
+                    value="los_4_days"
+                    v-model="form.admit"
+                >
+            </p>
+            <p
+                class="px-2 tracking-wide leading-5 italic cursor-pointer"
+                @click="form.admit = 'los_4_days'"
+            >
+                อย่างน้อย 96 ชม. ในผู้ป่วยที่มีปัจจัยเสี่ยงต่อไปนี้อย่างน้อย 1 ข้อ
             </p>
         </div>
         <div class="flex my-2 pl-10 text-sm font-normal">
@@ -75,28 +107,38 @@
         <div class="flex my-2  text-sm font-normal">
             <p>3.</p>
             <p class="px-2 tracking-wide leading-5">
-                วินิจฉัยเป็น
+                วินิจฉัยเป็น (<span class=" underline">โปรดเลือก</span>)
             </p>
         </div>
         <div class="flex my-2 pl-4 text-sm font-normal">
             <p>
-                <icon
-                    class="w-4 h-4"
-                    :name="form.diagnosis === 'asymptomatic_or_stable_uri' ? 'check-circle':'circle'"
-                />
+                <input
+                    type="radio"
+                    name="diagnosis"
+                    value="asymptomatic_or_stable_uri"
+                    v-model="form.diagnosis"
+                >
             </p>
-            <p class="px-2 tracking-wide leading-5 italic">
+            <p
+                class="px-2 tracking-wide leading-5 italic cursor-pointer"
+                @click="form.diagnosis = 'asymptomatic_or_stable_uri'"
+            >
                 Asymptomatic/URI ที่อาการคงที่ หรือ
             </p>
         </div>
         <div class="flex my-2 pl-4 text-sm font-normal">
             <p>
-                <icon
-                    class="w-4 h-4"
-                    :name="form.diagnosis === 'pneumonia' ? 'check-circle':'circle'"
-                />
+                <input
+                    type="radio"
+                    name="diagnosis"
+                    value="pneumonia"
+                    v-model="form.diagnosis"
+                >
             </p>
-            <p class="px-2 tracking-wide leading-5 italic">
+            <p
+                class="px-2 tracking-wide leading-5 italic cursor-pointer"
+                @click="form.diagnosis = 'pneumonia'"
+            >
                 Pneumonia ที่อาการดีขึ้นหลังให้การรักษาอย่างน้อย 48 ชม. และไม่ได้ใช้ออกซิเจน
             </p>
         </div>
@@ -133,7 +175,7 @@
         <div class="flex my-2  text-sm font-normal">
             <p>6.</p>
             <p class="px-2 tracking-wide leading-5">
-                หากได้ยา Favipiravir และ/หรือ dexamethasone ต้องได้ยามาแล้วอย่างน้อย 48 ชม.
+                หากได้ยา Favipiravir ต้องได้ยามาแล้วอย่างน้อย 48 ชม.
             </p>
         </div>
         <div class="flex my-2  text-sm font-normal">
@@ -152,16 +194,28 @@
 </template>
 
 <script>
-import Icon from '@/Components/Helpers/Icon';
 export default {
-    components: { Icon },
+    emits: ['updated'],
     props: {
-        criterias: { type: Object, required: true },
+        patient: { type: String, required: true },
     },
     data () {
         return {
-            form: {...this.criterias},
+            form: {
+                version: 1,
+                admit: null,
+                diagnosis: null,
+            }
+
         };
     },
+    watch: {
+        form: {
+            deep: true,
+            handler(val) {
+                this.$emit('updated', val);
+            }
+        }
+    }
 };
 </script>
