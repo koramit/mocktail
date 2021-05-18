@@ -13,7 +13,6 @@
         </div>
         <div class="mt-4 px-4 py-8 w-80 lg:w-96 bg-white rounded shadow transform -translate-y-20">
             <span class="block font-semibold text-xl text-thick-theme-light mt-12 text-center">ลงทะเบียน</span>
-             profile.org_id= {{profile.org_id}}
             <span
                 v-if="form.errors.login"
                 class="block font-semibold text-sm text-red-400 mt-6 text-center"
@@ -141,7 +140,6 @@ export default {
     },
     created () {
         document.title = 'Mocktail: ลงทะเบียน';
-        alert('profile.org_id='+this.profile.org_id)
         if (this.profile.org_id !== undefined) {
             this.form.full_name = this.profile.name;
         }

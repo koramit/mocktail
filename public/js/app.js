@@ -713,6 +713,14 @@ var map = {
 		"./resources/js/Pages/Printouts/AdmissionNote.vue",
 		"resources_js_Pages_Printouts_AdmissionNote_vue"
 	],
+	"./Printouts/Criteria": [
+		"./resources/js/Pages/Printouts/Criteria.vue",
+		"resources_js_Pages_Printouts_Criteria_vue"
+	],
+	"./Printouts/Criteria.vue": [
+		"./resources/js/Pages/Printouts/Criteria.vue",
+		"resources_js_Pages_Printouts_Criteria_vue"
+	],
 	"./Printouts/DischargeSummary": [
 		"./resources/js/Pages/Printouts/DischargeSummary.vue",
 		"resources_js_Pages_Printouts_DischargeSummary_vue"
@@ -986,7 +994,7 @@ module.exports = webpackAsyncContext;
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "js/" + chunkId + ".js?id=" + {"resources_js_Pages_Auth_Login_vue":"c80fc5903175010ad2d0","resources_js_Pages_Auth_Register_vue":"95eb48eea0379b120458","resources_js_Pages_Forms_AdmissionNote_vue":"67a616b26ea8130f3b65","resources_js_Pages_Forms_DischargeSummary_vue":"955110c206e614494289","resources_js_Pages_Forms_ReferNote_vue":"28b5be1f09399647bf66","resources_js_Pages_Home_vue":"67632578b10ad1467150","resources_js_Pages_Printouts_AdmissionNote_vue":"37529553f23d77f84b77","resources_js_Pages_Printouts_DischargeSummary_vue":"b9e3053abd30dfe9b267","resources_js_Pages_Printouts_ReferNote_vue":"9b42ce591f52bbf617a3","resources_js_Pages_Prototypes_AdmissionNote_vue":"f6006726dc4fab66db5a","resources_js_Pages_Prototypes_DischargeSummary_vue":"7a77f4b60e5297c4c34d","resources_js_Pages_Prototypes_ReferNote_vue":"7aca281d4019a6c312c0","resources_js_Pages_Prototypes_TransferNote_vue":"a79e601e7470f61d2f08","resources_js_Pages_ReferCases_Index_vue":"8625e9409887708172c1","resources_js_Pages_ReferCases_Notes_vue":"7cc6e93626032f297264","resources_js_Pages_Reports_AdmissionNote_vue":"63ee42e54f1b01155aae","resources_js_Pages_Reports_DischargeSummary_vue":"4521677daef46da47217","resources_js_Pages_Reports_Folder_vue":"d0452d7ab5acfbb68059","resources_js_Pages_Reports_ReferNote_vue":"561afb99576a40e2262b","resources_js_Pages_Reports_ReferNoteOld_vue":"e87c052c27a1609d722d","resources_js_Pages_Soon_vue":"8398d121f4a62ba2c72b","resources_js_Pages_TermsAndPolicies_vue":"4f8da2650d22d0d9eabc","resources_js_Pages_Users_vue":"27c0dcef230b7c4bb863","resources_js_Pages_Welcome_vue":"eaeb46aa67396c2908fc"}[chunkId] + "";
+/******/ 			return "js/" + chunkId + ".js?id=" + {"resources_js_Pages_Auth_Login_vue":"c80fc5903175010ad2d0","resources_js_Pages_Auth_Register_vue":"eaf381d17ec91f47ca7c","resources_js_Pages_Forms_AdmissionNote_vue":"ff5410b4c6426157d679","resources_js_Pages_Forms_DischargeSummary_vue":"3c30b9b545419959fd86","resources_js_Pages_Forms_ReferNote_vue":"917aced5b10fe66fab37","resources_js_Pages_Home_vue":"d23f1c299e59e75a7dbf","resources_js_Pages_Printouts_AdmissionNote_vue":"3ff1e6d43433070bf01e","resources_js_Pages_Printouts_Criteria_vue":"92b9d3d5864e9069db79","resources_js_Pages_Printouts_DischargeSummary_vue":"2bb59f26274e225d734b","resources_js_Pages_Printouts_ReferNote_vue":"ac15cee5e9b3388d6b6e","resources_js_Pages_Prototypes_AdmissionNote_vue":"322c7060faef582fcb99","resources_js_Pages_Prototypes_DischargeSummary_vue":"7a77f4b60e5297c4c34d","resources_js_Pages_Prototypes_ReferNote_vue":"836b057d24dd21b0e923","resources_js_Pages_Prototypes_TransferNote_vue":"a79e601e7470f61d2f08","resources_js_Pages_ReferCases_Index_vue":"eddab204d8332cc0f993","resources_js_Pages_ReferCases_Notes_vue":"9ff1179e809f98e3052b","resources_js_Pages_Reports_AdmissionNote_vue":"1677d3567b7606a97118","resources_js_Pages_Reports_DischargeSummary_vue":"6782d2c049c5442e075b","resources_js_Pages_Reports_Folder_vue":"65f8ead50e3e054418ac","resources_js_Pages_Reports_ReferNote_vue":"6fad336783e59d89476a","resources_js_Pages_Reports_ReferNoteOld_vue":"373fc4ee38836cbab967","resources_js_Pages_Soon_vue":"71be8121ba5fde977472","resources_js_Pages_TermsAndPolicies_vue":"4f8da2650d22d0d9eabc","resources_js_Pages_Users_vue":"54d78ae0c61538858379","resources_js_Pages_Welcome_vue":"eaeb46aa67396c2908fc"}[chunkId] + "";
 /******/ 		};
 /******/ 	})();
 /******/ 	
