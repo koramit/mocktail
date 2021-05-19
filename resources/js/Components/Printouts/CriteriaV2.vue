@@ -15,41 +15,7 @@
         <div class="flex my-2  text-sm font-normal">
             <p>2.</p>
             <p class="px-2 tracking-wide leading-5">
-                รักษาตัวอยู่ในโรงพยาบาล
-            </p>
-        </div>
-        <div class="flex my-2 pl-4 text-sm font-normal">
-            <p>
-                <input
-                    disabled
-                    type="radio"
-                    name="admit"
-                    value="los_2_days"
-                    v-model="form.admit"
-                >
-            </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.admit = 'los_2_days'"
-            >
-                อย่างน้อย 48 ชม. ในผู้ป่วยที่ไม่มีปัจจัยเสี่ยง หรือ
-            </p>
-        </div>
-        <div class="flex my-2 pl-4 text-sm font-normal">
-            <p>
-                <input
-                    disabled
-                    type="radio"
-                    name="admit"
-                    value="los_4_days"
-                    v-model="form.admit"
-                >
-            </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.admit = 'los_4_days'"
-            >
-                อย่างน้อย 96 ชม. ในผู้ป่วยที่มีปัจจัยเสี่ยงต่อไปนี้อย่างน้อย 1 ข้อ
+                ได้รับการประเมินจากแพทย์แล้วว่าสามารถส่งตัวไปหอผู้ป่วยเฉพาะกิจได้ <br class="mb-2"> โดยต้องรักษาตัวอยู่ในโรงพยาบาลอย่างน้อย 96 ชม. กรณีที่ มีปัจจัยเสี่ยงต่อไปนี้อย่างน้อย 1 ข้อ ได้แก่
             </p>
         </div>
         <div class="flex my-2 pl-10 text-sm font-normal">
@@ -114,35 +80,23 @@
         </div>
         <div class="flex my-2 pl-4 text-sm font-normal">
             <p>
-                <input
-                    disabled
-                    type="radio"
-                    name="diagnosis"
-                    value="asymptomatic_or_stable_uri"
-                    v-model="form.diagnosis"
-                >
+                <icon
+                    class="w-4 h-4"
+                    :name="form.diagnosis === 'asymptomatic_or_stable_uri' ? 'check-circle':'circle'"
+                />
             </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.diagnosis = 'asymptomatic_or_stable_uri'"
-            >
+            <p class="px-2 tracking-wide leading-5 italic">
                 Asymptomatic/URI ที่อาการคงที่ หรือ
             </p>
         </div>
         <div class="flex my-2 pl-4 text-sm font-normal">
             <p>
-                <input
-                    disabled
-                    type="radio"
-                    name="diagnosis"
-                    value="pneumonia"
-                    v-model="form.diagnosis"
-                >
+                <icon
+                    class="w-4 h-4"
+                    :name="form.diagnosis === 'pneumonia' ? 'check-circle':'circle'"
+                />
             </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.diagnosis = 'pneumonia'"
-            >
+            <p class="px-2 tracking-wide leading-5 italic">
                 Pneumonia ที่อาการดีขึ้นหลังให้การรักษาอย่างน้อย 48 ชม. และไม่ได้ใช้ออกซิเจน
             </p>
         </div>
@@ -179,7 +133,7 @@
         <div class="flex my-2  text-sm font-normal">
             <p>6.</p>
             <p class="px-2 tracking-wide leading-5">
-                หากได้ยา Favipiravir ต้องได้ยามาแล้วอย่างน้อย 48 ชม.
+                หากได้ยา Favipiravir และ/หรือ dexamethasone ต้องได้ยามาแล้วอย่างน้อย 48 ชม.
             </p>
         </div>
         <div class="flex my-2  text-sm font-normal">
@@ -198,7 +152,9 @@
 </template>
 
 <script>
+import Icon from '@/Components/Helpers/Icon';
 export default {
+    components: { Icon },
     props: {
         criterias: { type: Object, required: true },
     },

@@ -25,10 +25,7 @@
                     :name="form.admit === 'los_2_days' ? 'check-circle' : 'circle'"
                 />
             </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.admit = 'los_2_days'"
-            >
+            <p class="px-2 tracking-wide leading-5 italic">
                 อย่างน้อย 48 ชม. ในผู้ป่วยที่ไม่มีปัจจัยเสี่ยง หรือ
             </p>
         </div>
@@ -39,10 +36,7 @@
                     :name="form.admit === 'los_4_days' ? 'check-circle' : 'circle'"
                 />
             </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.admit = 'los_4_days'"
-            >
+            <p class="px-2 tracking-wide leading-5 italic">
                 อย่างน้อย 96 ชม. ในผู้ป่วยที่มีปัจจัยเสี่ยงต่อไปนี้อย่างน้อย 1 ข้อ
             </p>
         </div>
@@ -113,10 +107,7 @@
                     :name="form.diagnosis === 'asymptomatic_or_stable_uri' ? 'check-circle':'circle'"
                 />
             </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.diagnosis = 'asymptomatic_or_stable_uri'"
-            >
+            <p class="px-2 tracking-wide leading-5 italic">
                 Asymptomatic/URI ที่อาการคงที่ หรือ
             </p>
         </div>
@@ -127,10 +118,7 @@
                     :name="form.diagnosis === 'pneumonia' ? 'check-circle':'circle'"
                 />
             </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.diagnosis = 'pneumonia'"
-            >
+            <p class="px-2 tracking-wide leading-5 italic">
                 Pneumonia ที่อาการดีขึ้นหลังให้การรักษาอย่างน้อย 48 ชม. และไม่ได้ใช้ออกซิเจน
             </p>
         </div>

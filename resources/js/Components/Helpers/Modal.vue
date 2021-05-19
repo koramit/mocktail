@@ -12,7 +12,7 @@
             :class="{
                 'open': animate,
                 'w-11/12 md:10/12': widthMode == 'document',
-                'w-11/12 sm:10/12 md:w-2/5 xl:w-1/4': widthMode == 'form-cols-1',
+                'w-11/12 sm:10/12 md:w-2/5': widthMode == 'form-cols-1',
             }"
         >
             <!-- header -->

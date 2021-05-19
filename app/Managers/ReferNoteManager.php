@@ -179,6 +179,13 @@ class ReferNoteManager extends NoteManager
             $contents['patient']['tel_no'] = null;
             $contents['patient']['ward'] = null;
         }
+
+        if (! isset($contents['criterias'])) {
+            $contents['criterias'] = [
+                'version' => 2,
+                'diagnosis' => null,
+            ];
+        }
     }
 
     public function getConfigs($report = false)
@@ -332,6 +339,10 @@ class ReferNoteManager extends NoteManager
                 'lab' => null,
                 'id_document' => null,
             ],
+            'criterias' => [
+                'version' => 2,
+                'diagnosis' => null,
+            ],
         ];
     }
 
@@ -365,8 +376,8 @@ class ReferNoteManager extends NoteManager
         if (! Carbon::create($patient['date_admit_origin'])->greaterThanOrEqualTo(Carbon::create($patient['date_covid_infected']))) { // timeline fails
             $errors['date_admit_origin'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ตรวจพบเชื้อ';
         }
-        // date_refer MUST > date_admit_origin
-        if (! Carbon::create($patient['date_refer'])->greaterThan(Carbon::create($patient['date_admit_origin']))) { // timeline fails
+        // date_refer MUST >= date_admit_origin (admitted at 2am refer at 8am)
+        if (! Carbon::create($patient['date_refer'])->greaterThanOrEqualTo(Carbon::create($patient['date_admit_origin']))) { // timeline fails
             $errors['date_refer'] = 'ข้อมูลไม่สอดคล้องกับ วันที่รับไว้ในโรงพยาบาล';
         }
         // date_expect_discharge MUST > date_refer

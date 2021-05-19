@@ -80,7 +80,7 @@
                 name="date_symptom_start"
                 @autosave="autosave('patient.date_symptom_start')"
             />
-            <small class="text-md text-thick-theme-light italic">๏ หากไม่มีอาการให้ลงวันที่ตรวจพบเชื้อ</small>
+            <small class="text-md text-thick-theme-light italic">๏ หากไม่มีอาการให้ใส่วันที่ตรวจพบเชื้อ</small>
             <form-datetime
                 class="mt-2"
                 label="วันที่ตรวจพบเชื้อ"
@@ -98,6 +98,10 @@
                 name="date_admit_origin"
                 @autosave="autosave('patient.date_admit_origin')"
             />
+            <small
+                v-if="$page.props.user.center === 'ศิริราช'"
+                class="text-md text-thick-theme-light italic"
+            >๏ กรณีไม่ได้รับไว้ในโรงพยาบาล ให้ใส่วันที่คัดกรอง</small>
             <form-datetime
                 class="mt-2"
                 label="วันที่ส่งผู้ป่วยไป Hospitel"
@@ -278,7 +282,7 @@
                             name="date_uri"
                             @autosave="autosave('diagnosis.date_uri')"
                         />
-                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ลงวันที่ตรวจพบเชื้อแทน</small>
+                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ใส่วันที่ตรวจพบเชื้อแทน</small>
                     </template>
                     <form-checkbox
                         class="mt-2"
@@ -295,7 +299,7 @@
                             name="date_pneumonia"
                             @autosave="autosave('diagnosis.date_pneumonia')"
                         />
-                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ลงวันที่ตรวจพบเชื้อแทน</small>
+                        <small class="text-md text-thick-theme-light italic">๏ กรณีมีอาการหลัง admit แล้ว ให้ใส่วันที่ตรวจพบเชื้อแทน</small>
                     </template>
                     <form-checkbox
                         class="mt-2"
@@ -548,6 +552,7 @@
         <confirm-refer
             ref="confirmRefer"
             :patient="form.patient.name"
+            :version="contents.criterias.version"
             @confirmed="criteriaConfirmed"
         />
     </div>
@@ -591,7 +596,6 @@ export default {
             selectOtherPlaceholder: '',
             otherItem: '',
             otherItemAdded: false,
-            criterias: null,
         };
     },
     watch: {
@@ -792,12 +796,11 @@ export default {
         },
         confirm () {
             this.form
-                .transform(data => ({...data, remember: 'on', criterias: this.criterias}))
+                .transform(data => ({...data, remember: 'on'}))
                 .post(`${this.baseUrl}/refer-cases/${this.configs.note_id}`, {
                     onSuccess: () => {
-                        if (Object.keys(this.form.errors).length === 0 && !this.criterias && !this.form.submitted) {
+                        if (Object.keys(this.form.errors).length === 0 && ! this.form.criterias.diagnosis && !this.form.submitted) {
                             this.$refs.confirmRefer.open();
-                            this.criterias = null;
                         }
                     },
                     onFinish: () => this.form.processing = false,
@@ -805,7 +808,7 @@ export default {
                 });
         },
         criteriaConfirmed (criterias) {
-            this.criterias = criterias;
+            this.form.criterias = {...criterias};
             this.confirm();
         },
         updatePatient () {

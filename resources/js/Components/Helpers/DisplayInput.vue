@@ -20,7 +20,7 @@ export default {
     },
     computed: {
         formattedData () {
-            if (!this.format) {
+            if (!this.data || !this.format) {
                 return this.data;
             }
 

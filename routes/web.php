@@ -9,7 +9,6 @@ use App\Http\Controllers\DischargeSummaryNotesController;
 use App\Http\Controllers\ExportReportsController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
-use App\Http\Controllers\PrintCriteriaFormController;
 use App\Http\Controllers\PrintDefaultAdmissionNote;
 use App\Http\Controllers\PrintoutsController;
 use App\Http\Controllers\ReferCaseNotesController;
@@ -83,9 +82,6 @@ Route::middleware('auth')->get('/reports/{case:slug}', ReportsController::class)
 // printout
 Route::middleware('auth')->get('/printouts/{note:slug}', PrintoutsController::class);
 Route::middleware('auth')->get('/print-default-admission-note/{case:slug}', PrintDefaultAdmissionNote::class);
-
-// print criteria form
-Route::middleware('auth')->get('/print-criteria-form/{case:slug}', PrintCriteriaFormController::class);
 
 // soon
 Route::middleware('auth')->get('/soon', [PagesController::class, 'soon']);
