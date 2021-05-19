@@ -25,6 +25,7 @@
         "mitt": "^2.1.0",
         "postcss": "^8.2.13",
         "tailwindcss": "^2.1.2",
+        "tesseract.js": "^2.1.4",
         "vue": "^3.0.11",
         "vue-loader": "^16.2.0"
     }
