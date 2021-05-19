@@ -21,6 +21,16 @@
                 :error="form.errors.sat_code"
                 @autosave="autosave('patient.sat_code')"
             />
+            <div class="flex items-center mt-1">
+                <alphanumeric-reader @recognized="(result) => form.patient.sat_code = result ? result : 'ขอโทษนะ เราอ่านไม่ออกล่ะ 😅'" />
+                <button class="mx-2">
+                    <small class="text-md text-dark-theme-light italic">ตัวช่วยอ่าน SAT CODE </small>
+                    <icon
+                        class="w-4 h-4 text-dark-theme-light inline"
+                        name="question-circle"
+                    />
+                </button>
+            </div>
             <form-input
                 class="mt-2"
                 name="tel_no"
@@ -571,6 +581,8 @@ import FormTextarea from '@/Components/Controls/FormTextarea';
 import ImageUploader from '@/Components/Controls/ImageUploader';
 import ConfirmRefer from '@/Components/Forms/ConfirmRefer';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
+import AlphanumericReader from '@/Components/Controls/AlphanumericReader';
+import Icon from '@/Components/Helpers/Icon';
 export default {
     components: {
         FormCheckbox,
@@ -582,6 +594,8 @@ export default {
         ImageUploader,
         ConfirmRefer,
         SpinnerButton,
+        AlphanumericReader,
+        Icon,
     },
     layout: Layout,
     props: {

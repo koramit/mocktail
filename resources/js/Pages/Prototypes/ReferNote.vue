@@ -14,6 +14,7 @@
                 label="sat code"
                 v-model="patient.sat_code"
             />
+            <alphanumeric-reader @recognized="satCodeHelper" />
             <form-input
                 class="mt-2"
                 name="hn"
@@ -360,6 +361,7 @@
 </template>
 
 <script>
+import AlphanumericReader from '@/Components/Controls/AlphanumericReader';
 import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import FormDatetime from '@/Components/Controls/FormDatetime';
 import FormInput from '@/Components/Controls/FormInput';
@@ -367,6 +369,7 @@ import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
 export default {
     components: {
+        AlphanumericReader,
         FormCheckbox,
         FormDatetime,
         FormInput,
@@ -581,6 +584,9 @@ export default {
 
             this.configs[this.configsRef].push(val);
             this.$refs[this.formSelectRef].setOther(val);
+        },
+        satCodeHelper (data) {
+            this.patient.sat_code = data ? data : 'ขอโทษนะ เราอ่านไม่ออก 😅';
         }
     }
 };
