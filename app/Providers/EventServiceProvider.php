@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\CaseUpdated;
 use App\Events\Registered;
 use App\Listeners\InitUserRole;
 use App\Listeners\StoreCommonUserDataInSession;
+use App\Listeners\UpdateCaseSearchIndex;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         Login::class => [
             StoreCommonUserDataInSession::class,
+        ],
+        CaseUpdated::class => [
+            UpdateCaseSearchIndex::class,
         ],
     ];
 

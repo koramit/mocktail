@@ -27,6 +27,7 @@ class ReferCasesController extends Controller
                           ->withFilterUserCenter(Session::get('center')->id)
                           ->filter(Request::only('status', 'center'))
                           ->orderBy('updated_at', 'desc')
+                          ->orderBy('id')
                           ->paginate()
                           ->withQueryString()
                           ->through(function ($case) { // transform() will "transform" paginate->data and paginate->link
@@ -35,8 +36,8 @@ class ReferCasesController extends Controller
                                   'slug' => $case->slug,
                                   'note_slug' => $case->note->slug,
                                   'referer' => $case->referer->name,
-                                  'patient_name' => ($case->patient ? $case->patient->full_name : $case->patient_name) ?? 'ยังไม่มีข้อมูลชื่อ',
-                                  'hn' => $case->patient ? $case->patient->hn : null,
+                                  'patient_name' => $case->name,
+                                  'hn' => $case->hn,
                                   'center' => $case->center->name,
                                   'status' => $case->status,
                                   'status_label' => $case->status_label,

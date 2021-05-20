@@ -18,15 +18,14 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         $password = str_replace('=', 'TaOkUbSiGn', $password);
 
         $data = $this->brushing($this->pasteLoad('authenticate', ['login' => $login, 'password' => $password]));
-        if (! $data || ! isset($data['found'])) { // error: $data = null
+        if (! $data || ! $data['ok']) { // error: $data = null
             return [
                 'found' => false,
                 'message' => __('service.failed'),
             ];
         }
 
-        if (! $data['ok'] || ! $data['found']) {
-            $data['found'] = false;
+        if (! isset($data['found']) || ! $data['found']) {
             $data['message'] = $data['message'] ?? __('auth.failed');
             unset($data['UserInfo']);
             unset($data['body']);
@@ -54,14 +53,14 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function getPatient($hn)
     {
         $data = $this->brushing($this->pasteLoad('patient', ['hn' => $hn]));
-        if (! $data || ! isset($data['found'])) { // error: $data = null
+        if (! $data || ! $data['ok']) { // error: $data = null
             return [
                 'found' => false,
                 'message' => __('service.failed'),
             ];
         }
 
-        if (! $data['found']) { // error: $data = null
+        if (! isset($data['found']) || ! $data['found']) {
             $data['message'] = __('service.item_not_found', ['item' => 'HN']);
             unset($data['body']);
 
@@ -74,25 +73,28 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function getAdmission($an)
     {
         $data = $this->brushing($this->pasteLoad('admission', ['an' => $an]));
-        if (! $data || ! isset($data['found'])) { // error: $data = null
+        if (! $data || ! $data['ok']) { // error: $data = null
             return [
                 'found' => false,
                 'message' => __('service.failed'),
             ];
         }
 
-        if ($data['found']) {
-            $data['patient']['found'] = true;
-            $data['attending_name'] = $data['attending'];
-            $data['discharge_type_name'] = $data['discharge_type'];
-            $data['discharge_status_name'] = $data['discharge_status'];
-            $data['encountered_at'] = $data['admitted_at'] ? Carbon::parse($data['admitted_at'], 'asia/bangkok')->tz('UTC') : null;
-            $data['dismissed_at'] = $data['discharged_at'] ? Carbon::parse($data['discharged_at'], 'asia/bangkok')->tz('UTC') : null;
-            $data['patient']['marital_status_name'] = $data['patient']['marital_status'];
-            $data['patient']['location'] = $data['patient']['postcode'];
+        if (! isset($data['found']) || ! $data['found']) {
+            $data['message'] = __('service.item_not_found', ['item' => 'AN']);
+            unset($data['body']);
 
             return $data;
         }
+
+        $data['patient']['found'] = true;
+        $data['attending_name'] = $data['attending'];
+        $data['discharge_type_name'] = $data['discharge_type'];
+        $data['discharge_status_name'] = $data['discharge_status'];
+        $data['encountered_at'] = $data['admitted_at'] ? Carbon::parse($data['admitted_at'], 'asia/bangkok')->tz('UTC') : null;
+        $data['dismissed_at'] = $data['discharged_at'] ? Carbon::parse($data['discharged_at'], 'asia/bangkok')->tz('UTC') : null;
+        $data['patient']['marital_status_name'] = $data['patient']['marital_status'];
+        $data['patient']['location'] = $data['patient']['postcode'];
 
         return $data;
     }
@@ -100,14 +102,14 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     public function recentlyAdmission($hn)
     {
         $data = $this->brushing($this->pasteLoad('recently_admit', ['hn' => $hn]));
-        if (! $data || ! isset($data['found'])) { // error: $data = null
+        if (! $data || ! $data['ok']) { // error: $data = null
             return [
                 'found' => false,
                 'message' => __('service.failed'),
             ];
         }
 
-        if ($data['found']) { // error: not found found
+        if (isset($data['found']) && $data['found']) { // error: not found found
             $data['patient']['found'] = true;
             $data['attending_name'] = $data['attending'];
             $data['discharge_type_name'] = $data['discharge_type'];
@@ -137,10 +139,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     {
         try {
             $response = Http::timeout(5)
-                        ->withOptions([
-                            'verify' => false,
-                            'proxy' => config('services.toothpaste.proxy'),
-                        ])
+                        ->withOptions(['verify' => false])
                         ->asForm()
                         ->post(config('services.toothpaste.url'), ['payload' => $data]);
         } catch (Exception $e) {
