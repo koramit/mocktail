@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CaseUpdated;
 use App\Managers\PatientManager;
 use App\Managers\ReferNoteManager;
 use App\Models\Note;
@@ -25,7 +26,7 @@ class ReferCasesController extends Controller
 
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
-                          ->filter(Request::only('status', 'center'))
+                          ->filter(Request::only('status', 'center', 'search'))
                           ->orderBy('updated_at', 'desc')
                           ->orderBy('id')
                           ->paginate()
@@ -33,6 +34,7 @@ class ReferCasesController extends Controller
                           ->through(function ($case) { // transform() will "transform" paginate->data and paginate->link
                               return [
                                   'id' => $case->id,
+                                  'meta' => $case->meta,
                                   'slug' => $case->slug,
                                   'note_slug' => $case->note->slug,
                                   'referer' => $case->referer->name,
@@ -54,7 +56,7 @@ class ReferCasesController extends Controller
 
         return Inertia::render('ReferCases/Index', [
             'cases' => $cases,
-            'filters' => Request::all('status', 'center'),
+            'filters' => Request::all('status', 'center', 'search'),
         ]);
     }
 
@@ -124,6 +126,8 @@ class ReferCasesController extends Controller
 
         $case = $user->referCases()->create($case);
 
+        CaseUpdated::dispatch($case);
+
         return [
             'url' => 'forms/'.$note->slug.'/edit',
         ];
@@ -149,6 +153,7 @@ class ReferCasesController extends Controller
         if ($note->referCase->status === 'draft') {
             $note->referCase->status = 'submitted';
             $data['submitted'] = true;
+            CaseUpdated::dispatch($note->referCase);
         }
 
         $note->referCase->tel_no = $data['patient']['tel_no'];
@@ -160,6 +165,7 @@ class ReferCasesController extends Controller
 
         $note->contents = $data;
         $note->save();
+        $note->referCase->touch();
 
         return Redirect::route('refer-cases')->with('messages', [
             'status' => 'success',

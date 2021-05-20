@@ -1,7 +1,7 @@
 <template>
     <div
         v-if="Object.keys($page.props.errors).length && $page.props.errors.hidden === undefined"
-        class="flex items-center rounded-tl-lg rounded-tr-lg border-red-400 border-8 border-t-0 border-l-0 border-r-0 shadow p-4"
+        class="flex items-center rounded-tl-lg rounded-tr-lg border-red-400 border-8 border-t-0 border-l-0 border-r-0 shadow p-4 mb-2"
     >
         <icon
             class="block w-12 h-12 text-red-400"
@@ -18,7 +18,7 @@
     </div>
     <div
         v-else-if="$page.props.flash.messages && !Object.keys($page.props.errors).length"
-        class="flex items-center rounded-tl-lg rounded-tr-lg border-8 border-t-0 border-l-0 border-r-0 shadow p-4"
+        class="flex items-center rounded-tl-lg rounded-tr-lg border-8 border-t-0 border-l-0 border-r-0 shadow p-4 mb-2"
         :class="{
             'border-alt-theme-light': $page.props.flash.messages.status === 'info',
             'border-green-200': $page.props.flash.messages.status === 'success',

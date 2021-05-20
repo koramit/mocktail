@@ -3,22 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\CaseUpdated;
-use App\Models\ReferCase;
-use Illuminate\Support\Facades\Cache;
 
 class UpdateCaseSearchIndex
 {
-    protected $cases;
-
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->cases = Cache::get('case-search-index', $this->initCaseSearchIndex());
-    }
+    protected $case;
 
     /**
      * Handle the event.
@@ -28,43 +16,53 @@ class UpdateCaseSearchIndex
      */
     public function handle(CaseUpdated $event)
     {
-        $index = $this->cases->search(function ($item) use ($event) {
-            return $item['id'] === $event->case->id;
-        });
-
-        if ($index === false) {
-            $this->cases->push($this->udpateCase($event->case));
-        } else {
-            $this->cases[$index] = $this->udpateCase($event->case);
+        $this->case = $event->case;
+        $meta = $this->case->meta;
+        $metaUpdate = $this->getMeta();
+        foreach ($metaUpdate as $key => $value) {
+            $meta[$key] = $value;
         }
+        $this->case->meta = $meta;
 
-        Cache::put('case-search-index', $this->cases);
+        return $this->case->save();
     }
 
-    protected function initCaseSearchIndex()
-    {
-        return ReferCase::with('patient', 'referer', 'admission', 'center')
-                          ->get()
-                          ->transform(function ($case) {
-                              return $this->udpateCase($case);
-                          });
-    }
-
-    protected function udpateCase($case)
+    protected function getMeta()
     {
         return [
-            'id' => $case->id,
-            'an' => $case->an,
-            'hn' => $case->hn,
-            'name' => $case->name,
-            'room_number' => $case->room_number,
-            'referer' => $case->referer->full_name,
-            'admit_md' => $case->admission->notes()->whereType('admission note')->first()
-                            ? $case->admission->notes()->whereType('admission note')->first()->author->full_name
-                            : null,
-            'dc_md' => $case->admission->notes()->whereType('discharge summary')->first()
-                            ? $case->admission->notes()->whereType('discharge summary')->first()->author->full_name
-                            : null,
+            'an' => $this->case->an,
+            'hn' => $this->case->hn,
+            'name' => $this->getName(),
+            'room_number' => $this->case->room_number,
+            'referer' => $this->case->referer->full_name,
+            'admit_md' => $this->getAuthor('admission note'),
+            'dc_md' => $this->getAuthor('discharge summary'),
         ];
+    }
+
+    protected function getAuthor($noteType)
+    {
+        if (! $this->case->admission) {
+            return null;
+        }
+
+        return $this->case->admission->notes()->whereType($noteType)->first()
+                ? $this->case->admission->notes()->whereType($noteType)->first()->author->full_name
+                : null;
+    }
+
+    protected function getName()
+    {
+        if ($this->case->patient) {
+            return $this->case->patient->profile['first_name'];
+        }
+
+        $names = collect(explode(' ', $this->case->name));
+        if ($names->count() === 1) {
+            return $this->case->name;
+        }
+        $names->pop();
+
+        return $names->pop();
     }
 }

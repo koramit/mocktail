@@ -25,6 +25,7 @@ class DischargeSummaryNotesController extends Controller
         if (! $data['submitted']) {
             $data['submitted'] = true;
             $isUpdate = false;
+            $note->admission->referCase->touch();
         }
 
         $note->contents = $data;

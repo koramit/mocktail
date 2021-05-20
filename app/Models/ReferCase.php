@@ -168,6 +168,14 @@ class ReferCase extends Model
             $query->whereHas('center', function ($query) use ($center) {
                 $query->where('centers.name', $center);
             });
+        })->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where('meta->hn', 'like', "%{$search}%")
+                  ->orWhere('meta->an', 'like', "%{$search}%")
+                  ->orWhere('meta->name', 'like', "%{$search}%")
+                  ->orWhere('meta->room_number', 'like', "%{$search}%")
+                  ->orWhere('meta->referer', 'like', "%{$search}%")
+                  ->orWhere('meta->admit_md', 'like', "%{$search}%")
+                  ->orWhere('meta->dc_md', 'like', "%{$search}%");
         });
     }
 
