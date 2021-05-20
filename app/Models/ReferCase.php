@@ -25,7 +25,11 @@ class ReferCase extends Model
      * @var array
      */
     protected $appends = [
+        'hn',
+        'an',
+        'name',
         'status',
+        'status_label',
         'updated_at_for_humans',
     ];
 

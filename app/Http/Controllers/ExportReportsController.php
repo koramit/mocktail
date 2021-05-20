@@ -20,8 +20,8 @@ class ExportReportsController extends Controller
                           ->get()
                           ->transform(function ($case) {
                               return [
-                                  'HN' => $case->patient ? $case->patient->hn : null,
-                                  'ชื่อ-สกุล' => $case->patient ? $case->patient->full_name : $case->patient_name,
+                                  'HN' => $case->hn,
+                                  'ชื่อ-สกุล' => $case->name,
                                   'วันที่ Admit' => $this->castDate($case->note->contents['patient']['date_refer']),
                                   'วันที่ Discharge' => $this->castDate($case->note->contents['patient']['date_expect_discharge']),
                                   'รพ. ต้นทาง' => $case->center->name,
