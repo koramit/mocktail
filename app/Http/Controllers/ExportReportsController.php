@@ -16,7 +16,7 @@ class ExportReportsController extends Controller
     {
         $cases = ReferCase::with(['patient', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
-                          ->filter(Request::only('status', 'center'))
+                          ->filter(Request::only('status', 'center', 'search'))
                           ->get()
                           ->transform(function ($case) {
                               return [

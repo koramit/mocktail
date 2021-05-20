@@ -53,6 +53,10 @@ class UpdateCaseSearchIndex
 
     protected function getName()
     {
+        if ($this->case->patient) {
+            return $this->case->patient->profile['first_name'];
+        }
+
         $names = collect(explode(' ', $this->case->name));
         if ($names->count() === 1) {
             return $this->case->name;

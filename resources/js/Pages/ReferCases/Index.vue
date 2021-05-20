@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- reset filters -->
-        <inertia-link
+        <!-- <inertia-link
             v-if="!cases.data.length && isFiltered"
             :href="`${baseUrl}/refer-cases?remember=forget`"
             class="text-yellow-400 text-semibold mt-2"
@@ -9,13 +9,23 @@
             as="button"
         >
             ยกเลิกตัวกรอง
-        </inertia-link>
+        </inertia-link> -->
 
         <!-- download spreedsheet -->
+        <!-- v-if="cases.data.length" -->
         <div
-            class="flex justify-end mb-2"
-            v-if="cases.data.length"
+            class="flex justify-between mb-2"
         >
+            <div class="w-2/3">
+                <input
+                    autocomplete="off"
+                    type="text"
+                    name="search"
+                    :placeholder="$page.props.user.center === 'ศิริราช' ? '🔍 ด้วย HN AN ชื่อ ห้อง แพทย์':'🔍 ด้วย ชื่อ'"
+                    v-model="search"
+                    class="form-input w-full"
+                >
+            </div>
             <a
                 class="flex items-center text-green-600"
                 :href="`${baseUrl}/reports/refer-cases${reportUrl}`"
@@ -195,6 +205,7 @@
 
 <script>
 import { useForm } from '@inertiajs/inertia-vue3';
+import throttle from 'lodash/throttle';
 import Layout from '@/Components/Layouts/Layout';
 import CreateCase from '@/Components/Forms/CreateCase';
 import Admission from '@/Components/Forms/Admission';
@@ -210,8 +221,16 @@ export default {
     data () {
         return {
             baseUrl: this.$page.props.app.baseUrl,
-            currentConfirm: {}
+            currentConfirm: {},
+            search: this.filters.search
         };
+    },
+    watch: {
+        search: {
+            handler: throttle(function() {
+                this.applyFilters('search', this.search);
+            }, 450),
+        }
     },
     computed: {
         abilities () {
@@ -273,13 +292,17 @@ export default {
         },
         applyFilters (filter, value) {
             let filters = {...this.filters};
-            filters[filter] = filters[filter] ? null : value;
+            if (filter === 'search') {
+                filters[filter] = value;
+            } else {
+                filters[filter] = filters[filter] ? null : value;
+            }
             let query = Object.keys(filters)
                 .filter(key => filters[key])
                 .map(key => `${key}=${filters[key]}`)
                 .join('&');
             query = query ? query : 'remember=forget';
-            this.$inertia.visit(`${this.baseUrl}/refer-cases?${query}`, { replace: true });
+            this.$inertia.visit(`${this.baseUrl}/refer-cases?${query}`, { preserveState: true });
         }
     }
 };

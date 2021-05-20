@@ -47,6 +47,10 @@ class BuildCaseSearchIndex
 
     protected static function getName(&$case)
     {
+        if ($case->patient) {
+            return $case->patient->profile['first_name'];
+        }
+
         $names = collect(explode(' ', $case->name));
         if ($names->count() === 1) {
             return $case->name;

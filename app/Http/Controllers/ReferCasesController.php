@@ -26,7 +26,7 @@ class ReferCasesController extends Controller
 
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
-                          ->filter(Request::only('status', 'center'))
+                          ->filter(Request::only('status', 'center', 'search'))
                           ->orderBy('updated_at', 'desc')
                           ->orderBy('id')
                           ->paginate()
@@ -34,6 +34,7 @@ class ReferCasesController extends Controller
                           ->through(function ($case) { // transform() will "transform" paginate->data and paginate->link
                               return [
                                   'id' => $case->id,
+                                  'meta' => $case->meta,
                                   'slug' => $case->slug,
                                   'note_slug' => $case->note->slug,
                                   'referer' => $case->referer->name,
@@ -55,7 +56,7 @@ class ReferCasesController extends Controller
 
         return Inertia::render('ReferCases/Index', [
             'cases' => $cases,
-            'filters' => Request::all('status', 'center'),
+            'filters' => Request::all('status', 'center', 'search'),
         ]);
     }
 
