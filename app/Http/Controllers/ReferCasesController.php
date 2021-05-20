@@ -28,7 +28,7 @@ class ReferCasesController extends Controller
                           ->withFilterUserCenter(Session::get('center')->id)
                           ->filter(Request::only('status', 'center', 'search'))
                           ->orderBy('updated_at', 'desc')
-                          ->orderBy('id')
+                          ->orderBy('id', 'desc')
                           ->paginate()
                           ->withQueryString()
                           ->through(function ($case) { // transform() will "transform" paginate->data and paginate->link
