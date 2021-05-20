@@ -21,7 +21,8 @@
                 :error="form.errors.sat_code"
                 @autosave="autosave('patient.sat_code')"
             />
-            <div class="flex items-center mt-1">
+            <!-- far future feature 😂 -->
+            <!-- <div class="flex items-center mt-1">
                 <alphanumeric-reader @recognized="(result) => form.patient.sat_code = result ? result : 'ขอโทษนะ เราอ่านไม่ออกล่ะ 😅'" />
                 <button class="mx-2">
                     <small class="text-md text-dark-theme-light italic">ตัวช่วยอ่าน SAT CODE </small>
@@ -30,7 +31,7 @@
                         name="question-circle"
                     />
                 </button>
-            </div>
+            </div> -->
             <form-input
                 class="mt-2"
                 name="tel_no"
