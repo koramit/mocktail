@@ -31,7 +31,6 @@ return [
     ],
 
     'toothpaste' => [
-        'proxy' => env('HTTP_PROXY', null),
         'url' => env('TOOTHPASTE_URL'),
         'token' => env('TOOTHPASTE_TOKEN'),
         'authenticate' => [
