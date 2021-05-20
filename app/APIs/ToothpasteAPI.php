@@ -137,7 +137,10 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
     {
         try {
             $response = Http::timeout(5)
-                        ->withOptions(['verify' => false])
+                        ->withOptions([
+                            'verify' => false,
+                            'proxy' => config('services.toothpaste.proxy'),
+                        ])
                         ->asForm()
                         ->post(config('services.toothpaste.url'), ['payload' => $data]);
         } catch (Exception $e) {
