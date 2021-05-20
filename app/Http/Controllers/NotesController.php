@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CaseUpdated;
 use App\Managers\AdmissionNoteManager;
 use App\Managers\DischargeSummaryManager;
 use App\Managers\ReferNoteManager;
@@ -55,6 +56,9 @@ class NotesController extends Controller
             $manager->transferData();
             $manager->checkDischarge();
         }
+
+        $note->admission->referCase->touch();
+        CaseUpdated::dispatch($note->admission->referCase);
 
         return  Redirect::route('note.form', ['note' => $note]);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CaseUpdated;
 use App\Managers\PatientManager;
 use App\Managers\ReferNoteManager;
 use App\Models\Note;
@@ -124,6 +125,8 @@ class ReferCasesController extends Controller
 
         $case = $user->referCases()->create($case);
 
+        CaseUpdated::dispatch($case);
+
         return [
             'url' => 'forms/'.$note->slug.'/edit',
         ];
@@ -149,6 +152,7 @@ class ReferCasesController extends Controller
         if ($note->referCase->status === 'draft') {
             $note->referCase->status = 'submitted';
             $data['submitted'] = true;
+            CaseUpdated::dispatch($note->referCase);
         }
 
         $note->referCase->tel_no = $data['patient']['tel_no'];
@@ -160,6 +164,7 @@ class ReferCasesController extends Controller
 
         $note->contents = $data;
         $note->save();
+        $note->referCase->touch();
 
         return Redirect::route('refer-cases')->with('messages', [
             'status' => 'success',

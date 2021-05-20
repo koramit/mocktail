@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CaseUpdated;
 use App\Managers\AdmissionManager;
 use App\Models\ReferCase;
 use Illuminate\Support\Facades\Request;
@@ -43,6 +44,8 @@ class AdmissionsController extends Controller
         // attach admission to refer note
         $case->note->admission_id = $case->admission_id;
         $case->note->save();
+
+        CaseUpdated::dispatch($case);
 
         return back()->with('messages', [
             'status' => 'success',
