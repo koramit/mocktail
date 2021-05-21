@@ -160,7 +160,7 @@ class ReferCase extends Model
         }
     }
 
-    public function scopeFilter($query, array $filters)
+    public function scopeFilter($query, array $filters, $userCenterId)
     {
         $query->when($filters['status'] ?? null, function ($query, $status) {
             $query->where('meta->status', $status);
@@ -168,16 +168,23 @@ class ReferCase extends Model
             $query->whereHas('center', function ($query) use ($center) {
                 $query->where('centers.name', $center);
             });
-        })->when($filters['search'] ?? null, function ($query, $search) {
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('meta->hn', 'like', "{$search}%")
-                      ->orWhere('meta->an', 'like', "{$search}%")
-                      ->orWhere('meta->name', 'like', "{$search}%")
-                      ->orWhere('meta->room_number', 'like', "{$search}%")
-                      ->orWhere('meta->referer', 'like', "%{$search}%")
-                      ->orWhere('meta->admit_md', 'like', "%{$search}%")
-                      ->orWhere('meta->dc_md', 'like', "%{$search}%");
-            });
+        })->when($filters['search'] ?? null, function ($query, $search) use ($userCenterId) {
+            if ($userCenterId !== config('app.main_center_id')) {
+                $query->where('meta->name', 'like', "{$search}%");
+            } else {
+                $query->where(function ($query) use ($search) {
+                    if (is_numeric($search)) {
+                        $query->orWhere('meta->hn', 'like', "{$search}%")
+                              ->orWhere('meta->an', 'like', "{$search}%")
+                              ->orWhere('meta->room_number', 'like', "{$search}%");
+                    } else {
+                        $query->orWhere('meta->name', 'like', "{$search}%")
+                              ->orWhere('meta->referer', 'like', "%{$search}%")
+                              ->orWhere('meta->admit_md', 'like', "%{$search}%")
+                              ->orWhere('meta->dc_md', 'like', "%{$search}%");
+                    }
+                });
+            }
         });
     }
 

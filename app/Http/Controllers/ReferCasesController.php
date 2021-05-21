@@ -26,7 +26,7 @@ class ReferCasesController extends Controller
 
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
-                          ->filter(Request::only('status', 'center', 'search'))
+                          ->filter(Request::only('status', 'center', 'search'), Session::get('center')->id)
                           ->orderBy('updated_at', 'desc')
                           ->orderBy('id', 'desc')
                           ->paginate()
