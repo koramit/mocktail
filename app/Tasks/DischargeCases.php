@@ -10,7 +10,7 @@ class DischargeCases
 {
     public function __invoke()
     {
-        $workHours = collect([1, 3, 5, 7, 9, 11]);
+        $workHours = collect([1, 3, 4, 5, 7, 9, 11]);
         if (! $workHours->contains(now()->hour)) {
             return;
         }
