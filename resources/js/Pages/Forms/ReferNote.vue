@@ -109,8 +109,8 @@
                 name="date_admit_origin"
                 @autosave="autosave('patient.date_admit_origin')"
             />
+            <!-- v-if="$page.props.user.center === 'ศิริราช'" -->
             <small
-                v-if="$page.props.user.center === 'ศิริราช'"
                 class="text-md text-thick-theme-light italic"
             >๏ กรณีไม่ได้รับไว้ในโรงพยาบาล ให้ใส่วันที่คัดกรอง</small>
             <form-datetime
