@@ -1,6 +1,5 @@
 <template>
     <teleport to="body">
-        <!-- @opened="checkAdmission" -->
         <modal
             ref="modal"
             width-mode="form-cols-1"
@@ -13,6 +12,20 @@
             </template>
             <template #body>
                 <div class="py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
+                    <template v-if="state === 'need_sat_code'">
+                        <form-input
+                            v-model="form.sat_code"
+                            label="sat code"
+                            name="sat_code"
+                            :readonly="true"
+                        />
+                        <form-input
+                            v-model="form.nation"
+                            label="สัญชาติ"
+                            name="nation"
+                            :readonly="true"
+                        />
+                    </template>
                     <form-input
                         v-model="form.hn"
                         label="hn"
@@ -40,7 +53,7 @@
                         name="try_later"
                         :readonly="true"
                     />
-                    <template v-if="state && state !== 'try_later'">
+                    <template v-if="state && state === 'confirm'">
                         <form-input
                             v-model="form.an"
                             label="an"
@@ -62,18 +75,29 @@
                 <spinner-button
                     :spin="busy"
                     class="btn-dark w-full mt-6"
-                    v-if="state !== 'try_later'"
+                    v-if="state === 'confirm'"
                     @click="perform"
                     :disabled="!form.hn || (state && !form.room_number)"
                 >
                     {{ !state ? 'ค้น HN':'ยืนยัน' }}
                 </spinner-button>
                 <p
-                    v-else
+                    v-else-if="state === 'try_later'"
                     class="text-sm text-yellow-400 w-full text-center"
                 >
                     <span class="font-semibold">HN</span> นี้ยังไม่มีข้อมูลแอดมิทใน <span class="font-semibold">{{ wardNameCheck }}</span><br class="sm:hidden"> โปรดลองใหม่ภายหลัง
                 </p>
+                <p
+                    v-else-if="state === 'need_sat_code'"
+                    class="text-sm text-yellow-400 w-full text-center"
+                >
+                    จำเป็นต้องมี <span class="font-semibold">SAT CODE</span> สำหรับชาวต่างชาติ โปรดแจ้งผู้ส่งเคส
+                </p>
+                <icon
+                    v-if="state !== 'confirm' && busy "
+                    class="w-4 h-4 animate-spin"
+                    name="circle-notch"
+                />
             </template>
         </modal>
     </teleport>
@@ -83,9 +107,10 @@ import { useForm } from '@inertiajs/inertia-vue3';
 import FormInput from '@/Components/Controls/FormInput';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import Modal from '@/Components/Helpers/Modal';
+import Icon from '@/Components/Helpers/Icon';
 export default {
     emits: ['closed'],
-    components: { FormInput, Modal, SpinnerButton },
+    components: { FormInput, Modal, Icon, SpinnerButton },
     data () {
         return {
             form: {
@@ -104,7 +129,7 @@ export default {
         };
     },
     methods: {
-        open (id, hn, referName) {
+        open (id, hn, referName, satCode) {
             this.state = null;
             this.form = {};
             this.form.id = id;
@@ -115,6 +140,7 @@ export default {
             }
             this.busy = true;
             this.form.hn = hn;
+            this.form.sat_code = satCode;
             this.checkAdmission();
             this.$refs.modal.open();
         },
@@ -122,7 +148,9 @@ export default {
             if (!this.state) {
                 // sarch hn
                 this.checkAdmission();
-            } else if (this.state === 'comfirm') {
+            } else if (this.state === 'need_sat_code') {
+                //
+            } else if (this.state === 'confirm') {
                 this.busy = true;
                 let form = useForm({...this.form, remember: 'on'});
                 form.post(`${this.$page.props.app.baseUrl}/admissions`, {
@@ -136,12 +164,10 @@ export default {
             window.axios
                 .post(`${this.$page.props.app.baseUrl}/front-api/patient-rencently-admission`, this.form)
                 .then((response) => {
-                    console.log(response.data);
                     if (! response.data.found) {
                         this.state = 'try_later';
                         this.try_later = 'ไม่พบข้อมูลการแอดมิท';
                         if (response.data.patient.found) {
-                            console.log('found patient');
                             this.form.name = response.data.patient.patient_name;
                         }
                         return;
@@ -153,11 +179,14 @@ export default {
                         this.state = 'try_later';
                         return;
                     }
-                    this.state = 'comfirm';
+                    let patient = response.data.patient;
+                    if (patient.nation !== 'ไทย' && (! patient.document_id || patient.document_id.length !== 13) && ! this.form.sat_code) {
+                        this.form.nation = patient.nation;
+                        this.state = 'need_sat_code';
+                    } else {
+                        this.state = 'confirm';
+                    }
                     this.form.an = response.data.an;
-                })
-                .catch((error) => {
-                    console.log(error);
                 })
                 .finally(() => this.busy = false);
         }

@@ -21,6 +21,9 @@
                 :error="form.errors.sat_code"
                 @autosave="autosave('patient.sat_code')"
             />
+            <small
+                class="text-md text-thick-theme-light italic"
+            >๏ กรณีผู้ป่วยชาวต่างชาติ</small>
             <!-- far future feature 😂 -->
             <!-- <div class="flex items-center mt-1">
                 <alphanumeric-reader @recognized="(result) => form.patient.sat_code = result ? result : 'ขอโทษนะ เราอ่านไม่ออกล่ะ 😅'" />
