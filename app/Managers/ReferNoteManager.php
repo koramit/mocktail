@@ -468,18 +468,19 @@ class ReferNoteManager extends NoteManager
             $errors['date_repeat_NP_swap'] = 'ข้อมูลไม่สอดคล้องกับ วันที่ครบกำหนดนอนใน hospitel';
         }
 
+        /* NO LONGER CHECK sat_code DUE TO its not require in most case */
         // check candidate keys
-        if (! isset($errors['sat_code'])) {
-            $count = Note::where('contents->patient->sat_code', $patient['sat_code'])
-                        ->where('contents->patient->date_admit_origin', $patient['date_admit_origin'])
-                        ->whereHas('referCase', function ($query) {
-                            $query->where('meta->status', '<>', 'canceled');
-                        })
-                        ->count();
-            if ($count > 1) {
-                $errors['sat_code'] = 'เคสซ้ำ โปรดตรวจสอบ SAT CODE และ วันที่รับไว้ในโรงพยาบาล';
-            }
-        }
+        // if (! isset($errors['sat_code'])) {
+        //     $count = Note::where('contents->patient->sat_code', $patient['sat_code'])
+        //                 ->where('contents->patient->date_admit_origin', $patient['date_admit_origin'])
+        //                 ->whereHas('referCase', function ($query) {
+        //                     $query->where('meta->status', '<>', 'canceled');
+        //                 })
+        //                 ->count();
+        //     if ($count > 1) {
+        //         $errors['sat_code'] = 'เคสซ้ำ โปรดตรวจสอบ SAT CODE และ วันที่รับไว้ในโรงพยาบาล';
+        //     }
+        // }
 
         if (count($errors) > 0) {
             return $errors;
@@ -524,7 +525,7 @@ class ReferNoteManager extends NoteManager
     protected static function getBaseRules($noAdmit = false)
     {
         $rules = [
-            'sat_code' => 'required|alpha_num|size:18',
+            'sat_code' => 'nullable|alpha_num|size:18',
             'tel_no' => 'required|digits_between:9,10',
             'insurance' => 'required|string',
             'date_covid_infected' => 'required|date',

@@ -138,7 +138,7 @@
                 <button
                     v-if="userCan('admit', referCase)"
                     class="w-full flex items-center text-green-200 justify-start"
-                    @click="this.$refs.admission.open(referCase.id, referCase.hn, referCase.patient_name)"
+                    @click="this.$refs.admission.open(referCase.id, referCase.hn, referCase.patient_name, referCase.sat_code)"
                 >
                     <icon
                         class="w-4 h-4 mr-1"
