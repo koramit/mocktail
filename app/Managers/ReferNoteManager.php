@@ -602,7 +602,7 @@ class ReferNoteManager extends NoteManager
             }
         }
 
-        if (! $uploads['lab']) {
+        if (! ($uploads['lab'] ?? false)) {
             $errors['lab'] = ['จำเป็นต้องแนบภาพ ใบรายงานผล COVID'];
         } elseif (! Storage::exists('uploads/'.$uploads['lab'])) {
             $errors['lab'] = ['กรุณาแนบไฟล์ใหม่'];
