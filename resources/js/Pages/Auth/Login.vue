@@ -50,6 +50,22 @@
             >
                 สร้างบัญชีใหม่
             </inertia-link>
+            <!-- annoucement -->
+            <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
+                <p>ประกาศ</p>
+                <p class="mt-2 italic text-xs">
+                    จะไม่สามารถใช้งานระบบได้ตามวันเวลาต่อไปนี้
+                </p>
+                <p class="mt-2 text-xs">
+                    1. 18 มิ.ย. 2564 เวลา 23:00 - 23:30 น.
+                </p>
+                <p class="mt-2 text-xs">
+                    2. 19 มิ.ย. 2564 เวลา 22:00 - 23:00 น.
+                </p>
+                <p class="mt-2 text-xs">
+                    ขออภัยในความไม่สะดวก
+                </p>
+            </div>
         </div>
     </div>
 </template>
