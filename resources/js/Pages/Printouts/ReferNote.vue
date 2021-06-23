@@ -11,7 +11,7 @@
                 </h3>
                 <div class="mt-1 grid grid-rows-4 grid-flow-col gap-2">
                     <display-input
-                        v-for="(field, key) in configs.patient"
+                        v-for="(field, key) in configs.patient.filter(data => contents.patient[data.name])"
                         :key="key"
                         :label="field.label"
                         :data="contents.patient[field.name]"
