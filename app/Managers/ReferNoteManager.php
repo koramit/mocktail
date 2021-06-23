@@ -55,12 +55,8 @@ class ReferNoteManager extends NoteManager
             return $contents;
         }
 
-        if ($this->note->referCase->center->name === config('app.main_center')) {
-            $ward = $this->note->contents['patient']['ward'] ?? null;
-            $contents['patient']['center'] = $this->note->referCase->center->name.($ward ? " ({$ward})" : '');
-        } else {
-            $contents['patient']['center'] = $this->note->referCase->center->name;
-        }
+        $ward = $this->note->contents['patient']['ward'] ?? null;
+        $contents['patient']['center'] = $this->note->referCase->center->name.($ward ? " ({$ward})" : '');
 
         $contents['author'] = [
             'name' => $this->note->author->full_name,
@@ -193,7 +189,9 @@ class ReferNoteManager extends NoteManager
         if (! $report) {
             return [
                 'insurances' => ['กรมบัญชีกลาง', 'ประกันสังคม', '30 บาท', 'ชำระเงินเอง'],
-                'wards' => ['มว ทีม 1', 'มว ทีม 2', 'มว ทีม 3', 'อฎ 12 เหนือ', 'อฎ 12 ใต้', 'อานันทมหิดล 2', 'ARI คลินิก'],
+                'wards' => $this->note->referCase->center->name === config('app.main_center') ?
+                    ['มว ทีม 1', 'มว ทีม 2', 'มว ทีม 3', 'อฎ 12 เหนือ', 'อฎ 12 ใต้', 'อานันทมหิดล 2', 'ARI คลินิก'] :
+                    ['ARI คลินิก', 'COVID-19 ward'],
                 'meals' => ['ปกติ', 'อิสลาม', 'มังสวิรัติ'],
                 'symptoms' => [
                     ['label' => 'ไข้', 'name' => 'fever'],
@@ -542,6 +540,8 @@ class ReferNoteManager extends NoteManager
             'o2_sat' => 'required|integer',
 
             'adr_detail' => 'exclude_if:no_adr,true|required|string',
+
+            'ward' => 'required|string',
         ];
 
         if (! $noAdmit) {
@@ -555,7 +555,6 @@ class ReferNoteManager extends NoteManager
 
         if (Session::get('center')->id === config('app.main_center_id')) {
             $rules['hn'] = 'required|digits:8';
-            $rules['ward'] = 'required|string';
         }
 
         return $rules;

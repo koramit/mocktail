@@ -5,14 +5,6 @@
             <h2 class="font-semibold text-thick-theme-light">
                 ข้อมูลเบื้องต้น
             </h2>
-            <!-- next features -->
-            <!-- <form-checkbox
-                class="mt-4"
-                v-model="form.no_admit"
-                label="ส่งตัวโดยไม่ได้รับไว้ในโรงพยาบาล"
-                :toggler="true"
-                @autosave="autosave('no_admit')"
-            /> -->
             <form-input
                 class="mt-2"
                 name="sat_code"
@@ -24,17 +16,6 @@
             <small
                 class="text-md text-thick-theme-light italic"
             >๏ กรณีผู้ป่วยชาวต่างชาติ</small>
-            <!-- far future feature 😂 -->
-            <!-- <div class="flex items-center mt-1">
-                <alphanumeric-reader @recognized="(result) => form.patient.sat_code = result ? result : 'ขอโทษนะ เราอ่านไม่ออกล่ะ 😅'" />
-                <button class="mx-2">
-                    <small class="text-md text-dark-theme-light italic">ตัวช่วยอ่าน SAT CODE </small>
-                    <icon
-                        class="w-4 h-4 text-dark-theme-light inline"
-                        name="question-circle"
-                    />
-                </button>
-            </div> -->
             <form-input
                 class="mt-2"
                 name="tel_no"
@@ -72,9 +53,7 @@
                 ref="insurance"
                 @autosave="autosave('patient.insurance')"
             />
-            <!-- next feature -->
             <form-select
-                v-if="$page.props.user.center === 'ศิริราช'"
                 class="mt-2"
                 label="หอผู้ป่วย"
                 v-model="form.patient.ward"
@@ -112,7 +91,6 @@
                 name="date_admit_origin"
                 @autosave="autosave('patient.date_admit_origin')"
             />
-            <!-- v-if="$page.props.user.center === 'ศิริราช'" -->
             <small
                 class="text-md text-thick-theme-light italic"
             >๏ กรณีไม่ได้รับไว้ในโรงพยาบาล ให้ใส่วันที่คัดกรอง</small>
@@ -585,8 +563,6 @@ import FormTextarea from '@/Components/Controls/FormTextarea';
 import ImageUploader from '@/Components/Controls/ImageUploader';
 import ConfirmRefer from '@/Components/Forms/ConfirmRefer';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
-import AlphanumericReader from '@/Components/Controls/AlphanumericReader';
-import Icon from '@/Components/Helpers/Icon';
 export default {
     components: {
         FormCheckbox,
@@ -598,8 +574,6 @@ export default {
         ImageUploader,
         ConfirmRefer,
         SpinnerButton,
-        AlphanumericReader,
-        Icon,
     },
     layout: Layout,
     props: {

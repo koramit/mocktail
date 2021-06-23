@@ -21,6 +21,11 @@
                     :patient="patient"
                     @updated="(data) => form = {...data}"
                 />
+                <criteria-v-3
+                    v-else-if="version === 3"
+                    :patient="patient"
+                    @updated="(data) => form = {...data}"
+                />
             </template>
             <template #footer>
                 <div class="flex justify-end items-center">
@@ -42,6 +47,15 @@
                     >
                         ยืนยัน
                     </spinner-button>
+                    <spinner-button
+                        v-else-if="version === 3"
+                        :spin="form.processing"
+                        class="btn-dark w-full mt-6"
+                        :disabled="!form.diagnosis"
+                        @click="confirmed"
+                    >
+                        ยืนยัน
+                    </spinner-button>
                 </div>
             </template>
         </modal>
@@ -53,9 +67,10 @@ import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import Modal from '@/Components/Helpers/Modal';
 import CriteriaV1 from '@/Components/Forms/CriteriaV1';
 import CriteriaV2 from '@/Components/Forms/CriteriaV2';
+import CriteriaV3 from '@/Components/Forms/CriteriaV3';
 export default {
     emits: ['closed', 'confirmed'],
-    components: { Modal, SpinnerButton, CriteriaV1, CriteriaV2 },
+    components: { Modal, SpinnerButton, CriteriaV1, CriteriaV2, CriteriaV3 },
     props: {
         patient: { type: String, required: true },
         version: { type: Number, default: 1 }
