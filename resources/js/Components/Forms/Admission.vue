@@ -75,7 +75,7 @@
                 <spinner-button
                     :spin="busy"
                     class="btn-dark w-full mt-6"
-                    v-if="state === 'confirm'"
+                    v-if="state === 'confirm' || state === null"
                     @click="perform"
                     :disabled="!form.hn || (state && !form.room_number)"
                 >
