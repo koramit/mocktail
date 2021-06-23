@@ -94,7 +94,7 @@
                     จำเป็นต้องมี <span class="font-semibold">SAT CODE</span> สำหรับชาวต่างชาติ โปรดแจ้งผู้ส่งเคส
                 </p>
                 <icon
-                    v-if="state !== 'confirm' && busy "
+                    v-if="state !== null && state !== 'confirm' && busy "
                     class="w-4 h-4 animate-spin"
                     name="circle-notch"
                 />
