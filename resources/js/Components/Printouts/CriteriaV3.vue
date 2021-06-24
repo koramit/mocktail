@@ -1,10 +1,10 @@
 <template>
-    <div class="max-h-70 overflow-y-scroll py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
-        <p class="font-semibold underline">
-            ใบส่งตัว {{ patient }}
-        </p>
+    <div class="px-12 py-6 print-p-0">
+        <h2 class="font-semibold pb-2 border-b-2 border-dashed text-xl text-center">
+            เกณฑ์การรับผู้ป่วยเข้าในหอผู้ป่วยเฉพาะกิจ (Hospitel)
+        </h2>
         <p class="font-semibold text-dark-theme-light mt-4">
-            ต้องเข้าเกณฑ์ทุกข้อดังต่อไปนี้
+            {{ criterias.patient_label }} เข้าเกณฑ์ทุกข้อดังต่อไปนี้
         </p>
         <div class="flex my-2  text-sm font-normal">
             <p>1.</p>
@@ -75,38 +75,28 @@
         <div class="flex my-2  text-sm font-normal">
             <p>3.</p>
             <p class="px-2 tracking-wide leading-5">
-                วินิจฉัยเป็น (<span class=" underline">โปรดเลือก</span>)
+                วินิจฉัยเป็น
             </p>
         </div>
         <div class="flex my-2 pl-4 text-sm font-normal">
             <p>
-                <input
-                    type="radio"
-                    name="diagnosis"
-                    value="asymptomatic_or_stable_uri"
-                    v-model="form.diagnosis"
-                >
+                <icon
+                    class="w-4 h-4"
+                    :name="form.diagnosis === 'asymptomatic_or_stable_uri' ? 'check-circle':'circle'"
+                />
             </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.diagnosis = 'asymptomatic_or_stable_uri'"
-            >
+            <p class="px-2 tracking-wide leading-5 italic">
                 Asymptomatic/URI ที่อาการคงที่ หรือ
             </p>
         </div>
         <div class="flex my-2 pl-4 text-sm font-normal">
             <p>
-                <input
-                    type="radio"
-                    name="diagnosis"
-                    value="pneumonia"
-                    v-model="form.diagnosis"
-                >
+                <icon
+                    class="w-4 h-4"
+                    :name="form.diagnosis === 'pneumonia' ? 'check-circle':'circle'"
+                />
             </p>
-            <p
-                class="px-2 tracking-wide leading-5 italic cursor-pointer"
-                @click="form.diagnosis = 'pneumonia'"
-            >
+            <p class="px-2 tracking-wide leading-5 italic">
                 Pneumonia ที่อาการดีขึ้นหลังให้การรักษาอย่างน้อย 48 ชม. และไม่ได้ใช้ออกซิเจน
             </p>
         </div>
@@ -162,26 +152,16 @@
 </template>
 
 <script>
+import Icon from '@/Components/Helpers/Icon';
 export default {
-    emits: ['updated'],
+    components: { Icon },
     props: {
-        patient: { type: String, required: true },
+        criterias: { type: Object, required: true },
     },
     data () {
         return {
-            form: {
-                version: 3,
-                diagnosis: null,
-            }
+            form: {...this.criterias},
         };
     },
-    watch: {
-        form: {
-            deep: true,
-            handler(val) {
-                this.$emit('updated', val);
-            }
-        }
-    }
 };
 </script>

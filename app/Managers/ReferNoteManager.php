@@ -178,7 +178,7 @@ class ReferNoteManager extends NoteManager
 
         if (! isset($contents['criterias'])) {
             $contents['criterias'] = [
-                'version' => 2,
+                'version' => 3,
                 'diagnosis' => null,
             ];
         }
@@ -338,7 +338,7 @@ class ReferNoteManager extends NoteManager
                 'id_document' => null,
             ],
             'criterias' => [
-                'version' => 2,
+                'version' => 3,
                 'diagnosis' => null,
             ],
         ];

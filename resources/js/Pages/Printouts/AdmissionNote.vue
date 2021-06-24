@@ -95,6 +95,10 @@
                         v-else-if="contents.criterias.version === 2"
                         :criterias="contents.criterias"
                     />
+                    <criteria-v-3
+                        v-else-if="contents.criterias.version === 3"
+                        :criterias="contents.criterias"
+                    />
                 </div>
             </div>
         </template>
@@ -112,9 +116,10 @@ import Plain from '@/Components/Layouts/Plain';
 import Paper from '@/Components/Layouts/Paper';
 import CriteriaV1 from '@/Components/Printouts/CriteriaV1';
 import CriteriaV2 from '@/Components/Printouts/CriteriaV2';
+import CriteriaV3 from '@/Components/Printouts/CriteriaV3';
 export default {
     layout: Plain,
-    components: { DisplayInput, Paper, CriteriaV1, CriteriaV2 },
+    components: { DisplayInput, Paper, CriteriaV1, CriteriaV2, CriteriaV3 },
     props: {
         contents: { type: Object, required: true },
         configs: { type: Object, required: true },
