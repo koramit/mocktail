@@ -599,12 +599,11 @@ class ReferNoteManager extends NoteManager
             } elseif (! Storage::exists('uploads/'.$uploads['film'])) {
                 $errors['film'] = ['กรุณาแนบไฟล์ใหม่'];
             }
-        }
-
-        if (! ($uploads['lab'] ?? false)) {
-            $errors['lab'] = ['จำเป็นต้องแนบภาพ ใบรายงานผล COVID'];
-        } elseif (! Storage::exists('uploads/'.$uploads['lab'])) {
-            $errors['lab'] = ['กรุณาแนบไฟล์ใหม่'];
+            if (! ($uploads['lab'] ?? false)) {
+                $errors['lab'] = ['จำเป็นต้องแนบภาพ ใบรายงานผล COVID'];
+            } elseif (! Storage::exists('uploads/'.$uploads['lab'])) {
+                $errors['lab'] = ['กรุณาแนบไฟล์ใหม่'];
+            }
         }
 
         if (! $patient['hn']) {
