@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\CaseUpdated;
 use App\Managers\AdmissionNoteManager;
 use App\Managers\DischargeSummaryManager;
+use App\Managers\HomeIsolationNoteManager;
 use App\Managers\ReferNoteManager;
 use App\Models\Note;
 use App\Models\ReferCase;
@@ -66,7 +67,11 @@ class NotesController extends Controller
     public function edit(Note $note)
     {
         if ($note->type === 'refer note') {
-            $manager = new ReferNoteManager($note);
+            if (($note->referCase->meta['type'] ?? null) === 'Home Isolation') {
+                $manager = new HomeIsolationNoteManager($note);
+            } else {
+                $manager = new ReferNoteManager($note);
+            }
         } elseif ($note->type === 'admission note') {
             $manager = new AdmissionNoteManager($note);
         } elseif ($note->type === 'discharge summary') {

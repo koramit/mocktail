@@ -29,6 +29,15 @@
                         :readonly="(form.hn && true) || $page.props.user.center === 'ศิริราช'"
                         v-if="$page.props.user.center !== 'ศิริราช' || confirmed"
                     />
+                    <form-select
+                        v-if="$page.props.user.center === 'ศิริราช'"
+                        label="ประเภท"
+                        class="mt-2"
+                        v-model="form.refer_type"
+                        :error="form.errors.refer_type"
+                        :options="['Hospitel', 'Home Isolation']"
+                        name="refer_type"
+                    />
                 </div>
             </template>
             <template #footer>
@@ -48,16 +57,18 @@
 
 <script>
 import FormInput from '@/Components/Controls/FormInput';
+import FormSelect from '@/Components/Controls/FormSelect';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import Modal from '@/Components/Helpers/Modal';
 export default {
     emits: ['closed'],
-    components: { FormInput, Modal, SpinnerButton },
+    components: { FormInput, FormSelect, Modal, SpinnerButton },
     data () {
         return {
             form: {
                 patient_name: null,
                 hn: null,
+                refer_type: 'Hospitel',
                 errors: {},
             },
             busy: false,
@@ -67,7 +78,12 @@ export default {
     },
     methods: {
         open () {
-            this.form = {};
+            this.form = {
+                patient_name: null,
+                hn: null,
+                refer_type: 'Hospitel',
+                errors: {},
+            };
             this.form.errors = {};
             this.$refs.modal.open();
             this.confirmed = null;
@@ -87,11 +103,6 @@ export default {
                         return;
                     }
                     this.form.errors = response.data;
-                    // let errors = response.data;
-                    // Object.keys(errors).map(key => {
-                    //     errors[key] = errors[key][0];
-                    // });
-                    // this.form.errors = errors;
                     return;
                 })
                 .catch((error) => {

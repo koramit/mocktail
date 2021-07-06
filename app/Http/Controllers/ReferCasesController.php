@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\CaseUpdated;
+use App\Managers\HomeIsolationNoteManager;
 use App\Managers\PatientManager;
 use App\Managers\ReferNoteManager;
 use App\Models\Note;
@@ -66,9 +67,12 @@ class ReferCasesController extends Controller
         $errors = [];
         $hn = Request::input('hn', null);
         if (Session::get('center')->name === config('app.main_center')) {
-            // Main center needs hn
+            // Main center needs hn and type
             if (! $hn) {
                 $errors['hn'] = 'จำเป็นต้องลง HN';
+            }
+            if (! Request::input('refer_type', null)) {
+                $errors['refer_type'] = 'จำเป็นต้องลงประเภท';
             }
         } else {
             // Other center needs hn or name
@@ -100,7 +104,9 @@ class ReferCasesController extends Controller
         }
 
         $user = Auth::user();
-        $contents = ReferNoteManager::initNote();
+        $contents = (Request::input('refer_type')) === 'Hospitel'
+                    ? ReferNoteManager::initNote()
+                    : HomeIsolationNoteManager::initNote();
 
         $note = new Note();
         $note->slug = Str::uuid()->toString();
@@ -114,6 +120,7 @@ class ReferCasesController extends Controller
             'note_id' => $note->id,
             'meta' => [
                 'status' => 'draft',
+                'type' => Request::input('refer_type'),
             ],
         ];
 
@@ -136,14 +143,21 @@ class ReferCasesController extends Controller
 
     public function update(Note $note)
     {
-        if ($errors = ReferNoteManager::validate($note)) {
+        $referType = $note->referCase->meta['type'] ?? 'Hospitel';
+        $errors = ($referType) === 'Hospitel'
+                    ? ReferNoteManager::validate($note)
+                    : HomeIsolationNoteManager::validate($note);
+
+        if ($errors) {
             return back()->withErrors($errors);
         }
 
         $data = Request::all();
-        // criteria V1/V2 is OK for this condition
-        if (! $data['criterias']['diagnosis'] && ! $note->contents['submitted']) {
-            return back();
+        if ($referType === 'Hospiel') {
+            // criteria V1/V2 is OK for this condition
+            if (! $data['criterias']['diagnosis'] && ! $note->contents['submitted']) {
+                return back();
+            }
         }
 
         $hn = $data['patient']['hn'];
