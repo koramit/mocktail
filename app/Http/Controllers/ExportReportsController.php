@@ -16,7 +16,7 @@ class ExportReportsController extends Controller
     {
         $cases = ReferCase::with(['patient', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
-                          ->filter(Request::only('status', 'center', 'search'), Session::get('center')->id)
+                          ->filter(Request::only('status', 'center', 'type', 'search'), Session::get('center')->id)
                           ->get()
                           ->transform(function ($case) {
                               return [
@@ -27,6 +27,7 @@ class ExportReportsController extends Controller
                                   'รพ. ต้นทาง' => $case->center->name,
                                   'สถานะ' => $case->status_label,
                                   'หมายเลขห้อง' => $case->room_number,
+                                  'ประเภท' => $case->meta['type'] ?? 'Hospitel',
                               ];
                           });
         $filename = 'รายงานแบบบันทึกการส่งต่อผู้ป่วย@'.now()->tz(Auth::user()->timezone)->format('d-m-Y').'.xlsx';

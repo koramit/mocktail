@@ -802,6 +802,7 @@ export default {
                 });
         },
         criteriaConfirmed (criterias) {
+            console.log(criterias);
             this.form.criterias = {...criterias};
             this.confirm();
         },

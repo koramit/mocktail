@@ -8,6 +8,7 @@ use App\Managers\PatientManager;
 use App\Managers\ReferNoteManager;
 use App\Models\Note;
 use App\Models\ReferCase;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -27,7 +28,7 @@ class ReferCasesController extends Controller
 
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
-                          ->filter(Request::only('status', 'center', 'search'), Session::get('center')->id)
+                          ->filter(Request::only('status', 'center', 'type', 'search'), Session::get('center')->id)
                           ->orderBy('updated_at', 'desc')
                           ->orderBy('id', 'desc')
                           ->paginate()
@@ -58,7 +59,7 @@ class ReferCasesController extends Controller
 
         return Inertia::render('ReferCases/Index', [
             'cases' => $cases,
-            'filters' => Request::all('status', 'center', 'search'),
+            'filters' => Request::all('status', 'center', 'type', 'search'),
         ]);
     }
 
@@ -153,9 +154,13 @@ class ReferCasesController extends Controller
         }
 
         $data = Request::all();
-        if ($referType === 'Hospiel') {
+        if ($referType === 'Hospitel') {
             // criteria V1/V2 is OK for this condition
             if (! $data['criterias']['diagnosis'] && ! $note->contents['submitted']) {
+                return back();
+            }
+        } else {
+            if ((($data['criterias']['new_case'] ?? null) === null) && ! $note->contents['submitted']) {
                 return back();
             }
         }
@@ -166,7 +171,17 @@ class ReferCasesController extends Controller
         }
 
         if ($note->referCase->status === 'draft') {
-            $note->referCase->status = 'submitted';
+            if ($referType === 'Hospitel') {
+                $note->referCase->status = 'submitted';
+            } else {
+                $today = now()->today(Auth::user()->timezone);
+                $dateRefer = Carbon::create($data['patient']['date_refer'], Auth::user()->timezone);
+                if ($dateRefer->greaterThanOrEqualTo($today)) {
+                    $note->referCase->status = 'submitted';
+                } else {
+                    $note->referCase->status = 'admitted';
+                }
+            }
             $data['submitted'] = true;
             CaseUpdated::dispatch($note->referCase);
         }

@@ -1,11 +1,12 @@
 <template>
-    <div class="max-h-70 overflow-y-scroll py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
-        <p class="font-semibold underline">
-            การกักตัวเองที่บ้าน {{ patient }}
-        </p>
+    <div class="px-12 py-6 print-p-0">
+        <h2 class="font-semibold pb-2 border-b-2 border-dashed text-xl text-center">
+            การกักตัวเองที่บ้าน
+        </h2>
         <p class="font-semibold text-dark-theme-light mt-4">
+            {{ criterias.patient_label }}
             {{
-                newCase
+                criterias.new_case
                     ? 'ผู้ป่วยวินิจฉัยใหม่ตามเกณฑ์ ดังต่อไปนี้'
                     : 'ผู้ป่วยโควิด-19 ที่ step down หลังเข้ารักษาในโรงพยาบาลหรือ hospitel'
             }}
@@ -16,7 +17,7 @@
                 ยินยอมทำ Home Isolation
             </p>
         </div>
-        <template v-if="newCase">
+        <template v-if="criterias.new_case">
             <div class="flex my-2  text-sm font-normal">
                 <p>2.</p>
                 <p class="px-2 tracking-wide leading-5">
@@ -121,21 +122,13 @@
 
 <script>
 export default {
-    emits: ['updated'],
     props: {
-        patient: { type: String, required: true },
-        newCase: { type: Boolean },
+        criterias: { type: Object, required: true },
     },
     data () {
         return {
-            form: {
-                version: 1,
-                new_case: this.newCase,
-            }
+            form: {...this.criterias},
         };
     },
-    mounted () {
-        this.$nextTick(() => this.$emit('updated', this.form));
-    }
 };
 </script>

@@ -6,7 +6,6 @@ use App\Models\Note;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class HomeIsolationNoteManager extends ReferNoteManager
@@ -23,32 +22,33 @@ class HomeIsolationNoteManager extends ReferNoteManager
 
     public function setFlashData($report = false)
     {
+        parent::setFlashData($report);
         // title and menu
         Request::session()->flash('page-title', 'Home isolation: '.($this->note->referCase->name).' เริ่มวันที่ '.$this->getDateString($this->note->contents['patient']['date_refer']));
-        if ($report) {
-            Request::session()->flash('messages', null);
-        } else {
-            if ($this->note->contents['submitted']) {
-                Request::session()->flash('messages', [
-                    'status' => 'warning',
-                    'messages' => ['โปรด <span class="font-semibold">ยืนยัน</span> ทุกครั้งหลังแก้ไขข้อมูล'],
-                ]);
-            } else {
-                Request::session()->flash('messages', [
-                    'status' => 'info',
-                    'messages' => [
-                        'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
-                        'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการรับผู้ป่วย Home Isolation</span> ท้ายฟอร์ม',
-                        'เมื่อ <span class="font-semibold">ยืนยันการรับผู้ป่วย Home Isolation</span> แล้ว <span class="italic underline">จะไม่สามารถแก้ไขข้อมูลได้อีก</span>',
-                    ],
-                ]);
-            }
-        }
+        // if ($report) {
+        //     Request::session()->flash('messages', null);
+        // } else {
+        //     if ($this->note->contents['submitted']) {
+        //         Request::session()->flash('messages', [
+        //             'status' => 'warning',
+        //             'messages' => ['โปรด <span class="font-semibold">ยืนยัน</span> ทุกครั้งหลังแก้ไขข้อมูล'],
+        //         ]);
+        //     } else {
+        //         Request::session()->flash('messages', [
+        //             'status' => 'info',
+        //             'messages' => [
+        //                 'สามารถกลับมาลงข้อมูลต่อภายหลังได้',
+        //                 'เมื่อลงข้อมูลครบแล้วให้ <span class="font-semibold">ยืนยันการรับผู้ป่วย Home Isolation</span> ท้ายฟอร์ม',
+        //                 'เมื่อ <span class="font-semibold">ยืนยันการรับผู้ป่วย Home Isolation</span> แล้ว <span class="italic underline">จะไม่สามารถแก้ไขข้อมูลได้อีก</span>',
+        //             ],
+        //         ]);
+        //     }
+        // }
 
-        Request::session()->flash('main-menu-links', [ // need check abilities
-            ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
-        ]);
-        Request::session()->flash('action-menu', []);
+        // Request::session()->flash('main-menu-links', [ // need check abilities
+        //     ['icon' => 'clipboard-list', 'label' => 'รายการเคส', 'route' => 'refer-cases'],
+        // ]);
+        // Request::session()->flash('action-menu', []);
     }
 
     public function checkNewKeys(&$contents)
@@ -80,6 +80,19 @@ class HomeIsolationNoteManager extends ReferNoteManager
         $configs = parent::getConfigs($report);
         if (! $report) {
             $configs['wards'][] = 'ศูนย์เฉพาะกิจ (ใบหยก1)';
+        } else {
+            $configs['patient'] = [
+                ['label' => 'ส่งตัวจาก', 'name' => 'center'],
+                ['label' => 'sat code', 'name' => 'sat_code'],
+                ['label' => 'hn', 'name' => 'hn'],
+                ['label' => 'ชื่อผู้ป่วย', 'name' => 'name'],
+                ['label' => 'สิทธิ์การรักษา', 'name' => 'insurance'],
+                ['label' => 'วันแรกที่มีอาการ', 'name' => 'date_symptom_start', 'format' => 'date'],
+                ['label' => 'วันที่ตรวจพบเชื้อ', 'name' => 'date_covid_infected', 'format' => 'date'],
+                ['label' => 'วันที่รับไว้ในโรงพยาบาล', 'name' => 'date_admit_origin', 'format' => 'date'],
+                ['label' => 'วันที่เริ่มกักตัวเองที่บ้าน', 'name' => 'date_refer', 'format' => 'date'],
+                ['label' => 'วันที่ครบกำหนดกักตัวเองที่บ้าน', 'name' => 'date_expect_discharge', 'format' => 'date'],
+            ];
         }
 
         return $configs;
@@ -255,61 +268,5 @@ class HomeIsolationNoteManager extends ReferNoteManager
         }
 
         return $rules;
-    }
-
-    protected static function validateCommonFields($note, &$data, &$errors)
-    {
-        $patient = $data['patient'];
-
-        if ($patient['hn'] || Session::get('center')->name === config('app.main_center')) {
-            // validate hn
-            $patientExists = (new PatientManager())->manage($patient['hn']);
-            if (! $patientExists['found']) {
-                return [
-                    'hn' => 'ไม่พบ HN นี้ในระบบ',
-                ];
-            } else {
-                if ($note->referCase->patient_id !== $patientExists['patient']->id) {
-                    $note->referCase->patient_id = $patientExists['patient']->id;
-                    $note->referCase->patient_name = $patientExists['patient']->full_name;
-                    $note->referCase->save();
-                }
-            }
-        }
-
-        // validate comorbids
-        $comorbids = $data['comorbids'];
-        if (! $comorbids['no_comorbids']) {
-            if (! ($comorbids['dm'] ||
-                $comorbids['ht'] ||
-                $comorbids['other_comorbids'])
-            ) {
-                $errors['comorbids'] = 'โปรดระบุโรคประจำตัว';
-            }
-        }
-
-        // validate uploads
-        $uploads = $data['uploads'];
-        if ($note->author->center->id !== config('app.main_center_id')) {
-            if (! $uploads['film']) {
-                $errors['film'] = ['จำเป็นต้องแนบภาพ Film Chest ล่าสุด'];
-            } elseif (! Storage::exists('uploads/'.$uploads['film'])) {
-                $errors['film'] = ['กรุณาแนบไฟล์ใหม่'];
-            }
-        }
-
-        if (! ($uploads['lab'] ?? false)) {
-            $errors['lab'] = ['จำเป็นต้องแนบภาพ ใบรายงานผล COVID'];
-        } elseif (! Storage::exists('uploads/'.$uploads['lab'])) {
-            $errors['lab'] = ['กรุณาแนบไฟล์ใหม่'];
-        }
-
-        if (! $patient['hn']) {
-            if (! $uploads['id_document']) {
-                $errors['id_document'] = ['จำเป็นต้องแนบภาพ รูปถ่ายหน้าบัตรประชาชน'];
-            } elseif (! Storage::exists('uploads/'.$uploads['id_document'])) {
-                $errors['id_document'] = ['กรุณาแนบไฟล์ใหม่'];
-            }
-        }
     }
 }

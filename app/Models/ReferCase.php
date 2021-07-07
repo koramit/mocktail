@@ -90,14 +90,17 @@ class ReferCase extends Model
 
     public function getStatusLabelAttribute()
     {
-        // if (($this->meta['status'] === 'submitted' || $this->meta['status'] === 'admitted')
-        //     && $this->note->contents['refer_type'] === 'Home Isolation') {
-        //     return 'รอกักตัว';
-        // }
+        // if (($this->meta['type'] ?? null) === 'Home Isolation'
+        //     && (collect(['submitted', 'admitted', 'discharged'])->contains($this->meta['status']))
+        // ) {
+        //     $statuses = [
+        //         'submitted' => 'รอกักตัว',
+        //         'admitted' => 'กักตัวอยู่บ้าน',
+        //         'discharged' => 'เลิกกักตัว',
+        //     ];
 
-        if (($this->meta['type'] ?? null) === 'Home Isolation') {
-            return 'รอกักตัว';
-        }
+        //     return $statuses[$this->meta['status']];
+        // }
 
         $statuses = [
             'draft' => 'ร่าง',
@@ -177,6 +180,8 @@ class ReferCase extends Model
             $query->whereHas('center', function ($query) use ($center) {
                 $query->where('centers.name', $center);
             });
+        })->when($filters['type'] ?? null, function ($query, $type) {
+            $query->where('meta->type', $type);
         })->when($filters['search'] ?? null, function ($query, $search) use ($userCenterId) {
             if ($userCenterId !== config('app.main_center_id')) {
                 $query->where('meta->name', 'like', "{$search}%");

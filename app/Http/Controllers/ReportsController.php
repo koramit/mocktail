@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Managers\AdmissionNoteManager;
 use App\Managers\DischargeSummaryManager;
+use App\Managers\HomeIsolationNoteManager;
 use App\Managers\ReferNoteManager;
 use App\Models\ReferCase;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +43,7 @@ class ReportsController extends Controller
         $notes = [];
 
         // refer note
-        $manager = new ReferNoteManager($case->note);
+        $manager = ($case->meta['type'] ?? 'Hospitel') === 'Hospitel' ? new ReferNoteManager($case->note) : new HomeIsolationNoteManager($case->note);
         $notes['refer_note'] = [
             'contents' => $manager->getContents(true),
             'configs' => $manager->getConfigs(true),
