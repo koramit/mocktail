@@ -7,28 +7,45 @@
         >
             <template #header>
                 <div class="font-semibold text-dark-theme-light">
-                    เกณฑ์การรับผู้ป่วยเข้าในหอผู้ป่วยเฉพาะกิจ (Hospitel)
+                    {{
+                        referType === 'Hospitel'
+                            ? 'เกณฑ์การรับผู้ป่วยเข้าในหอผู้ป่วยเฉพาะกิจ (Hospitel)'
+                            : 'เกณฑ์รับผู้ป่วย Home Isolation'
+                    }}
                 </div>
             </template>
             <template #body>
-                <criteria-v-1
-                    v-if="version === 1"
-                    :patient="patient"
-                    @updated="(data) => form = {...data}"
-                />
-                <criteria-v-2
-                    v-else-if="version === 2"
-                    :patient="patient"
-                    @updated="(data) => form = {...data}"
-                />
-                <criteria-v-3
-                    v-else-if="version === 3"
-                    :patient="patient"
-                    @updated="(data) => form = {...data}"
-                />
+                <template v-if="referType === 'Hospitel'">
+                    <criteria-v-1
+                        v-if="version === 1"
+                        :patient="patient"
+                        @updated="(data) => form = {...data}"
+                    />
+                    <criteria-v-2
+                        v-else-if="version === 2"
+                        :patient="patient"
+                        @updated="(data) => form = {...data}"
+                    />
+                    <criteria-v-3
+                        v-else-if="version === 3"
+                        :patient="patient"
+                        @updated="(data) => form = {...data}"
+                    />
+                </template>
+                <template v-else>
+                    <criteria-home-v-1
+                        v-if="version === 1"
+                        :patient="patient"
+                        :new-case="newCase"
+                        @updated="(data) => form = {...data}"
+                    />
+                </template>
             </template>
             <template #footer>
-                <div class="flex justify-end items-center">
+                <div
+                    v-if="referType === 'Hospitel'"
+                    class="flex justify-end items-center"
+                >
                     <spinner-button
                         v-if="version === 1"
                         :spin="form.processing"
@@ -57,6 +74,19 @@
                         ยืนยัน
                     </spinner-button>
                 </div>
+                <div
+                    v-else
+                    class="flex justify-end items-center"
+                >
+                    <spinner-button
+                        v-if="version === 1"
+                        :spin="form.processing"
+                        class="btn-dark w-full mt-6"
+                        @click="confirmed"
+                    >
+                        ยืนยัน
+                    </spinner-button>
+                </div>
             </template>
         </modal>
     </teleport>
@@ -68,12 +98,15 @@ import Modal from '@/Components/Helpers/Modal';
 import CriteriaV1 from '@/Components/Forms/CriteriaV1';
 import CriteriaV2 from '@/Components/Forms/CriteriaV2';
 import CriteriaV3 from '@/Components/Forms/CriteriaV3';
+import CriteriaHomeV1 from '@/Components/Forms/CriteriaHomeV1';
 export default {
     emits: ['closed', 'confirmed'],
-    components: { Modal, SpinnerButton, CriteriaV1, CriteriaV2, CriteriaV3 },
+    components: { Modal, SpinnerButton, CriteriaV1, CriteriaV2, CriteriaV3, CriteriaHomeV1 },
     props: {
         patient: { type: String, required: true },
-        version: { type: Number, default: 1 }
+        version: { type: Number, default: 1 },
+        referType: { type: String, default: 'Hospitel' },
+        newCase: { type: Boolean }
     },
     data () {
         return {

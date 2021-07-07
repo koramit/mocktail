@@ -77,8 +77,23 @@
                             v-if="referCase.status === filters.status"
                         />
                     </button>
+                    <button
+                        class="text-sm shadow-sm italic px-2 rounded-xl mr-1 bg-indigo-200 text-indigo-400"
+                        v-if="referCase.status !== 'canceled' && referCase.meta.type === 'Home Isolation'"
+                        @click="applyFilters('type', referCase.meta.type)"
+                    >
+                        <icon
+                            class="inline w-4 h-4"
+                            name="house-user"
+                        />
+                        <icon
+                            class="ml-1 inline w-2 h-2"
+                            name="filter"
+                            v-if="referCase.meta.type === filters.type"
+                        />
+                    </button>
                     <span
-                        v-if="referCase.status === 'admitted'"
+                        v-if="referCase.status === 'admitted' && referCase.meta.type !== 'Home Isolation'"
                         class="text-sm text-thick-theme-light"
                     >
                         #{{ referCase.room_number }}
@@ -276,9 +291,9 @@ export default {
             case 'read':
                 return referCase.status !== 'canceled';
             case 'admit':
-                return this.abilities.includes('admit_patient') && referCase.status === 'submitted';
+                return this.abilities.includes('admit_patient') && referCase.status === 'submitted' && referCase.meta.type !== 'Home Isolation';
             case 'note':
-                return this.$page.props.user.roles.indexOf('md') !== -1 && ['admitted', 'discharged'].includes(referCase.status); // nurse not write note, for now
+                return this.$page.props.user.roles.indexOf('md') !== -1 && ['admitted', 'discharged'].includes(referCase.status) && referCase.meta.type !== 'Home Isolation'; // nurse not write note, for now
             case 'delete':
                 return !['admitted', 'discharged', 'canceled'].includes(referCase.status) && (this.abilities.includes('admit_patient') || referCase.referer === this.$page.props.user.name);
             default:
