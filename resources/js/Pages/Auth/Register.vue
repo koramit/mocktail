@@ -28,7 +28,7 @@
                     v-model="form.center"
                     name="center"
                     :error="form.errors.center"
-                    :options="['ปิยมหาราชการุณย์', 'ศูนย์การแพทย์กาญจนาภิเษก']"
+                    :options="['ศิริราช', 'ปิยมหาราชการุณย์', 'ศูนย์การแพทย์กาญจนาภิเษก']"
                 />
                 <form-input
                     class="mt-2"
