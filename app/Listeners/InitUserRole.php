@@ -30,6 +30,20 @@ class InitUserRole
         $initRole = json_decode(Storage::get('init/role.json'), true);
 
         if (! isset($profile['org_id'])) {
+            // SI MD without AD
+            $mds = $initRole['si_md_no_ad'];
+            foreach ($mds as $md) {
+                if (
+                    $md['tel_no'] === $event->user->profile['tel_no'] &&
+                    $md['pln'] === $event->user->profile['pln'] &&
+                    $md['center_id'] === $event->user->center->id
+                    ) {
+                    $event->user->assignRole('md');
+
+                    return;
+                }
+            }
+
             // non SI User
             $referers = $initRole['referer'];
             foreach ($referers as $referer) {
