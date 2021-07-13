@@ -8,7 +8,6 @@ use App\Managers\PatientManager;
 use App\Managers\ReferNoteManager;
 use App\Models\Note;
 use App\Models\ReferCase;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -68,7 +67,7 @@ class ReferCasesController extends Controller
         $errors = [];
         $hn = Request::input('hn', null);
         if (Session::get('center')->name === config('app.main_center')) {
-            // Main center needs hn and type
+            // Main center needs hn and type (hospitel or home)
             if (! $hn) {
                 $errors['hn'] = 'จำเป็นต้องลง HN';
             }
@@ -159,7 +158,7 @@ class ReferCasesController extends Controller
             if (! $data['criterias']['diagnosis'] && ! $note->contents['submitted']) {
                 return back();
             }
-        } else {
+        } else { // home isolation
             if ((($data['criterias']['new_case'] ?? null) === null) && ! $note->contents['submitted']) {
                 return back();
             }
@@ -171,17 +170,7 @@ class ReferCasesController extends Controller
         }
 
         if ($note->referCase->status === 'draft') {
-            if ($referType === 'Hospitel') {
-                $note->referCase->status = 'submitted';
-            } else {
-                $today = now()->today(Auth::user()->timezone);
-                $dateRefer = Carbon::create($data['patient']['date_refer'], Auth::user()->timezone);
-                if ($dateRefer->greaterThanOrEqualTo($today)) {
-                    $note->referCase->status = 'submitted';
-                } else {
-                    $note->referCase->status = 'admitted';
-                }
-            }
+            $note->referCase->status = 'submitted';
             $data['submitted'] = true;
             CaseUpdated::dispatch($note->referCase);
         }
