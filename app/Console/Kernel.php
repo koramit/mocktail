@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Tasks\AdmitCases;
 use App\Tasks\DischargeCases;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -27,6 +28,8 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->call(new DischargeCases)->hourlyAt(49);
+        // $schedule->call(new AdmitCases)->hourlyAt(19);
+        $schedule->call(new AdmitCases)->hourlyAt(4);
     }
 
     /**
