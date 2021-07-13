@@ -28,8 +28,8 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->call(new DischargeCases)->hourlyAt(49);
-        // $schedule->call(new AdmitCases)->hourlyAt(19);
-        $schedule->call(new AdmitCases)->hourlyAt(4);
+        $schedule->call(new AdmitCases)->hourlyAt(3);
+        $schedule->call(new AdmitCases)->hourlyAt(33);
     }
 
     /**
