@@ -10,10 +10,10 @@ class AdmitCases
 {
     public function __invoke()
     {
-        // $workHours = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
-        // if (! $workHours->contains(now()->hour)) {
-        //     return;
-        // }
+        $workHours = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+        if (! $workHours->contains(now()->hour)) {
+            return;
+        }
 
         $cases = ReferCase::where('meta->type', 'Home Isolation')
                           ->where('meta->status', 'submitted')
