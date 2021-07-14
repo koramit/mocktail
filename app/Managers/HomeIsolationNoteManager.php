@@ -73,6 +73,17 @@ class HomeIsolationNoteManager extends ReferNoteManager
                 'ARI' => true,
             ];
         }
+
+        if (! isset($contents['estimations'])) {
+            $contents['estimations'] = [
+                'temperature_celsius' => false,
+                'pulse_per_minute' => false,
+                'respiration_rate_per_minute' => false,
+                'sbp' => false,
+                'dbp' => false,
+                'o2_sat' => false,
+            ];
+        }
     }
 
     public function getConfigs($report = false)

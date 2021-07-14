@@ -182,6 +182,17 @@ class ReferNoteManager extends NoteManager
                 'diagnosis' => null,
             ];
         }
+
+        if (! isset($contents['estimations'])) {
+            $contents['estimations'] = [
+                'temperature_celsius' => false,
+                'pulse_per_minute' => false,
+                'respiration_rate_per_minute' => false,
+                'sbp' => false,
+                'dbp' => false,
+                'o2_sat' => false,
+            ];
+        }
     }
 
     public function getConfigs($report = false)
@@ -289,6 +300,14 @@ class ReferNoteManager extends NoteManager
                 'o2_sat' => null,
                 'level_of_consciousness' => ' Alert, Oriented, Cooperate',
                 'emotional_status' => 'Calm',
+            ],
+            'estimations' => [
+                'temperature_celsius' => false,
+                'pulse_per_minute' => false,
+                'respiration_rate_per_minute' => false,
+                'sbp' => false,
+                'dbp' => false,
+                'o2_sat' => false,
             ],
             'symptoms' => [
                 'asymptomatic_symptom' => false,

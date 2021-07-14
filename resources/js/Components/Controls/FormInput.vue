@@ -31,7 +31,7 @@
                         :checked="modelCheckbox"
                         @change="change"
                     >
-                    <span class="ml-4 text-lg cursor-pointer whitespace-nowrap">{{ switchLabel }}</span>
+                    <span class="ml-2 text-sm md:ml-4 md:text-lg cursor-pointer whitespace-nowrap">{{ switchLabel }}</span>
                 </label>
             </div>
         </div>

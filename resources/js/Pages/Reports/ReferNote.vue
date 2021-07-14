@@ -48,6 +48,11 @@
                     :data="contents.vital_signs[field.name]"
                 />
             </div>
+            <!-- :data="contents.vital_signs[field.name] + (contents.estimations[field.name] ? ' *':'')" -->
+            <!-- <small
+                v-if="estimated"
+                class="mt-2 text-md text-thick-theme-light italic"
+            >* เป็นค่าประมาณ</small> -->
 
             <template
                 v-for="(topic, key) in configs.topics"
@@ -160,12 +165,15 @@ export default {
                 }
             });
             return treatments;
-        }
+        },
+        // estimated () {
+        //     return Object.keys(this.contents.estimations).map(key => this.contents.estimations[key]).reduce((t, c) => t || c);
+        // }
     },
     data () {
         return {
             uploads: this.contents.uploads,
         };
-    },
+    }
 };
 </script>
