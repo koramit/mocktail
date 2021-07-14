@@ -23,7 +23,10 @@
                 class="form-input border-r-0 rounded-r-none"
                 :class="{ 'border-red-400': error }"
             >
-            <div class="w-auto flex items-center px-2 border-2 border-gray-200 rounded shadow-sm border-l-0 rounded-l-none bg-gray-50">
+            <div
+                class="w-auto flex items-center px-2 border-2 border-gray-200 rounded shadow-sm border-l-0 rounded-l-none bg-gray-50"
+                :class="{ 'border-red-400': error }"
+            >
                 <label class="inline-flex items-center">
                     <input
                         type="checkbox"
