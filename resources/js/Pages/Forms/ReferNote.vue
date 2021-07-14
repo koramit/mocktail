@@ -125,12 +125,23 @@
             <h2 class="font-semibold text-thick-theme-light">
                 Vital Signs ล่าสุด
             </h2>
+            <small
+                class="mt-2 text-md text-thick-theme-light italic"
+            >๏ หากเป็นค่าประมาณให้ ✔︎ ช่อง EST.</small>
+            <button
+                class="mt-2 block text-xs shadow-sm italic px-2 py-1 rounded-xl bg-bitter-theme-light text-white disabled:cursor-not-allowed disabled:opacity-50"
+                @click="Object.keys(form.estimations).map($key => form.estimations[$key] = true)"
+            >
+                EST. ALL
+            </button>
             <form-input
                 class="mt-2"
                 label="Temp (℃)"
                 type="number"
                 name="temperature_celsius"
-                v-model="form.vital_signs.temperature_celsius"
+                v-model:model-value="form.vital_signs.temperature_celsius"
+                v-model:model-checkbox="form.estimations.temperature_celsius"
+                switch-label="EST."
                 :error="form.errors.temperature_celsius"
                 @autosave="autosave('vital_signs.temperature_celsius')"
             />
@@ -139,7 +150,9 @@
                 label="Pulse (min)"
                 type="tel"
                 name="pulse_per_minute"
-                v-model="form.vital_signs.pulse_per_minute"
+                v-model:model-value="form.vital_signs.pulse_per_minute"
+                v-model:model-checkbox="form.estimations.pulse_per_minute"
+                switch-label="EST."
                 :error="form.errors.pulse_per_minute"
                 @autosave="autosave('vital_signs.pulse_per_minute')"
             />
@@ -148,7 +161,9 @@
                 label="RR (min)"
                 type="tel"
                 name="respiration_rate_per_minute"
-                v-model="form.vital_signs.respiration_rate_per_minute"
+                v-model:model-value="form.vital_signs.respiration_rate_per_minute"
+                v-model:model-checkbox="form.estimations.respiration_rate_per_minute"
+                switch-label="EST."
                 :error="form.errors.respiration_rate_per_minute"
                 @autosave="autosave('vital_signs.respiration_rate_per_minute')"
             />
@@ -157,7 +172,9 @@
                 label="SBP (mmHg)"
                 name="sbp"
                 type="tel"
-                v-model="form.vital_signs.sbp"
+                v-model:model-value="form.vital_signs.sbp"
+                v-model:model-checkbox="form.estimations.sbp"
+                switch-label="EST."
                 :error="form.errors.sbp"
                 @autosave="autosave('vital_signs.sbp')"
             />
@@ -166,7 +183,9 @@
                 label="DBP (mmHg)"
                 name="dbp"
                 type="tel"
-                v-model="form.vital_signs.dbp"
+                v-model:model-value="form.vital_signs.dbp"
+                v-model:model-checkbox="form.estimations.dbp"
+                switch-label="EST."
                 :error="form.errors.dbp"
                 @autosave="autosave('vital_signs.dbp')"
             />
@@ -175,7 +194,9 @@
                 label="O₂ sat (% RA)"
                 type="tel"
                 name="o2_sat"
-                v-model="form.vital_signs.o2_sat"
+                v-model:model-value="form.vital_signs.o2_sat"
+                v-model:model-checkbox="form.estimations.o2_sat"
+                switch-label="EST."
                 :error="form.errors.o2_sat"
                 @autosave="autosave('vital_signs.o2_sat')"
             />
@@ -723,6 +744,12 @@ export default {
                 this.$refs.selectOther.open();
             }
         },
+        'form.estimations': {
+            handler () {
+                this.autosave('estimations');
+            },
+            deep: true,
+        }
     },
     created () {
         if (this.form.patient.insurance && !this.configs.insurances.includes(this.form.patient.insurance)) {
