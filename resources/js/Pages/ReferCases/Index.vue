@@ -79,12 +79,27 @@
                     </button>
                     <button
                         class="text-sm shadow-sm italic px-2 rounded-xl mr-1 bg-indigo-200 text-indigo-400"
-                        v-if="referCase.status !== 'canceled' && referCase.meta.type === 'Home Isolation'"
+                        v-if="referCase.meta.type === 'Home Isolation'"
                         @click="applyFilters('type', referCase.meta.type)"
                     >
                         <icon
                             class="inline w-4 h-4"
                             name="house-user"
+                        />
+                        <icon
+                            class="ml-1 inline w-2 h-2"
+                            name="filter"
+                            v-if="referCase.meta.type === filters.type"
+                        />
+                    </button>
+                    <button
+                        class="text-sm shadow-sm italic px-2 rounded-xl mr-1 text-soft-theme-light bg-bitter-theme-light"
+                        v-if="referCase.meta.type !== 'Home Isolation'"
+                        @click="applyFilters('type', referCase.meta.type)"
+                    >
+                        <icon
+                            class="inline w-4 h-4"
+                            name="hospital"
                         />
                         <icon
                             class="ml-1 inline w-2 h-2"
