@@ -31,6 +31,7 @@ class AdmitCases
 
             $admission = $manager->manage($admission['an']);
             if ($admission['found'] && $admission['admission']->meta['place_name'] === 'Home Isolation') {
+                $case->admission_id = $admission['admission']->id;
                 $case->status = 'admitted';
                 $caseCount++;
             }
