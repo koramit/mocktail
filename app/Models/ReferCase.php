@@ -90,18 +90,6 @@ class ReferCase extends Model
 
     public function getStatusLabelAttribute()
     {
-        // if (($this->meta['type'] ?? null) === 'Home Isolation'
-        //     && (collect(['submitted', 'admitted', 'discharged'])->contains($this->meta['status']))
-        // ) {
-        //     $statuses = [
-        //         'submitted' => 'รอกักตัว',
-        //         'admitted' => 'กักตัวอยู่บ้าน',
-        //         'discharged' => 'เลิกกักตัว',
-        //     ];
-
-        //     return $statuses[$this->meta['status']];
-        // }
-
         $statuses = [
             'draft' => 'ร่าง',
             'submitted' => 'รอ',
