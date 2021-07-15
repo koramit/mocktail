@@ -1,4 +1,5 @@
 <template>
+    <Head title="Mocktail: ลงชื่อเข้าใช้งาน" />
     <div class="flex flex-col justify-center items-center w-full min-h-screen">
         <div
             class="flex flex-col justify-center items-center w-28 h-28 rounded-full border-soft-theme-light border-4 font-semibold bg-dark-theme-light z-10"
@@ -44,12 +45,12 @@
                     class="w-6 h-6 mr-2"
                 />Log in with LINE
             </a> -->
-            <inertia-link
+            <Link
                 :href="`${baseUrl}/register`"
                 class="text-bitter-theme-light"
             >
                 สร้างบัญชีใหม่
-            </inertia-link>
+            </Link>
             <!-- annoucement -->
             <!-- <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
                 <p>ประกาศ</p>
@@ -74,8 +75,9 @@
 import { useForm } from '@inertiajs/inertia-vue3';
 import FormInput from '@/Components/Controls/FormInput';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
+import { Head, Link } from '@inertiajs/inertia-vue3';
 export default {
-    components: { FormInput, SpinnerButton },
+    components: { FormInput, SpinnerButton, Head, Link },
     data () {
         return {
             form: useForm({
@@ -87,7 +89,7 @@ export default {
         };
     },
     created () {
-        document.title = 'Mocktail: ลงชื่อเข้าใช้งาน';
+        // document.title = 'Mocktail: ลงชื่อเข้าใช้งาน';
 
         this.baseUrl = document.querySelector('meta[name=base-url]').content;
         var lastTimeCheckSessionTimeout = Date.now();

@@ -1,4 +1,5 @@
 <template>
+    <Head title="Mocktail: ลงทะเบียน" />
     <div class="flex flex-col justify-center items-center w-full min-h-screen my-6">
         <div
             class="flex flex-col justify-center items-center w-28 h-28 rounded-full border-soft-theme-light border-4 font-semibold bg-dark-theme-light z-10"
@@ -116,8 +117,9 @@ import FormCheckbox from '@/Components/Controls/FormCheckbox.vue';
 import FormInput from '@/Components/Controls/FormInput';
 import FormSelect from '@/Components/Controls/FormSelect';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
+import { Head } from '@inertiajs/inertia-vue3';
 export default {
-    components: { FormCheckbox, FormInput, FormSelect, SpinnerButton },
+    components: { FormCheckbox, FormInput, FormSelect, SpinnerButton, Head },
     props: {
         profile: { type: Object, required: true }
     },
@@ -138,7 +140,7 @@ export default {
         };
     },
     created () {
-        document.title = 'Mocktail: ลงทะเบียน';
+        // document.title = 'Mocktail: ลงทะเบียน';
         if (this.profile.org_id !== undefined) {
             this.form.full_name = this.profile.name;
         }

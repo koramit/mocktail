@@ -1,4 +1,5 @@
 <template>
+    <Head :title="$page.props.flash.title" />
     <div>
         <!-- main contailner, flex makes its childs extend full h -->
         <div class="md:h-screen md:flex md:flex-col">
@@ -7,12 +8,12 @@
                 <!-- left navbar on desktop and full bar on mobile -->
                 <div class="bg-dark-theme-light text-white md:flex-shrink-0 md:w-56 xl:w-64 px-4 py-2 flex items-center justify-between md:justify-center">
                     <!-- the logo -->
-                    <inertia-link
+                    <Link
                         class="inline-block"
                         :href="`${baseUrl}/home`"
                     >
                         <span class="font-bold text-lg md:text-4xl italic">Mocktail</span>
-                    </inertia-link>
+                    </Link>
                     <!-- title display on mobile -->
                     <div class="text-soft-theme-light text-sm truncate mx-1 md:hidden">
                         {{ $page.props.flash.title }}
@@ -54,15 +55,15 @@
                         <template #dropdown>
                             <div class="mt-2 py-2 shadow-xl min-w-max bg-thick-theme-light text-white cursor-pointer rounded text-sm">
                                 <template v-if="hasRoles">
-                                    <inertia-link
+                                    <Link
                                         class="block px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
                                         :href="`${baseUrl}/home`"
                                         v-if="! currentPage('home')"
                                     >
                                         หน้าหลัก
-                                    </inertia-link>
+                                    </Link>
                                 </template>
-                                <inertia-link
+                                <Link
                                     class="w-full font-semibold text-left px-6 py-2 hover:bg-dark-theme-light hover:text-soft-theme-light"
                                     :href="`${baseUrl}/logout`"
                                     method="post"
@@ -70,7 +71,7 @@
                                     type="button"
                                 >
                                     ออกจากระบบ
-                                </inertia-link>
+                                </Link>
                             </div>
                         </template>
                     </dropdown>
@@ -100,15 +101,15 @@
                             </div> -->
                             <span class="inline-block py-1 text-white">{{ $page.props.user.name }}</span>
                             <template v-if="hasRoles">
-                                <inertia-link
+                                <Link
                                     class="block py-1"
                                     :href="`${baseUrl}/home`"
                                     v-if="! currentPage('home')"
                                 >
                                     หน้าหลัก
-                                </inertia-link>
+                                </Link>
                             </template>
-                            <inertia-link
+                            <Link
                                 class="block py-1"
                                 :href="`${baseUrl}/logout`"
                                 method="post"
@@ -116,7 +117,7 @@
                                 type="button"
                             >
                                 ออกจากระบบ
-                            </inertia-link>
+                            </Link>
                         </div>
                         <hr class="my-4">
                         <main-menu
@@ -161,20 +162,21 @@ import MainMenu from '@/Components/Helpers/MainMenu';
 import ActionMenu from '@/Components/Helpers/ActionMenu';
 import FlashMessages from '@/Components/Helpers/FlashMessages';
 import ConfirmForm from '@/Components/Forms/ConfirmForm';
+import { Head, Link } from '@inertiajs/inertia-vue3';
 export default {
-    components: { Dropdown, Icon, MainMenu, ActionMenu, FlashMessages, ConfirmForm },
+    components: { Dropdown, Icon, MainMenu, ActionMenu, FlashMessages, ConfirmForm, Head, Link },
     computed: {
         hasRoles() {
             return this.$page.props.user.abilities.length;
         }
     },
-    watch: {
-        '$page.props.flash': {
-            immediate: true,
-            deep: true,
-            handler() { document.title = this.$page.props.flash.title; }
-        },
-    },
+    // watch: {
+    //     '$page.props.flash': {
+    //         immediate: true,
+    //         deep: true,
+    //         handler() { document.title = this.$page.props.flash.title; }
+    //     },
+    // },
     data () {
         return {
             mobileMenuVisible: false,

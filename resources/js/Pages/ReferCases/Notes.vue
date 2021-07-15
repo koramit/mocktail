@@ -29,7 +29,7 @@
                 </div>
                 <div class="w-1/4">
                     <!-- read -->
-                    <inertia-link
+                    <Link
                         class="w-full flex text-alt-theme-light justify-start items-center my-2"
                         :href="`${baseUrl}/reports/${referCase.slug}#${type.name.split(' ').join('-').toLowerCase()}`"
                         v-if="userCanRead(type.name.toLowerCase())"
@@ -39,7 +39,7 @@
                             name="readme"
                         />
                         <span class="block font-normal text-thick-theme-light">อ่าน</span>
-                    </inertia-link>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -89,8 +89,9 @@ import { useForm } from '@inertiajs/inertia-vue3';
 import Layout from '@/Components/Layouts/Layout';
 import Icon from '@/Components/Helpers/Icon';
 import ConsultGuildline from '@/Components/Helpers/ConsultGuildline';
+import { Link } from '@inertiajs/inertia-vue3';
 export default {
-    components: { ConsultGuildline, Icon },
+    components: { ConsultGuildline, Icon, Link },
     layout: Layout,
     emits: ['need-confirm'],
     props: {

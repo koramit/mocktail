@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- reset filters -->
-        <!-- <inertia-link
+        <!-- <Link
             v-if="!cases.data.length && isFiltered"
             :href="`${baseUrl}/refer-cases?remember=forget`"
             class="text-yellow-400 text-semibold mt-2"
@@ -9,7 +9,7 @@
             as="button"
         >
             ยกเลิกตัวกรอง
-        </inertia-link> -->
+        </Link> -->
 
         <!-- download spreedsheet -->
         <!-- v-if="cases.data.length" -->
@@ -126,7 +126,7 @@
             <!-- right menu -->
             <div class="w-1/4 text-sm p-1 grid justify-items-center ">
                 <!-- write -->
-                <inertia-link
+                <Link
                     class="w-full flex text-yellow-200 justify-start"
                     v-if="userCan('write', referCase)"
                     :href="`${baseUrl}/forms/${referCase.note_slug}/edit`"
@@ -136,10 +136,10 @@
                         name="edit"
                     />
                     <span class="block font-normal text-thick-theme-light">เขียนต่อ</span>
-                </inertia-link>
+                </Link>
 
                 <!-- edit -->
-                <inertia-link
+                <Link
                     class="w-full flex text-alt-theme-light justify-start"
                     v-if="userCan('edit', referCase)"
                     :href="`${baseUrl}/forms/${referCase.note_slug}/edit`"
@@ -149,10 +149,10 @@
                         name="eraser"
                     />
                     <span class="block font-normal text-thick-theme-light">แก้ไข</span>
-                </inertia-link>
+                </Link>
 
                 <!-- read -->
-                <inertia-link
+                <Link
                     class="w-full flex text-alt-theme-light justify-start"
                     v-if="userCan('read', referCase)"
                     :href="`${baseUrl}/reports/${referCase.slug}`"
@@ -162,7 +162,7 @@
                         name="readme"
                     />
                     <span class="block font-normal text-thick-theme-light">อ่าน</span>
-                </inertia-link>
+                </Link>
 
                 <!-- admit -->
                 <button
@@ -178,7 +178,7 @@
                 </button>
 
                 <!-- notes -->
-                <inertia-link
+                <Link
                     class="w-full flex text-dark-theme-light justify-start"
                     v-if="userCan('note', referCase)"
                     :href="`${baseUrl}/refer-cases/${referCase.slug}/notes`"
@@ -188,7 +188,7 @@
                         name="clipboard-list"
                     />
                     <span class="block font-normal text-thick-theme-light">โน๊ต</span>
-                </inertia-link>
+                </Link>
 
                 <!-- cancel -->
                 <button
@@ -214,7 +214,7 @@
                         class="mr-1 mb-1 px-4 py-3 text-sm leading-4 bg-gray-200 text-gray-400 border rounded cursor-not-allowed"
                         v-html="link.label"
                     />
-                    <inertia-link
+                    <Link
                         v-else
                         :key="key+'theLink'"
                         class="mr-1 mb-1 px-4 py-3 text-sm text-dark-theme-light leading-4 border border-alt-theme-light rounded hover:bg-white focus:border-dark-theme-light focus:text-dark-theme-light transition-colors"
@@ -240,8 +240,9 @@ import Layout from '@/Components/Layouts/Layout';
 import CreateCase from '@/Components/Forms/CreateCase';
 import Admission from '@/Components/Forms/Admission';
 import Icon from '@/Components/Helpers/Icon';
+import { Link } from '@inertiajs/inertia-vue3';
 export default {
-    components: { Admission, CreateCase, Icon },
+    components: { Admission, CreateCase, Icon, Link },
     layout: Layout,
     emits: ['need-confirm'],
     props: {
