@@ -21,6 +21,7 @@ class ReferCaseNotesController extends Controller
                 'slug' => $case->slug,
                 'patient_name' => $case->patient_name,
                 'an' => $case->admission->an,
+                'type' => $case->meta['type'],
             ],
             'referer' => [
                 'name' => $case->referer->profile['full_name'],

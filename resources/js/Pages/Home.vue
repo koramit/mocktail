@@ -21,28 +21,28 @@
                 >
                     เพิ่มเคสใหม่
                 </button>
-                <inertia-link
+                <Link
                     class="btn btn-bitter block text-center"
                     :href="`${baseUrl}/refer-cases`"
                     v-if="abilities.includes('refer_case') || abilities.includes('admit_patient')"
                 >
                     รายการเคส
-                </inertia-link>
+                </Link>
                 <!-- next features -->
-                <!-- <inertia-link
+                <!-- <Link
                     class="btn btn-bitter block text-center"
                     :href="`${baseUrl}/users`"
                     v-if="abilities.includes('grant_user')"
                 >
                     เปิดสิทธิ์ผู้ใช้งาน
-                </inertia-link>
-                <inertia-link
+                </Link>
+                <Link
                     class="btn btn-bitter block text-center"
                     :href="`${baseUrl}/users`"
                     v-if="abilities.includes('grant_teammate')"
                 >
                     เปิดสิทธิ์เพื่อนร่วมงาน
-                </inertia-link> -->
+                </Link> -->
             </div>
         </div>
 
@@ -72,9 +72,10 @@
 <script>
 import Layout from '@/Components/Layouts/Layout';
 import CreateCase from '@/Components/Forms/CreateCase';
+import { Link } from '@inertiajs/inertia-vue3';
 export default {
     layout: Layout,
-    components: { CreateCase },
+    components: { CreateCase, Link },
     data () {
         return {
             baseUrl: this.$page.props.app.baseUrl,

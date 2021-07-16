@@ -2,6 +2,7 @@
 
 namespace App\Tasks;
 
+use App\Events\CaseUpdated;
 use App\Managers\AdmissionManager;
 use App\Models\ReferCase;
 use Illuminate\Support\Facades\Log;
@@ -10,7 +11,7 @@ class AdmitCases
 {
     public function __invoke()
     {
-        $workHours = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+        $workHours = collect([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
         if (! $workHours->contains(now()->hour)) {
             return;
         }
@@ -32,7 +33,16 @@ class AdmitCases
             $admission = $manager->manage($admission['an']);
             if ($admission['found'] && $admission['admission']->meta['place_name'] === 'Home Isolation') {
                 $case->admission_id = $admission['admission']->id;
+                if ($case->patient_id !== $admission['admission']->patient_id) {
+                    $case->patient_id = $admission['admission']->patient_id;
+                }
                 $case->status = 'admitted';
+                // attach admission to refer note
+                $case->note->admission_id = $case->admission_id;
+                $case->note->save();
+
+                CaseUpdated::dispatch($case);
+
                 $caseCount++;
             }
         }
