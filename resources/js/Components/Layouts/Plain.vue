@@ -34,6 +34,7 @@ export default {
     mounted () {
         this.$nextTick(() => {
             const pageLoadingIndicator = document.getElementById('page-loading-indicator');
+            document.querySelector('body').classList.toggle('bg-soft-theme-light');
             if (pageLoadingIndicator) {
                 pageLoadingIndicator.remove();
             }

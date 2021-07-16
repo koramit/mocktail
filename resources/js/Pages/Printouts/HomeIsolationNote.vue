@@ -75,11 +75,11 @@
                     />
                 </div>
 
-                <div class="new-page">
+                <!-- <div class="new-page">
                     <criteria-home-v-1
                         :criterias="{...contents.criterias, patient_label: contents.patient.name }"
                     />
-                </div>
+                </div> -->
             </div>
         </template>
         <template #footer-right>
@@ -94,10 +94,10 @@
 import DisplayInput from '@/Components/Helpers/DisplayInput';
 import Plain from '@/Components/Layouts/Plain';
 import Paper from '@/Components/Layouts/Paper';
-import CriteriaHomeV1 from '@/Components/Printouts/CriteriaHomeV1';
+// import CriteriaHomeV1 from '@/Components/Printouts/CriteriaHomeV1';
 export default {
     layout: Plain,
-    components: { DisplayInput, Paper, CriteriaHomeV1 },
+    components: { DisplayInput, Paper },
     props: {
         contents: { type: Object, required: true },
         configs: { type: Object, required: true },

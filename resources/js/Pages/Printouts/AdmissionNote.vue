@@ -87,18 +87,26 @@
                 </div>
 
                 <div class="new-page">
-                    <criteria-v-1
-                        v-if="contents.criterias.version === 1"
-                        :criterias="contents.criterias"
-                    />
-                    <criteria-v-2
-                        v-else-if="contents.criterias.version === 2"
-                        :criterias="contents.criterias"
-                    />
-                    <criteria-v-3
-                        v-else-if="contents.criterias.version === 3"
-                        :criterias="contents.criterias"
-                    />
+                    <template v-if="configs.type === 'Hospitel'">
+                        <criteria-v-1
+                            v-if="contents.criterias.version === 1"
+                            :criterias="contents.criterias"
+                        />
+                        <criteria-v-2
+                            v-else-if="contents.criterias.version === 2"
+                            :criterias="contents.criterias"
+                        />
+                        <criteria-v-3
+                            v-else-if="contents.criterias.version === 3"
+                            :criterias="contents.criterias"
+                        />
+                    </template>
+                    <template v-else>
+                        <criteria-home-v-1
+                            v-if="contents.criterias.version === 1"
+                            :criterias="contents.criterias"
+                        />
+                    </template>
                 </div>
             </div>
         </template>
@@ -117,9 +125,10 @@ import Paper from '@/Components/Layouts/Paper';
 import CriteriaV1 from '@/Components/Printouts/CriteriaV1';
 import CriteriaV2 from '@/Components/Printouts/CriteriaV2';
 import CriteriaV3 from '@/Components/Printouts/CriteriaV3';
+import CriteriaHomeV1 from '@/Components/Printouts/CriteriaHomeV1';
 export default {
     layout: Plain,
-    components: { DisplayInput, Paper, CriteriaV1, CriteriaV2, CriteriaV3 },
+    components: { DisplayInput, Paper, CriteriaV1, CriteriaV2, CriteriaV3, CriteriaHomeV1 },
     props: {
         contents: { type: Object, required: true },
         configs: { type: Object, required: true },
