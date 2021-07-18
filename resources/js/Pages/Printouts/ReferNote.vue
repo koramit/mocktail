@@ -77,7 +77,16 @@
             </div>
         </template>
         <template #footer-right>
-            <p class="text-print-size">
+            <p
+                class="text-print-size"
+                v-if="$page.props.user.roles.includes('nurse')"
+            >
+                เมื่อ {{ contents.author.updated_at }}
+            </p>
+            <p
+                class="text-print-size"
+                v-else
+            >
                 Electronic Signed by {{ contents.author.name }} ว. {{ contents.author.pln }} เมื่อ {{ contents.author.updated_at }}
             </p>
         </template>
