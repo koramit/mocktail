@@ -309,7 +309,11 @@ export default {
             case 'admit':
                 return this.abilities.includes('admit_patient') && referCase.status === 'submitted' && referCase.meta.type !== 'Home Isolation';
             case 'note':
-                return this.$page.props.user.roles.indexOf('md') !== -1 && ['admitted', 'discharged'].includes(referCase.status); // && referCase.meta.type !== 'Home Isolation' nurse not write note, for now
+                return (
+                    this.$page.props.user.roles.indexOf('md') !== -1
+                    || (referCase.meta.type === 'Home Isolation' && this.$page.props.user.roles.indexOf('home_nurse') !== -1)
+                )
+                    && ['admitted', 'discharged'].includes(referCase.status); // && referCase.meta.type !== 'Home Isolation' nurse not write note, for now
             case 'delete':
                 return !['admitted', 'discharged', 'canceled'].includes(referCase.status) && (this.abilities.includes('admit_patient') || referCase.referer === this.$page.props.user.name);
             default:
