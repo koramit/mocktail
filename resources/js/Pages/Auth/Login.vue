@@ -52,7 +52,7 @@
                 สร้างบัญชีใหม่
             </Link>
             <!-- annoucement -->
-            <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
+            <!-- <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
                 <p>ประกาศ</p>
                 <p class="mt-2 italic text-xs">
                     ระบบข้อมูลขัดข้องทำให้การใช้งานดังต่อไปนี้มีความติดขัด
@@ -69,7 +69,7 @@
                 <p class="mt-2 text-xs">
                     กำลังดำเนินการแก้ไข ขออภัยในความไม่สะดวก
                 </p>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
