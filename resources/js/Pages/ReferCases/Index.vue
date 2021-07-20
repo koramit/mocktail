@@ -1,23 +1,5 @@
 <template>
     <div>
-        <div class="my-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
-            <p>ประกาศ</p>
-            <p class="mt-2 italic text-xs">
-                ระบบข้อมูลขัดข้องทำให้การใช้งานดังต่อไปนี้มีความติดขัด
-            </p>
-            <p class="mt-2 text-xs">
-                ๏ เข้าใช้งาน ด้วยศิริราช AD
-            </p>
-            <p class="mt-2 text-xs">
-                ๏ ดึงข้อมูลผู้ป่วยจาก HN
-            </p>
-            <p class="mt-2 text-xs">
-                ๏ รับแอดมิทผู้ป่วย
-            </p>
-            <p class="mt-2 text-xs">
-                กำลังดำเนินการแก้ไข ขออภัยในความไม่สะดวก
-            </p>
-        </div>
         <!-- reset filters -->
         <!-- <Link
             v-if="!cases.data.length && isFiltered"
