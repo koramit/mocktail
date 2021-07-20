@@ -149,7 +149,10 @@ export default {
             }
 
             let notes = this.notes.filter(n => n.type === type);
-            return this.$page.props.user.roles.indexOf('md') !== -1
+            return (
+                this.$page.props.user.roles.indexOf('md') !== -1
+                || (this.referCase.type === 'Home Isolation' && this.$page.props.user.roles.indexOf('home_nurse') !== -1)
+            )
                 && (notes.length === 0 || notes[0].author_id === this.$page.props.user.id);
         },
         userCanRead (type) {

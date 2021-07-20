@@ -52,21 +52,24 @@
                 สร้างบัญชีใหม่
             </Link>
             <!-- annoucement -->
-            <!-- <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
+            <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
                 <p>ประกาศ</p>
                 <p class="mt-2 italic text-xs">
-                    จะไม่สามารถใช้งานระบบได้ตามวันเวลาต่อไปนี้
+                    ระบบข้อมูลขัดข้องทำให้การใช้งานดังต่อไปนี้มีความติดขัด
                 </p>
                 <p class="mt-2 text-xs">
-                    1. 18 มิ.ย. 2564 เวลา 23:00 - 23:30 น.
+                    ๏ เข้าใช้งาน ด้วยศิริราช AD
                 </p>
                 <p class="mt-2 text-xs">
-                    2. 19 มิ.ย. 2564 เวลา 22:00 - 23:00 น.
+                    ๏ ดึงข้อมูลผู้ป่วยจาก HN
                 </p>
                 <p class="mt-2 text-xs">
-                    ขออภัยในความไม่สะดวก
+                    ๏ รับแอดมิทผู้ป่วย
                 </p>
-            </div> -->
+                <p class="mt-2 text-xs">
+                    กำลังดำเนินการแก้ไข ขออภัยในความไม่สะดวก
+                </p>
+            </div>
         </div>
     </div>
 </template>
