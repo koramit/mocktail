@@ -11,7 +11,7 @@ class AdmitCases
 {
     public function __invoke()
     {
-        $workHours = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+        $workHours = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
         if (! $workHours->contains(now()->hour)) {
             return;
         }
@@ -28,15 +28,13 @@ class AdmitCases
 
         $caseCount = 0;
         $sumId = 0;
-        $seconds = 1;
         foreach ($cases as $case) {
             $sumId += $case->id;
             $admission = $api->recentlyAdmission($case->hn);
             if (! ($admission['found'] ?? null)) {
-                $case->timestamps = false;
-                $case->submitted_at = now()->addSeconds($seconds);
+                // $case->timestamps = false;
+                $case->submitted_at = now();
                 $case->save();
-                $seconds++;
                 continue;
             }
 
