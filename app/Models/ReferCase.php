@@ -107,6 +107,10 @@ class ReferCase extends Model
         $meta['status'] = $value;
         $this->meta = $meta;
 
+        if ($value === 'submitted') {
+            $this->submitted_at = now();
+        }
+
         return $this->save();
     }
 
