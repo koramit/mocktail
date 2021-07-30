@@ -28,13 +28,15 @@ class AdmitCases
 
         $caseCount = 0;
         $sumId = 0;
+        $seconds = 1;
         foreach ($cases as $case) {
             $sumId += $case->id;
             $admission = $api->recentlyAdmission($case->hn);
             if (! ($admission['found'] ?? null)) {
                 $case->timestamps = false;
-                $case->submitted_at = now();
+                $case->submitted_at = now()->addSeconds($seconds);
                 $case->save();
+                $seconds++;
                 continue;
             }
 
