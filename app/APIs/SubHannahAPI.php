@@ -139,13 +139,13 @@ class SubHannahAPI implements PatientAPI, AuthenticationAPI
     protected function makePost($url, $data)
     {
         $headers = ['app' => config('services.SUBHANNAH_API_NAME'), 'token' => config('services.SUBHANNAH_API_TOKEN')];
-        $options = ['timeout' => 8.0, 'verify' => false];
+        $options = ['timeout' => 4.0, 'verify' => false];
         try {
             $response = Http::withOptions($options)
                             ->withHeaders($headers)
                             ->post(config('services.SUBHANNAH_API_URL').$url, $data);
         } catch (Exception $e) {
-            Log::error($url.'@hannah '.$e->getMessage());
+            Log::error($url.'@hannah exception '.$e->getMessage());
 
             return ['ok' => false, 'status' => 408, 'error' => 'client', 'body' => 'Service is not available at the moment, please try again.'];
         }
