@@ -10,7 +10,7 @@ class DischargeCases
 {
     public function __invoke()
     {
-        $workHours = collect([1, 3, 4, 5, 7, 9, 11]);
+        $workHours = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
         if (! $workHours->contains(now()->hour)) {
             return;
         }
@@ -18,6 +18,8 @@ class DischargeCases
         $cases = ReferCase::with('admission')
                           ->whereNotNull('admission_id')
                           ->where('meta->status', 'admitted')
+                          ->orderBy('submitted_at')
+                          ->limit(50)
                           ->get();
 
         $manager = new AdmissionManager();
@@ -35,6 +37,10 @@ class DischargeCases
                 $caseCount++;
                 continue;
             }
+
+            $case->timestamps = false;
+            $case->submitted_at = now();
+            $case->save();
         }
 
         Log::notice("DISCHARGE CASE : {$cases->count()} cases checked, $caseCount discharged.");

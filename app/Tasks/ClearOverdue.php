@@ -11,6 +11,7 @@ class ClearOverdue
     public function __invoke()
     {
         $cases = ReferCase::with('note')
+                          ->whereNull('admission_id')
                           ->where('meta->type', 'Home Isolation')
                           ->where('meta->status', 'submitted')
                           ->get();

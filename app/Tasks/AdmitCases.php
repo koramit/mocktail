@@ -16,8 +16,11 @@ class AdmitCases
             return;
         }
 
-        $cases = ReferCase::where('meta->type', 'Home Isolation')
+        $cases = ReferCase::whereNull('admission_id')
+                          ->where('meta->type', 'Home Isolation')
                           ->where('meta->status', 'submitted')
+                          ->orderBy('submitted_at')
+                          ->limit(20)
                           ->get();
 
         $api = app()->make('App\Contracts\PatientAPI');
@@ -27,6 +30,9 @@ class AdmitCases
         foreach ($cases as $case) {
             $admission = $api->recentlyAdmission($case->hn);
             if (! ($admission['found'] ?? null)) {
+                $case->timestamps = false;
+                $case->submitted_at = now();
+                $case->save();
                 continue;
             }
 
