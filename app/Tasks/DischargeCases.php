@@ -10,7 +10,7 @@ class DischargeCases
 {
     public function __invoke()
     {
-        $workHours = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+        $workHours = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
         if (! $workHours->contains(now()->hour)) {
             return;
         }
@@ -25,7 +25,6 @@ class DischargeCases
         $manager = new AdmissionManager();
         $caseCount = 0;
         $sumId = 0;
-        $seconds = 1;
         foreach ($cases as $case) {
             $sumId += $case->id;
             if ($case->admission->dismissed_at) {
@@ -41,10 +40,9 @@ class DischargeCases
                 continue;
             }
 
-            $case->timestamps = false;
-            $case->submitted_at = now()->addSeconds($seconds);
+            // $case->timestamps = false;
+            $case->submitted_at = now();
             $case->save();
-            $seconds++;
         }
 
         Log::notice("DISCHARGE CASE : {$cases->count()} cases checked, $caseCount discharged. Sum ID = $sumId.");
