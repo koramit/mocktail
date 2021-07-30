@@ -5,6 +5,7 @@ namespace App\Tasks;
 use App\Events\CaseUpdated;
 use App\Managers\AdmissionManager;
 use App\Models\ReferCase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class AdmitCases
@@ -16,7 +17,8 @@ class AdmitCases
             return;
         }
 
-        $cases = ReferCase::where('meta->type', 'Home Isolation')
+        $cases = ReferCase::with('note')
+                          ->where('meta->type', 'Home Isolation')
                           ->where('meta->status', 'submitted')
                           ->get();
 
@@ -24,7 +26,13 @@ class AdmitCases
         $manager = new AdmissionManager();
 
         $caseCount = 0;
+        $overdue = 0;
         foreach ($cases as $case) {
+            if (today()->diffInDays(Carbon::create($case->note->contents['patient']['date_refer'])) >= 7) {
+                $case->cancel('system', 'overdue');
+                $overdue++;
+                continue;
+            }
             $admission = $api->recentlyAdmission($case->hn);
             if (! ($admission['found'] ?? null)) {
                 continue;
@@ -47,6 +55,6 @@ class AdmitCases
             }
         }
 
-        Log::notice("ADMIT CASE : {$cases->count()} cases checked, $caseCount admitted.");
+        Log::notice("ADMIT CASE : {$cases->count()} cases checked, $caseCount admitted, $overdue overdue.");
     }
 }
