@@ -25,6 +25,7 @@ class DischargeCases
         $manager = new AdmissionManager();
         $caseCount = 0;
         $sumId = 0;
+        $seconds = 1;
         foreach ($cases as $case) {
             $sumId += $case->id;
             if ($case->admission->dismissed_at) {
@@ -41,8 +42,9 @@ class DischargeCases
             }
 
             $case->timestamps = false;
-            $case->submitted_at = now();
+            $case->submitted_at = now()->addSeconds($seconds);
             $case->save();
+            $seconds++;
         }
 
         Log::notice("DISCHARGE CASE : {$cases->count()} cases checked, $caseCount discharged. Sum ID = $sumId.");
