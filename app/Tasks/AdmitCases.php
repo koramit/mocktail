@@ -32,7 +32,7 @@ class AdmitCases
             $sumId += $case->id;
             $admission = $api->recentlyAdmission($case->hn);
             if (! ($admission['found'] ?? null)) {
-                // $case->timestamps = false;
+                $case->timestamps = false;
                 $case->submitted_at = now();
                 $case->save();
                 continue;
@@ -53,6 +53,11 @@ class AdmitCases
 
                 $caseCount++;
             }
+
+            $case->timestamps = false;
+            $case->submitted_at = now();
+            $case->save();
+            continue;
         }
 
         Log::notice("ADMIT CASE : {$cases->count()} cases checked, $caseCount admitted. Sum ID = $sumId.");
