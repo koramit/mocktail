@@ -27,7 +27,9 @@ class AdmitCases
         $manager = new AdmissionManager();
 
         $caseCount = 0;
+        $sumId = 0;
         foreach ($cases as $case) {
+            $sumId += $case->id;
             $admission = $api->recentlyAdmission($case->hn);
             if (! ($admission['found'] ?? null)) {
                 $case->timestamps = false;
@@ -53,6 +55,6 @@ class AdmitCases
             }
         }
 
-        Log::notice("ADMIT CASE : {$cases->count()} cases checked, $caseCount admitted.");
+        Log::notice("ADMIT CASE : {$cases->count()} cases checked, $caseCount admitted. Sum ID = $sumId.");
     }
 }
