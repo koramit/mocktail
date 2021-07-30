@@ -40,7 +40,7 @@ class DischargeCases
                 continue;
             }
 
-            // $case->timestamps = false;
+            $case->timestamps = false;
             $case->submitted_at = now();
             $case->save();
         }
