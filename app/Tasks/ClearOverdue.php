@@ -13,7 +13,10 @@ class ClearOverdue
         $cases = ReferCase::with('note')
                           ->whereNull('admission_id')
                           ->where('meta->type', 'Home Isolation')
-                          ->where('meta->status', 'submitted')
+                          ->where(function ($query) {
+                              $query->orWhere('meta->status', 'draft')
+                                    ->orWhere('meta->status', 'submitted');
+                          })
                           ->get();
 
         $overdue = 0;
