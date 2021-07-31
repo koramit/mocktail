@@ -30,7 +30,7 @@
                 class="flex items-center text-green-600"
                 :href="`${baseUrl}/reports/refer-cases${reportUrl}`"
             >
-                <icon
+                <Icon
                     class="w-4 h-4 mr-1"
                     name="file-excel"
                 />
@@ -53,7 +53,7 @@
                         @click="applyFilters('center', referCase.center)"
                     >
                         {{ referCase.center }}
-                        <icon
+                        <Icon
                             class="inline w-2 h-2"
                             name="filter"
                             v-if="referCase.center === filters.center"
@@ -71,7 +71,7 @@
                         @click="applyFilters('status', referCase.status)"
                     >
                         {{ referCase.status_label }}
-                        <icon
+                        <Icon
                             class="inline w-2 h-2"
                             name="filter"
                             v-if="referCase.status === filters.status"
@@ -82,31 +82,47 @@
                         v-if="referCase.meta.type === 'Home Isolation'"
                         @click="applyFilters('type', referCase.meta.type)"
                     >
-                        <icon
+                        <Icon
                             class="inline w-4 h-4"
                             name="house-user"
                         />
-                        <icon
+                        <Icon
                             class="ml-1 inline w-2 h-2"
                             name="filter"
                             v-if="referCase.meta.type === filters.type"
                         />
                     </button>
-                    <button
-                        class="text-sm shadow-sm italic px-2 rounded-xl mr-1 text-soft-theme-light bg-bitter-theme-light"
-                        v-if="referCase.meta.type !== 'Home Isolation'"
-                        @click="applyFilters('type', referCase.meta.type)"
-                    >
-                        <icon
-                            class="inline w-4 h-4"
-                            name="hospital"
-                        />
-                        <icon
-                            class="ml-1 inline w-2 h-2"
-                            name="filter"
-                            v-if="referCase.meta.type === filters.type"
-                        />
-                    </button>
+                    <template v-if="referCase.meta.type !== 'Home Isolation'">
+                        <button
+                            class="text-sm shadow-sm italic px-2 rounded-xl mr-1 text-soft-theme-light bg-bitter-theme-light"
+                            @click="applyFilters('type', referCase.meta.type)"
+                        >
+                            <Icon
+                                class="inline w-4 h-4"
+                                name="hospital"
+                            />
+                            <Icon
+                                class="ml-1 inline w-2 h-2"
+                                name="filter"
+                                v-if="referCase.meta.type === filters.type"
+                            />
+                        </button>
+                        <button
+                            class="text-sm shadow-sm italic px-2 rounded-xl mr-1"
+                            :class="{
+                                'text-green-200 bg-green-400': referCase.meta.ward === 'Baiyok',
+                                'bg-soft-theme-light text-bitter-theme-light': referCase.meta.ward === 'Riverside'
+                            }"
+                            @click="applyFilters('ward', referCase.meta.ward)"
+                        >
+                            {{ referCase.meta.ward }}
+                            <Icon
+                                class="ml-1 inline w-2 h-2"
+                                name="filter"
+                                v-if="(referCase.meta.ward) === filters.ward"
+                            />
+                        </button>
+                    </template>
                     <span
                         v-if="referCase.status === 'admitted' && referCase.meta.type !== 'Home Isolation'"
                         class="text-sm text-thick-theme-light"
@@ -131,7 +147,7 @@
                     v-if="userCan('write', referCase)"
                     :href="`${baseUrl}/forms/${referCase.note_slug}/edit`"
                 >
-                    <icon
+                    <Icon
                         class="w-4 h-4 mr-1"
                         name="edit"
                     />
@@ -144,7 +160,7 @@
                     v-if="userCan('edit', referCase)"
                     :href="`${baseUrl}/forms/${referCase.note_slug}/edit`"
                 >
-                    <icon
+                    <Icon
                         class="w-4 h-4 mr-1"
                         name="eraser"
                     />
@@ -157,7 +173,7 @@
                     v-if="userCan('read', referCase)"
                     :href="`${baseUrl}/reports/${referCase.slug}`"
                 >
-                    <icon
+                    <Icon
                         class="w-4 h-4 mr-1"
                         name="readme"
                     />
@@ -168,9 +184,9 @@
                 <button
                     v-if="userCan('admit', referCase)"
                     class="w-full flex items-center text-green-200 justify-start"
-                    @click="this.$refs.admission.open(referCase.id, referCase.hn, referCase.patient_name, referCase.sat_code)"
+                    @click="this.$refs.admission.open(referCase.id, referCase.hn, referCase.patient_name, referCase.sat_code, referCase.meta.ward)"
                 >
-                    <icon
+                    <Icon
                         class="w-4 h-4 mr-1"
                         name="procedure"
                     />
@@ -183,7 +199,7 @@
                     v-if="userCan('note', referCase)"
                     :href="`${baseUrl}/refer-cases/${referCase.slug}/notes`"
                 >
-                    <icon
+                    <Icon
                         class="w-4 h-4 mr-1"
                         name="clipboard-list"
                     />
@@ -196,7 +212,7 @@
                     class="w-full flex text-red-200 justify-start"
                     @click="cancel(referCase)"
                 >
-                    <icon
+                    <Icon
                         class="w-4 h-4 mr-1"
                         name="trash-alt"
                     />
@@ -228,8 +244,8 @@
             </div>
         </div>
 
-        <create-case ref="createCase" />
-        <admission ref="admission" />
+        <CreateCase ref="createCase" />
+        <Admission ref="admission" />
     </div>
 </template>
 

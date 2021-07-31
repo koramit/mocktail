@@ -174,6 +174,8 @@ class ReferCase extends Model
             });
         })->when($filters['type'] ?? null, function ($query, $type) {
             $query->where('meta->type', $type);
+        })->when($filters['ward'] ?? null, function ($query, $ward) {
+            $query->where('meta->ward', $ward);
         })->when($filters['search'] ?? null, function ($query, $search) use ($userCenterId) {
             if ($userCenterId !== config('app.main_center_id')) {
                 $query->where('meta->name', 'like', "{$search}%");

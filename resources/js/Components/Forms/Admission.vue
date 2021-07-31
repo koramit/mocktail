@@ -7,7 +7,7 @@
         >
             <template #header>
                 <div class="font-semibold text-dark-theme-light">
-                    รับแอดมิท
+                    รับแอดมิทที่ {{ wardName }}
                 </div>
             </template>
             <template #body>
@@ -125,11 +125,12 @@ export default {
             busy: false,
             needConfirm: false,
             state: null,
-            wardNameCheck: 'ศูนย์เฉพาะกิจ',
+            wardNameCheck: null,
+            wardName: null,
         };
     },
     methods: {
-        open (id, hn, referName, satCode) {
+        open (id, hn, referName, satCode, ward) {
             this.state = null;
             this.form = {};
             this.form.id = id;
@@ -141,6 +142,8 @@ export default {
             this.busy = true;
             this.form.hn = hn;
             this.form.sat_code = satCode;
+            this.wardName = ward;
+            this.wardNameCheck = ward === 'Baiyok' ? 'ศูนย์เฉพาะกิจ':'รอชื่อ Reverside';
             this.checkAdmission();
             this.$refs.modal.open();
         },

@@ -27,7 +27,7 @@ class ReferCasesController extends Controller
 
         $cases = ReferCase::with(['patient', 'referer', 'center', 'note'])
                           ->withFilterUserCenter(Session::get('center')->id)
-                          ->filter(Request::only('status', 'center', 'type', 'search'), Session::get('center')->id)
+                          ->filter(Request::only('status', 'center', 'type', 'ward', 'search'), Session::get('center')->id)
                           ->orderBy('updated_at', 'desc')
                           ->orderBy('id', 'desc')
                           ->paginate()
@@ -58,7 +58,7 @@ class ReferCasesController extends Controller
 
         return Inertia::render('ReferCases/Index', [
             'cases' => $cases,
-            'filters' => Request::all('status', 'center', 'type', 'search'),
+            'filters' => Request::all('status', 'center', 'type', 'ward', 'search'),
         ]);
     }
 
@@ -104,7 +104,8 @@ class ReferCasesController extends Controller
         }
 
         $user = Auth::user();
-        $contents = (Request::input('refer_type')) === 'Hospitel'
+        $referType = Request::input('refer_type') !== 'Home Isolation' ? 'Hospitel' : 'Home Isolation';
+        $contents = ($referType) === 'Hospitel'
                     ? ReferNoteManager::initNote()
                     : HomeIsolationNoteManager::initNote();
 
@@ -120,7 +121,8 @@ class ReferCasesController extends Controller
             'note_id' => $note->id,
             'meta' => [
                 'status' => 'draft',
-                'type' => Request::input('refer_type'),
+                'type' => $referType,
+                'ward' => Request::input('refer_type'),
             ],
         ];
 
