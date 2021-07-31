@@ -28,6 +28,7 @@ class ExportReportsController extends Controller
                                   'สถานะ' => $case->status_label,
                                   'หมายเลขห้อง' => $case->room_number,
                                   'ประเภท' => $case->meta['type'] ?? 'Hospitel',
+                                  'ward' => $case->meta['ward'],
                                   'AN' => $case->admission ? $case->admission->an : null,
                                   'วันที่ Admit' => $case->admission ? $case->admission->encountered_at->tz('asia/bangkok')->format('d-M-Y') : null,
                                   'วันที่ Discharge' => ($case->admission && $case->admission->dismissed_at) ? $case->admission->dismissed_at->tz('asia/bangkok')->format('d-M-Y') : null,

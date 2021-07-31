@@ -1,6 +1,6 @@
 <template>
     <teleport to="body">
-        <modal
+        <Modal
             ref="modal"
             width-mode="form-cols-1"
             @closed="$emit('closed')"
@@ -12,7 +12,7 @@
             </template>
             <template #body>
                 <div class="py-4 my-2 md:py-6 md:my-4 border-t border-b border-bitter-theme-light">
-                    <form-input
+                    <FormInput
                         class="mt-2"
                         v-model="form.hn"
                         name="hn"
@@ -20,7 +20,7 @@
                         :label="'hn' + (($page.props.user.center === 'ศิริราช') ? '':' ศิริราช (ถ้ามี)')"
                         :error="form.errors.hn"
                     />
-                    <form-input
+                    <FormInput
                         class="mt-2"
                         v-model="form.patient_name"
                         name="patient_name"
@@ -29,29 +29,28 @@
                         :readonly="(form.hn && true) || $page.props.user.center === 'ศิริราช'"
                         v-if="$page.props.user.center !== 'ศิริราช' || confirmed"
                     />
-                    <form-select
-                        v-if="$page.props.user.center === 'ศิริราช'"
-                        label="ประเภท"
+                    <FormSelect
+                        label="ส่งตัวที่"
                         class="mt-2"
                         v-model="form.refer_type"
                         :error="form.errors.refer_type"
-                        :options="['Hospitel', 'Home Isolation']"
+                        :options="$page.props.user.center === 'ศิริราช' ? ['Baiyok', 'Riverside', 'Home Isolation'] : ['Baiyok', 'Riverside']"
                         name="refer_type"
                     />
                 </div>
             </template>
             <template #footer>
                 <div class="flex justify-end items-center">
-                    <spinner-button
+                    <SpinnerButton
                         :spin="busy"
                         class="btn-dark w-full mt-6"
                         @click="store"
                     >
                         {{ confirmed ? 'ยืนยัน':'เพิ่ม' }}
-                    </spinner-button>
+                    </SpinnerButton>
                 </div>
             </template>
-        </modal>
+        </Modal>
     </teleport>
 </template>
 
@@ -81,7 +80,7 @@ export default {
             this.form = {
                 patient_name: null,
                 hn: null,
-                refer_type: 'Hospitel',
+                refer_type: null,
                 errors: {},
             };
             this.form.errors = {};
