@@ -60,6 +60,6 @@ class AdmitCases
             continue;
         }
 
-        Log::notice("ADMIT CASE : {$cases->count()} cases checked, $caseCount admitted. Sum ID = $sumId.");
+        // Log::notice("ADMIT CASE : {$cases->count()} cases checked, $caseCount admitted. Sum ID = $sumId.");
     }
 }

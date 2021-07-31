@@ -45,6 +45,6 @@ class DischargeCases
             $case->save();
         }
 
-        Log::notice("DISCHARGE CASE : {$cases->count()} cases checked, $caseCount discharged. Sum ID = $sumId.");
+        // Log::notice("DISCHARGE CASE : {$cases->count()} cases checked, $caseCount discharged. Sum ID = $sumId.");
     }
 }
