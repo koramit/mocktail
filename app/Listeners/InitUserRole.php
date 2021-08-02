@@ -115,6 +115,13 @@ class InitUserRole
                 return;
             }
 
+            if (collect($initRole['referer_nurse'])->search($profile['org_id']) !== false) {
+                $event->user->assignRole('nurse');
+                $event->user->assignRole('referer');
+
+                return;
+            }
+
             Log::notice($event->user->center->name.' '.$profile['full_name'].' ไม่สามารถกำหนด role ได้');
         }
     }
