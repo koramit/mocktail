@@ -111,6 +111,13 @@ class ReferCase extends Model
             $this->submitted_at = now();
         }
 
+        if (($value === 'admitted' || $value === 'discharged') && ! $this->note->contents['submitted']) {
+            $this->note->forceFill([
+                'contents->submitted' => true,
+            ])
+            ->save();
+        }
+
         return $this->save();
     }
 
