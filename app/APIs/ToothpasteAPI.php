@@ -7,6 +7,7 @@ use App\Contracts\PatientAPI;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ToothpasteAPI implements PatientAPI, AuthenticationAPI
 {
@@ -143,6 +144,8 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
                         ->asForm()
                         ->post(config('services.toothpaste.url'), ['payload' => $data]);
         } catch (Exception $e) {
+            Log::error($data['endpoint'].'@toothpaste exception '.$e->getMessage());
+
             return [
                 'ok' => false,
                 'found' => false,
