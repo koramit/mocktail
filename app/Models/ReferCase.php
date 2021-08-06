@@ -109,9 +109,7 @@ class ReferCase extends Model
 
         if ($value === 'submitted' || $value === 'admitted') {
             $this->submitted_at = now();
-        }
-
-        if (($value === 'admitted' || $value === 'discharged') && ! $this->note->contents['submitted']) {
+        } elseif (($value === 'admitted' || $value === 'discharged') && ! $this->note->contents['submitted']) {
             $this->note->forceFill([
                 'contents->submitted' => true,
             ])

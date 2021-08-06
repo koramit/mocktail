@@ -15,7 +15,7 @@ class DischargeCases
             return;
         }
 
-        $cases = ReferCase::with('admission')
+        $cases = ReferCase::with(['admission', 'note'])
                           ->whereNotNull('admission_id')
                           ->where('meta->status', 'admitted')
                           ->orderBy('submitted_at')

@@ -16,7 +16,8 @@ class AdmitCases
             return;
         }
 
-        $cases = ReferCase::whereNull('admission_id')
+        $cases = ReferCase::with('note')
+                          ->whereNull('admission_id')
                           ->where('meta->type', 'Home Isolation')
                           ->where('meta->status', 'submitted')
                           ->orderBy('submitted_at')
