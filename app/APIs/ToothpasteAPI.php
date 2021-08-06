@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class ToothpasteAPI implements PatientAPI, AuthenticationAPI
 {
+    protected $service;
+
     public function authenticate($login, $password)
     {
         $password = str_replace('+', 'BuAgSiGn', $password);
@@ -144,7 +146,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
                         ->asForm()
                         ->post(config('services.toothpaste.url'), ['payload' => $data]);
         } catch (Exception $e) {
-            Log::error($data['endpoint'].'@toothpaste exception '.$e->getMessage());
+            Log::error($this->service.'@toothpaste exception '.$e->getMessage());
 
             return [
                 'ok' => false,
@@ -158,6 +160,7 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
 
     protected function pasteLoad($service, $data)
     {
+        $this->service = $service;
         $config = config('services.toothpaste')[$service];
         $data = [
             'endpoint' => $config['endpoint'],
