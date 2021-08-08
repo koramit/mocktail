@@ -86,7 +86,7 @@
                     />
                 </div>
 
-                <div class="new-page">
+                <!-- <div class="new-page">
                     <template v-if="configs.type === 'Hospitel'">
                         <criteria-v-1
                             v-if="contents.criterias.version === 1"
@@ -107,7 +107,7 @@
                             :criterias="contents.criterias"
                         />
                     </template>
-                </div>
+                </div> -->
             </div>
         </template>
         <template #footer-right>
