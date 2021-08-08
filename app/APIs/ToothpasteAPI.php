@@ -138,6 +138,21 @@ class ToothpasteAPI implements PatientAPI, AuthenticationAPI
         return $data;
     }
 
+    public function patientAdmissions($hn)
+    {
+        $data = $this->brushing($this->pasteLoad('patient_admissions', ['hn' => $hn]));
+        if (! $data || ! $data['ok']) { // error: $data = null
+            return [
+                'found' => false,
+                'message' => __('service.failed'),
+            ];
+        }
+
+        if (isset($data['found']) && $data['found']) { // error: not found found
+            return $data;
+        }
+    }
+
     protected function brushing($data)
     {
         try {

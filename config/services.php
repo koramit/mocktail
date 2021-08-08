@@ -57,6 +57,12 @@ return [
             'app' => env('HANNAH_APP'),
             'token' => env('HANNAH_TOKEN'),
         ],
+        'patient_admissions' => [
+            'endpoint' => env('HANNAH_URL').'patient-admissions',
+            'auth' => 'token_secret',
+            'app' => env('HANNAH_APP'),
+            'token' => env('HANNAH_TOKEN'),
+        ],
     ],
 
     'SUBHANNAH_API_NAME' => env('SUBHANNAH_API_NAME'),
