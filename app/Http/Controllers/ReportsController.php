@@ -43,6 +43,17 @@ class ReportsController extends Controller
         $notes = [];
 
         // refer note
+        /*
+         * There is a bug that can't be reproduce yet
+         * note status was set to false after
+         * case was submitted so, just
+         * garantee note can print
+         */
+        if (! collect(['draft', 'canceled'])->contains($case->status) && ! $case->note->contents['submitted']) {
+            $case->note->forceFill(['contents->submitted' => true])->save();
+            unset($case->note); // force reload
+        }
+
         $manager = ($case->meta['type'] ?? 'Hospitel') === 'Hospitel' ? new ReferNoteManager($case->note) : new HomeIsolationNoteManager($case->note);
         $notes['refer_note'] = [
             'contents' => $manager->getContents(true),
