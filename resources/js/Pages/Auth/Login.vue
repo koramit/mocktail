@@ -52,7 +52,7 @@
                 สร้างบัญชีใหม่
             </Link>
             <!-- annoucement -->
-            <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
+            <!-- <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
                 <p>ประกาศ</p>
                 <p class="mt-2 italic text-xs">
                     ขณะนี้ไม่สามารถใช้งานดังต่อได้
@@ -69,7 +69,7 @@
                 <p class="mt-2 text-xs">
                     อันเนื่องมาจากเหตุขัดข้องของระบบเครือข่ายมหาวิทยาลัยมหิดล ขออภัยในความไม่สะดวก
                 </p>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
