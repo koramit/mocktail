@@ -52,10 +52,10 @@
                 สร้างบัญชีใหม่
             </Link>
             <!-- annoucement -->
-            <!-- <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
+            <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
                 <p>ประกาศ</p>
                 <p class="mt-2 italic text-xs">
-                    จะไม่สามารถใช้งานดังต่อไปนี้ได้ในวันที่ 21 สิงหาคม 2564 เวลา 22:00 - 23:00 น.
+                    ขณะนี้ไม่สามารถใช้งานดังต่อได้
                 </p>
                 <p class="mt-2 text-xs">
                     ๏ เข้าใช้งาน ด้วยศิริราช AD
@@ -67,9 +67,9 @@
                     ๏ รับแอดมิทผู้ป่วย
                 </p>
                 <p class="mt-2 text-xs">
-                    อันเนื่องมาจากฝ่ายสารสนเทศจะทำการบำรุงรักษาเครื่องแม่ข่าย ขออภัยในความไม่สะดวก
+                    อันเนื่องมาจากเหตุขัดข้องของระบบเครือข่ายมหาวิทยาลัยมหิดล ขออภัยในความไม่สะดวก
                 </p>
-            </div> -->
+            </div>
         </div>
     </div>
 </template>
