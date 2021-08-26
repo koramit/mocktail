@@ -14,6 +14,8 @@ class ExportReportsController extends Controller
 {
     public function __invoke()
     {
+        ini_set('memory_limit', '256M');
+
         $cases = ReferCase::with(['patient', 'center', 'note', 'admission'])
                           ->withFilterUserCenter(Session::get('center')->id)
                           ->filter(Request::only('status', 'center', 'type', 'search'), Session::get('center')->id)
