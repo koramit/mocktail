@@ -7,7 +7,6 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DischargeSummaryNotesController;
 use App\Http\Controllers\ExportReportsController;
-use App\Http\Controllers\LinkUserController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PrintDefaultAdmissionNote;
@@ -40,7 +39,6 @@ Route::middleware('guest')->get('/login', [AuthenticatedSessionController::class
 // Route::middleware('guest')->get('/login/{provider}/callback', [AuthenticatedSessionController::class, 'store']);
 Route::middleware('guest')->post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::middleware('auth')->post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-Route::post('/link-user', LinkUserController::class);
 
 // User
 Route::middleware('auth')->get('/home', [PagesController::class, 'home'])->name('home');

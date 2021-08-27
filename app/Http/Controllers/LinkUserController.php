@@ -10,12 +10,6 @@ class LinkUserController extends Controller
 {
     public function __invoke(AuthenticationAPI $api)
     {
-        Request::validate([
-            'login' => 'required|string',
-            'password' => 'required|string',
-            'org_id' => 'required|numeric',
-        ]);
-
         $data = $api->authenticate(Request::input('login'), Request::input('password'));
 
         if (! $data['found']) {
@@ -43,6 +37,8 @@ class LinkUserController extends Controller
                 'org_id' => 'org_id not matched',
             ];
         }
+
+        $user->tokens()->where('name', 'link-user')->delete();
 
         $token = $user->createToken('link-user');
 
