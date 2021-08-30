@@ -9,6 +9,10 @@ class ReferCasesController extends Controller
 {
     public function store()
     {
+        Request::validate([
+
+        ]);
+
         return Request::all();
     }
 }

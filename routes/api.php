@@ -21,5 +21,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/link-user', LinkUserController::class);
+
 Route::post('/refer-cases', [ReferCasesController::class, 'store'])
      ->middleware('auth:sanctum');
