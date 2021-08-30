@@ -143,7 +143,7 @@ export default {
             this.form.hn = hn;
             this.form.sat_code = satCode;
             this.wardName = ward;
-            this.wardNameCheck = ward === 'Baiyok' ? 'ศูนย์เฉพาะกิจ (ใบหยก1)':'ศูนย์เฉพาะกิจ(ริเวอร์ไซด์)';
+            this.wardNameCheck = ward === 'Baiyoke' ? 'ศูนย์เฉพาะกิจ (ใบหยก1)':'ศูนย์เฉพาะกิจ(ริเวอร์ไซด์)';
             this.checkAdmission();
             this.$refs.modal.open();
         },

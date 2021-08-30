@@ -22,7 +22,7 @@ class SubHannahAPI implements PatientAPI, AuthenticationAPI
         if (! $data || ! $data['ok']) { // error: $data = null
             return [
                 'found' => false,
-                'message' => __('service.failed'),
+                'message' => ($data['status'] ?? 500) === 400 ? __('auth.failed') : __('service.failed'),
             ];
         }
 
@@ -150,11 +150,11 @@ class SubHannahAPI implements PatientAPI, AuthenticationAPI
             return ['ok' => false, 'status' => 408, 'error' => 'client', 'body' => 'Service is not available at the moment, please try again.'];
         }
 
-        if ($response->successful()) {
+        if ($response->ok()) {
             return $response->json();
         }
 
-        Log::error($url.'@hannah '.$response->body());
+        Log::error($url.'@hannah '.$response->body().' '.$response->status());
 
         return [
             'ok' => false,
