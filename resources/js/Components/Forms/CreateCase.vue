@@ -34,7 +34,7 @@
                         class="mt-2"
                         v-model="form.refer_type"
                         :error="form.errors.refer_type"
-                        :options="$page.props.user.center === 'ศิริราช' ? ['Baiyok', 'Riverside', 'Home Isolation'] : ['Baiyok', 'Riverside']"
+                        :options="$page.props.user.center === 'ศิริราช' ? ['Baiyoke', 'Riverside', 'Home Isolation'] : ['Baiyoke', 'Riverside']"
                         name="refer_type"
                     />
                 </div>

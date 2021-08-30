@@ -110,7 +110,7 @@
                         <button
                             class="text-sm shadow-sm italic px-2 rounded-xl mr-1"
                             :class="{
-                                'text-green-200 bg-green-400': referCase.meta.ward === 'Baiyok',
+                                'text-green-200 bg-green-400': referCase.meta.ward === 'Baiyoke',
                                 'bg-soft-theme-light text-bitter-theme-light': referCase.meta.ward === 'Riverside'
                             }"
                             @click="applyFilters('ward', referCase.meta.ward)"
