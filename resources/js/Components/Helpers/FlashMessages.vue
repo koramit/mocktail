@@ -13,6 +13,14 @@
                 <p class="px-2 tracking-wide leading-5">
                     ข้อมูลไม่ถูกต้อง <span class="font-semibold">{{ Object.keys($page.props.errors).length }} รายการ</span> กรุณาตรวจสอบ
                 </p>
+                <ul>
+                    <li
+                        v-for="(error, key) in $page.props.errors"
+                        :key="key"
+                    >
+                        {{ error }}
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
