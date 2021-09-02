@@ -38,6 +38,7 @@ class ExportDOSController extends Controller
                                   'set B' => (str_contains(strtolower($case->note->contents['remark']), 'set b') || str_contains(strtolower($case->note->contents['remark']), 'setb')) ? 'Y' : null,
                                   'set C' => (str_contains(strtolower($case->note->contents['remark']), 'set c') || str_contains(strtolower($case->note->contents['remark']), 'setc')) ? 'Y' : null,
                                   'Dexa' => str_contains(strtolower($case->note->contents['remark']), 'dexa') ? 'Y' : null,
+                                  'date_admit_th' => $this->getDateThai($case->admission->encountered_at->tz('asia/bangkok')),
                               ];
                           });
         $filename = 'ข้อมูลทำ DOS สำหรับเคส HI@'.now()->tz(Auth::user()->timezone)->format('d-m-Y').'.xlsx';
@@ -58,5 +59,12 @@ class ExportDOSController extends Controller
         }
 
         return Carbon::create($dateStr)->format('d-M-Y');
+    }
+
+    protected function getDateThai($dateRef)
+    {
+        $thaiMonths = ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+
+        return $dateRef->day.' '.$thaiMonths[$dateRef->month].' '.($dateRef->year + 543);
     }
 }
