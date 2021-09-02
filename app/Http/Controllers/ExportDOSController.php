@@ -34,6 +34,10 @@ class ExportDOSController extends Controller
                                   'วันครบกำหนดยา favipiravir' => $this->castDate($case->note->contents['treatments']['date_stop_favipiravir']),
                                   'เพิ่มเติม' => $case->note->contents['remark'] ? str_replace("\n", ' ', $case->note->contents['remark']) : null,
                                   'แพทย์ผู้ทำใบส่งตัว' => (str_contains($case->meta['referer'], 'พญ.') || str_contains($case->meta['referer'], 'นพ.')) ? $case->meta['referer'] : null,
+                                  'set A' => (str_contains(strtolower($case->note->contents['remark']), 'set a') || str_contains(strtolower($case->note->contents['remark']), 'seta')) ? 'Y' : null,
+                                  'set B' => (str_contains(strtolower($case->note->contents['remark']), 'set b') || str_contains(strtolower($case->note->contents['remark']), 'setb')) ? 'Y' : null,
+                                  'set C' => (str_contains(strtolower($case->note->contents['remark']), 'set c') || str_contains(strtolower($case->note->contents['remark']), 'setc')) ? 'Y' : null,
+                                  'Dexa' => str_contains(strtolower($case->note->contents['remark']), 'dexa') ? 'Y' : null,
                               ];
                           });
         $filename = 'ข้อมูลทำ DOS สำหรับเคส HI@'.now()->tz(Auth::user()->timezone)->format('d-m-Y').'.xlsx';
