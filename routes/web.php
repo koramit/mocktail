@@ -6,6 +6,7 @@ use App\Http\Controllers\APIs\Front\PatientAPIController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DischargeSummaryNotesController;
+use App\Http\Controllers\ExportDOSController;
 use App\Http\Controllers\ExportReportsController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PagesController;
@@ -75,6 +76,7 @@ Route::middleware('auth')->post('/front-api/patient', [PatientAPIController::cla
 
 // Export report
 Route::middleware('auth')->get('/reports/refer-cases', ExportReportsController::class);
+Route::middleware('auth', 'can:export_hi_dos')->get('/reports/refer-cases-hi-dos', ExportDOSController::class);
 
 // report
 Route::middleware('auth')->get('/reports/{case:slug}', ReportsController::class);
