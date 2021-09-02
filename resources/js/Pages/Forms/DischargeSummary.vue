@@ -529,6 +529,23 @@ export default {
                 } else {
                     this.form.discharge.refer_to = null;
                 }
+
+                if (['BY REFER', 'BY ESCAPE'].includes(val)) {
+                    this.form.problem_list = {
+                        no_problem_list: true,
+                        quarantine: false,
+                        other_problem_list: null,
+                    };
+                    this.form.appointment = {
+                        no_appointment: true,
+                        date_appointment: null,
+                        appointment_at: null,
+                    };
+                    this.form.repeat_NP_swab = {
+                        no_repeat_NP_swab: true,
+                        date_repeat_NP_swab: null,
+                    };
+                }
             }
         },
         'form.diagnosis.asymptomatic_diagnosis': {
@@ -624,6 +641,10 @@ export default {
                     form['contents->discharge'] = this.form.discharge;
                 } else if (field.indexOf('complications') !== -1) {
                     form['contents->complications'] = this.form.complications;
+                } else if (field.indexOf('dischagre_type') !== -1) {
+                    form['contents->problem_list'] = this.form.problem_list;
+                    form['contents->appointment'] = this.form.appointment;
+                    form['contents->repeat_NP_swab'] = this.form.repeat_NP_swab;
                 } else {
                     form['contents->' + (field.split('.').join('->'))] = lodashGet(this.form, field);
                 }

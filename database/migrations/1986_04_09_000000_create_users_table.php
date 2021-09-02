@@ -66,6 +66,7 @@ class CreateUsersTable extends Migration
             ['name' => 'grant_admin'] + $datetime, // assign admin for user
             ['name' => 'grant_user'] + $datetime, // assign center, md and nurse for user
             ['name' => 'grant_teammate'] + $datetime, // assign referer for teammate
+            ['name' => 'export_hi_dos'] + $datetime,
         ]);
 
         Role::insert([
@@ -78,8 +79,8 @@ class CreateUsersTable extends Migration
         ]);
 
         $assignment = [
-            'root' => ['grant_admin', 'grant_user', 'view_any_cases', 'admit_patient'],
-            'admin' => ['grant_user', 'view_any_cases', 'admit_patient'],
+            'root' => ['grant_admin', 'grant_user', 'view_any_cases', 'admit_patient', 'export_hi_dos'],
+            'admin' => ['grant_user', 'view_any_cases', 'admit_patient', 'export_hi_dos'],
             'referer' => ['refer_case', 'view_case'],
             'md' => ['refer_case', 'create_note', 'view_any_cases', 'admit_patient'],
             'nurse' => ['create_note', 'view_any_cases', 'admit_patient'],
