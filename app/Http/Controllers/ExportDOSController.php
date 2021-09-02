@@ -33,7 +33,7 @@ class ExportDOSController extends Controller
                                   'วันที่เริ่มยา favipiravir' => $this->castDate($case->note->contents['treatments']['date_start_favipiravir']),
                                   'วันครบกำหนดยา favipiravir' => $this->castDate($case->note->contents['treatments']['date_stop_favipiravir']),
                                   'เพิ่มเติม' => $case->note->contents['remark'] ? str_replace("\n", ' ', $case->note->contents['remark']) : null,
-                                  'แพทย์ผู้ทำใบส่งตัว' => $case->meta['referer'],
+                                  'แพทย์ผู้ทำใบส่งตัว' => (str_contains($case->meta['referer'], 'พญ.') || str_contains($case->meta['referer'], 'นพ.')) ? $case->meta['referer'] : null,
                               ];
                           });
         $filename = 'ข้อมูลทำ DOS สำหรับเคส HI@'.now()->tz(Auth::user()->timezone)->format('d-m-Y').'.xlsx';
