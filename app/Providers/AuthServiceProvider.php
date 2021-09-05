@@ -30,5 +30,7 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
         });
+
+        Gate::define('transit', fn ($user) => $user->can('refer_case') && $user->center_id === 1);
     }
 }

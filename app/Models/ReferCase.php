@@ -91,6 +91,7 @@ class ReferCase extends Model
     public function getStatusLabelAttribute()
     {
         $statuses = [
+            'transit' => 'ส่งจาก ARI',
             'draft' => 'ร่าง',
             'submitted' => 'รอ',
             'admitted' => 'แอดมิท',
@@ -166,7 +167,9 @@ class ReferCase extends Model
 
     public function scopeFilter($query, array $filters, $userCenterId)
     {
-        $query->when($filters['status'] ?? null, function ($query, $status) {
+        $query
+        ->where('meta->status', '<>', 'transit')
+        ->when($filters['status'] ?? null, function ($query, $status) {
             $query->where('meta->status', $status);
         })->when($filters['center'] ?? null, function ($query, $center) {
             $query->whereHas('center', function ($query) use ($center) {

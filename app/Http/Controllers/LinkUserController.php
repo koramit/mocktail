@@ -31,7 +31,7 @@ class LinkUserController extends Controller
             ];
         }
 
-        if ($user && $user->profile['org_id'] != Request::input('org_id')) {
+        if ($user->profile['org_id'] != Request::input('org_id')) {
             return [
                 'found' => false,
                 'org_id' => 'org_id not matched',

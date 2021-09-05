@@ -15,6 +15,7 @@ use App\Http\Controllers\PrintoutsController;
 use App\Http\Controllers\ReferCaseNotesController;
 use App\Http\Controllers\ReferCasesController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\TransitCasesController;
 use App\Http\Controllers\UploadsController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -84,6 +85,10 @@ Route::middleware('auth')->get('/reports/{case:slug}', ReportsController::class)
 // printout
 Route::middleware('auth')->get('/printouts/{note:slug}', PrintoutsController::class);
 Route::middleware('auth')->get('/print-default-admission-note/{case:slug}', PrintDefaultAdmissionNote::class);
+
+// transit cases
+Route::middleware('auth', 'can:transit')->get('/transit-cases', [TransitCasesController::class, 'index']);
+Route::middleware('auth', 'can:transit')->post('/transit-cases/{case:slug}', [TransitCasesController::class, 'update']);
 
 // soon
 Route::middleware('auth')->get('/soon', [PagesController::class, 'soon']);
