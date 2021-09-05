@@ -28,6 +28,13 @@
                 >
                     รายการเคส
                 </Link>
+                <Link
+                    class="btn btn-bitter block text-center"
+                    :href="`${baseUrl}/transit-cases`"
+                    v-if="abilities.includes('refer_case') && $page.props.user.center === 'ศิริราช'"
+                >
+                    เคสจาก ARI คลินิก ศิริราช
+                </Link>
                 <!-- next features -->
                 <!-- <Link
                     class="btn btn-bitter block text-center"

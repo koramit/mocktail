@@ -91,6 +91,7 @@ class ReferCase extends Model
     public function getStatusLabelAttribute()
     {
         $statuses = [
+            'transit' => 'ส่งจาก ARI',
             'draft' => 'ร่าง',
             'submitted' => 'รอ',
             'admitted' => 'แอดมิท',

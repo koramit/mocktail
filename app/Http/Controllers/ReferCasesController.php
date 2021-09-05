@@ -38,7 +38,6 @@ class ReferCasesController extends Controller
                                   'meta' => $case->meta,
                                   'slug' => $case->slug,
                                   'note_slug' => $case->note->slug,
-                                  'referer' => $case->referer->name,
                                   'patient_name' => $case->name,
                                   'hn' => $case->hn,
                                   'sat_code' => $case->note->contents['patient']['sat_code'],
