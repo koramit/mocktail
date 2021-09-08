@@ -97,6 +97,8 @@ class ReferCasesController extends Controller
             'ht' => $data['ht'],
             'other_comorbids' => trim(($data['dlp'] ? 'DLP ' : '').($data['obesity'] ? 'obesity ' : '').($data['other_comorbids'])),
         ];
+
+        $contents['remark'] = $data['remark'];
         /// END COPY DATA
 
         // If Update Case
