@@ -31,7 +31,7 @@ class ExportAdmitOrderController extends Controller
                           });
         $filename = 'ข้อมูลทำคำสั่ง Admit@'.now()->tz(Auth::user()->timezone)->format('d-m-Y').'.xlsx';
         $agent = new Agent();
-        $sorted = $cases->sortBy([
+        $sorted = $cases->filter(fn ($c) => $c->age >= 17)->sortBy([
             fn ($a, $b) => $a['ward'] <=> $b['ward'],
             fn ($a, $b) => $b['an'] <=> $a['an'],
         ]);
