@@ -12,18 +12,30 @@
         </Link> -->
 
         <!-- download spreedsheet -->
-        <!-- v-if="cases.data.length" -->
-        <a
-            class="flex items-center text-green-600 mb-2"
-            :href="`${baseUrl}/reports/refer-cases-hi-dos`"
-            v-if="$page.props.user.abilities.includes('export_hi_dos')"
-        >
-            <Icon
-                class="w-4 h-4 mr-1"
-                name="file-excel"
-            />
-            <span class="block font-normal text-thick-theme-light">ข้อมูลทำ DOS สำหรับ HI</span>
-        </a>
+        <div class="md:flex">
+            <a
+                class="flex items-center text-green-600 mb-2 mr-4"
+                :href="`${baseUrl}/reports/refer-cases-hi-dos`"
+                v-if="$page.props.user.abilities.includes('export_hi_dos')"
+            >
+                <Icon
+                    class="w-4 h-4 mr-1"
+                    name="file-excel"
+                />
+                <span class="block font-normal text-thick-theme-light">ข้อมูลทำ DOS สำหรับ HI</span>
+            </a>
+            <a
+                class="flex items-center text-green-600 mb-2 mr-4"
+                :href="`${baseUrl}/reports/refer-cases-admit-order`"
+                v-if="$page.props.user.abilities.includes('export_hi_dos')"
+            >
+                <Icon
+                    class="w-4 h-4 mr-1"
+                    name="file-excel"
+                />
+                <span class="block font-normal text-thick-theme-light">ข้อมูลทำคำสั่ง Admit</span>
+            </a>
+        </div>
         <div
             class="flex justify-between mb-2"
         >
