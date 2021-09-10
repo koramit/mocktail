@@ -53,18 +53,9 @@ class ReferCasesController extends Controller
         $contents['patient']['date_covid_infected'] = $data['date_covid_infected'];
         $contents['patient']['date_admit_origin'] = $data['date_refer'];
         $contents['patient']['date_refer'] = $data['date_refer'];
-        $contents['patient']['meal'] = 'ปกติ';
 
         $contents['vital_signs']['temperature_celsius'] = $data['temperature_celsius'];
         $contents['vital_signs']['o2_sat'] = $data['o2_sat'];
-        $contents['vital_signs']['pulse_per_minute'] = 0;
-        $contents['vital_signs']['respiration_rate_per_minute'] = 0;
-        $contents['vital_signs']['sbp'] = 0;
-        $contents['vital_signs']['dbp'] = 0;
-        $contents['estimations']['pulse_per_minute'] = true;
-        $contents['estimations']['respiration_rate_per_minute'] = true;
-        $contents['estimations']['sbp'] = true;
-        $contents['estimations']['dbp'] = true;
 
         $contents['symptoms'] = [
             'asymptomatic_symptom' => $data['asymptomatic_symptom'],
@@ -107,13 +98,24 @@ class ReferCasesController extends Controller
             'other_comorbids' => trim(($data['dlp'] ? 'DLP ' : '').($data['obesity'] ? 'obesity ' : '').($data['other_comorbids'])),
         ];
 
-        $contents['treatments']['temperature_per_day'] = 'วันละสองครั้งเช้าเย็น';
-        $contents['treatments']['oxygen_sat_RA_per_day'] = 'วันละสองครั้งเช้าเย็น';
-        if ($data['weight'] ?? false) {
-            if ($data['weight'] >= 90) {
-                $contents['treatments']['due_to_obesity'] = 'BW ≥ 90 kg: Favipiravir (200) 12 tabs po q 12 h day 1 then 5 tabs po q 12 h D2-5';
-            } else {
-                $contents['treatments']['due_to_obesity'] = 'BW < 90 kg: Favipiravir (200) 9 tabs po q 12 h day 1 then 4 tabs po q 12 h D2-5';
+        if ($data['refer_type'] === 'Hospitel') {
+            $contents['vital_signs']['pulse_per_minute'] = 0;
+            $contents['vital_signs']['respiration_rate_per_minute'] = 0;
+            $contents['vital_signs']['sbp'] = 0;
+            $contents['vital_signs']['dbp'] = 0;
+            $contents['estimations']['pulse_per_minute'] = true;
+            $contents['estimations']['respiration_rate_per_minute'] = true;
+            $contents['estimations']['sbp'] = true;
+            $contents['estimations']['dbp'] = true;
+            $contents['patient']['meal'] = 'ปกติ';
+            $contents['treatments']['temperature_per_day'] = 'วันละสองครั้งเช้าเย็น';
+            $contents['treatments']['oxygen_sat_RA_per_day'] = 'วันละสองครั้งเช้าเย็น';
+            if ($data['weight'] ?? false) {
+                if ($data['weight'] >= 90) {
+                    $contents['treatments']['due_to_obesity'] = 'BW ≥ 90 kg: Favipiravir (200) 12 tabs po q 12 h day 1 then 5 tabs po q 12 h D2-5';
+                } else {
+                    $contents['treatments']['due_to_obesity'] = 'BW < 90 kg: Favipiravir (200) 9 tabs po q 12 h day 1 then 4 tabs po q 12 h D2-5';
+                }
             }
         }
 
