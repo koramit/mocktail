@@ -88,6 +88,11 @@
                     :data="contents.treatments[field.name]"
                 />
             </div>
+            <display-input
+                v-if="contents.treatments.due_to_obesity"
+                class="mt-2"
+                :data="contents.treatments.due_to_obesity"
+            />
 
             <template v-if="contents.remark">
                 <h3 class="font-normal underline text-dark-theme-light mt-8 md:mt-12">

@@ -478,8 +478,16 @@
                         @autosave="autosave('treatments.date_stop_favipiravir')"
                     />
                 </template>
+                <form-radio
+                    class="mt-4"
+                    v-model="form.treatments.due_to_obesity"
+                    name="due_to_obesity"
+                    :allow-reset="true"
+                    :options="configs.obesityMeds"
+                    @autosave="autosave('treatments.due_to_obesity')"
+                />
             </template>
-            <form-datetime
+            <!-- <form-datetime
                 class="mt-2"
                 label="นัดมาทำ NP swab ซ้ำ วันที่"
                 v-model="form.treatments.date_repeat_NP_swap"
@@ -487,7 +495,7 @@
                 name="date_repeat_NP_swap"
                 @autosave="autosave('treatments.date_repeat_NP_swap')"
             />
-            <small class="text-md text-thick-theme-light italic">๏ กรณีบุคลากรทางการแพทย์ศิริราช</small>
+            <small class="text-md text-thick-theme-light italic">๏ กรณีบุคลากรทางการแพทย์ศิริราช</small> -->
         </div>
 
         <!-- uploads -->
@@ -581,6 +589,7 @@ import FormInput from '@/Components/Controls/FormInput';
 import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
 import FormTextarea from '@/Components/Controls/FormTextarea';
+import FormRadio from '@/Components/Controls/FormRadio';
 import ImageUploader from '@/Components/Controls/ImageUploader';
 import ConfirmRefer from '@/Components/Forms/ConfirmRefer';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
@@ -592,6 +601,7 @@ export default {
         FormSelect,
         FormSelectOther,
         FormTextarea,
+        FormRadio,
         ImageUploader,
         ConfirmRefer,
         SpinnerButton,

@@ -62,6 +62,11 @@
                         :data="contents.treatments[field.name]"
                     />
                 </div>
+                <display-input
+                    v-if="contents.treatments.due_to_obesity"
+                    class="mt-2"
+                    :data="contents.treatments.due_to_obesity"
+                />
 
                 <div
                     v-if="contents.remark"
