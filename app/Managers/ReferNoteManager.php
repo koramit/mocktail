@@ -210,7 +210,7 @@ class ReferNoteManager extends NoteManager
                 'wards' => $this->note->referCase->center->name === config('app.main_center') ?
                     ['มว ทีม 1', 'มว ทีม 2', 'มว ทีม 3', 'อฎ 9 เหนือ', 'อฎ 9 ใต้', 'อฎ 10 เหนือ', 'อฎ 10 ใต้', 'อฎ 11 เหนือ', 'อฎ 11 ใต้', 'อฎ 12 เหนือ', 'อฎ 12 ใต้', 'อานันทมหิดล 2', 'ARI คลินิก', 'HI'] :
                     ['ARI คลินิก', 'COVID-19 ward', 'HI'],
-                'obesityMeds' => ['BW < 90 kg: Favipiravir (200) 9 tabs po q 12 h day-1 then 4 tabs po q 12 h D2-5', 'BW ≥ 90 kg: Favipiravir (200) 12 tabs po q 12 h day 1 then 5 tabs po q 12 h D2-5'],
+                'obesityMeds' => ['BW < 90 kg: Favipiravir (200) 9 tabs po q 12 h day 1 then 4 tabs po q 12 h D2-5', 'BW ≥ 90 kg: Favipiravir (200) 12 tabs po q 12 h day 1 then 5 tabs po q 12 h D2-5'],
                 'meals' => ['ปกติ', 'อิสลาม', 'มังสวิรัติ'],
                 'symptoms' => [
                     ['label' => 'ไข้', 'name' => 'fever'],
