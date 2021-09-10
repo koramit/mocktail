@@ -479,7 +479,7 @@
                     />
                 </template>
             </template>
-            <form-datetime
+            <!-- <form-datetime
                 class="mt-2"
                 label="นัดมาทำ NP swab ซ้ำ วันที่"
                 v-model="form.treatments.date_repeat_NP_swap"
@@ -487,7 +487,7 @@
                 name="date_repeat_NP_swap"
                 @autosave="autosave('treatments.date_repeat_NP_swap')"
             />
-            <small class="text-md text-thick-theme-light italic">๏ กรณีบุคลากรทางการแพทย์ศิริราช</small>
+            <small class="text-md text-thick-theme-light italic">๏ กรณีบุคลากรทางการแพทย์ศิริราช</small> -->
         </div>
 
         <!-- uploads -->
