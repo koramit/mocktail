@@ -42,7 +42,7 @@
                 :error="form.errors.name"
                 @autosave="autosave('patient.name')"
             />
-            <form-select
+            <form-radio
                 class="mt-2"
                 label="สิทธิ์การรักษา"
                 v-model="form.patient.insurance"
@@ -53,6 +53,7 @@
                 ref="insurance"
                 @autosave="autosave('patient.insurance')"
             />
+            <error :error="form.errors.insurance" />
             <form-select
                 class="mt-2"
                 label="หอผู้ป่วย"
@@ -252,7 +253,7 @@
                         @autosave="autosave('symptoms.other_symptoms')"
                     />
                 </div>
-                <form-select
+                <form-radio
                     v-else
                     class="mt-2"
                     v-model="form.symptoms.asymptomatic_detail"
@@ -261,6 +262,7 @@
                     :options="['ไม่มีอาการตั้งแต่ต้น', 'อาการดีขึ้นแล้ว']"
                     @autosave="autosave('symptoms.asymptomatic_detail')"
                 />
+                <error :error="form.errors.asymptomatic_detail" />
             </div>
 
             <!-- diagnosis -->
@@ -417,7 +419,7 @@
             <h2 class="font-semibold text-thick-theme-light">
                 อาหาร
             </h2>
-            <form-select
+            <form-radio
                 class="mt-2"
                 name="meal"
                 v-model="form.patient.meal"
@@ -427,6 +429,7 @@
                 ref="meal"
                 @autosave="autosave('patient.meal')"
             />
+            <error :error="form.errors.meal" />
         </div>
 
         <!-- treatments -->
@@ -435,7 +438,7 @@
                 คำสั่งการรักษา
             </h2>
             <template v-if="!form.no_admit">
-                <form-select
+                <form-radio
                     class="mt-2"
                     label="Temperature"
                     name="temperature_per_day"
@@ -444,7 +447,8 @@
                     :options="['วันละครั้ง', 'วันละสองครั้งเช้าเย็น']"
                     @autosave="autosave('treatments.temperature_per_day')"
                 />
-                <form-select
+                <error :error="form.errors.temperature_per_day" />
+                <form-radio
                     class="mt-2"
                     label="Oxygen sat RA"
                     name="oxygen_sat_RA_per_day"
@@ -453,6 +457,7 @@
                     :options="['วันละครั้ง', 'วันละสองครั้งเช้าเย็น']"
                     @autosave="autosave('treatments.oxygen_sat_RA_per_day')"
                 />
+                <error :error="form.errors.oxygen_sat_RA_per_day" />
                 <form-checkbox
                     class="mt-4"
                     v-model="form.treatments.favipiravir"
@@ -590,6 +595,7 @@ import FormSelect from '@/Components/Controls/FormSelect';
 import FormSelectOther from '@/Components/Controls/FormSelectOther';
 import FormTextarea from '@/Components/Controls/FormTextarea';
 import FormRadio from '@/Components/Controls/FormRadio';
+import Error from '@/Components/Controls/Error';
 import ImageUploader from '@/Components/Controls/ImageUploader';
 import ConfirmRefer from '@/Components/Forms/ConfirmRefer';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
@@ -602,6 +608,7 @@ export default {
         FormSelectOther,
         FormTextarea,
         FormRadio,
+        Error,
         ImageUploader,
         ConfirmRefer,
         SpinnerButton,

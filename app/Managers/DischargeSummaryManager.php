@@ -340,7 +340,7 @@ class DischargeSummaryManager extends NoteManager
                 'refer_to' => null,
             ],
             'diagnosis' => [
-                'asymptomatic_diagnosis' => true,
+                'asymptomatic_diagnosis' => false,
                 'uri' => false,
                 'date_uri' => null,
                 'pneumonia' => false,
