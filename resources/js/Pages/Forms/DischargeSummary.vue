@@ -510,18 +510,19 @@ export default {
         };
     },
     watch: {
-        'form.discharge.discharge_status': {
-            handler (val) {
-                if (! val) {
-                    return;
-                }
-                if (val === 'NOT IMPROVED') {
-                    this.form.diagnosis.asymptomatic_diagnosis = false;
-                } else {
-                    this.form.diagnosis.asymptomatic_diagnosis = true;
-                }
-            }
-        },
+        /** REMOVE by CR 20210922 */
+        // 'form.discharge.discharge_status': {
+        //     handler (val) {
+        //         if (! val) {
+        //             return;
+        //         }
+        //         if (val === 'NOT IMPROVED') {
+        //             this.form.diagnosis.asymptomatic_diagnosis = false;
+        //         } else {
+        //             this.form.diagnosis.asymptomatic_diagnosis = true;
+        //         }
+        //     }
+        // },
         'form.discharge.discharge_type': {
             handler (val) {
                 if (val === 'BY REFER') {
