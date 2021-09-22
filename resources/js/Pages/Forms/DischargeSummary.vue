@@ -47,24 +47,28 @@
                 v-model="form.admission.length_of_stay"
                 :readonly="true"
             />
-            <form-select
+            <form-radio
                 class="mt-2"
                 label="สถานะ"
                 name="discharge_status"
                 v-model="form.discharge.discharge_status"
                 :error="form.errors.discharge_status"
                 :options="configs.discharge_status"
+                :allow-reset="true"
                 @autosave="autosave('discharge.discharge_status')"
             />
-            <form-select
+            <error :error="form.errors.discharge_status" />
+            <form-radio
                 class="mt-2"
                 label="ประเภท"
                 name="discharge_type"
                 v-model="form.discharge.discharge_type"
                 :error="form.errors.discharge_type"
                 :options="configs.discharge_type"
+                :allow-reset="true"
                 @autosave="autosave('discharge.discharge_type')"
             />
+            <error :error="form.errors.discharge_type" />
             <form-input
                 v-if="form.discharge.discharge_type === 'BY REFER'"
                 class="mt-2"
@@ -344,7 +348,7 @@
                     @autosave="autosave('symptoms.other_symptoms')"
                 />
             </div>
-            <form-select
+            <form-radio
                 v-else
                 class="mt-2"
                 v-model="form.symptoms.asymptomatic_detail"
@@ -353,6 +357,7 @@
                 :options="['ไม่มีอาการตั้งแต่ต้น', 'อาการดีขึ้นแล้ว']"
                 @autosave="autosave('symptoms.asymptomatic_detail')"
             />
+            <error :error="form.errors.asymptomatic_detail" />
         </div>
 
         <template v-if="['BY REFER', 'BY ESCAPED'].indexOf(form.discharge.discharge_type) === -1">
@@ -492,8 +497,10 @@ import FormCheckbox from '@/Components/Controls/FormCheckbox';
 import FormDatetime from '@/Components/Controls/FormDatetime';
 import SpinnerButton from '@/Components/Controls/SpinnerButton';
 import FormTextarea from '@/Components/Controls/FormTextarea';
+import FormRadio from '@/Components/Controls/FormRadio';
+import Error from '@/Components/Controls/Error';
 export default {
-    components: { FormInput, FormSelect, FormCheckbox, FormDatetime, SpinnerButton, FormTextarea },
+    components: { FormInput, FormSelect, FormCheckbox, FormDatetime, SpinnerButton, FormTextarea, FormRadio, Error },
     layout: Layout,
     props: {
         contents: { type: Object, required: true },
