@@ -20,6 +20,7 @@ class TransitCasesController extends Controller
 
         $cases = ReferCase::with(['patient', 'referer', 'note'])
                           ->where('meta->status', 'transit')
+                          ->orderByDesc('id')
                           ->get()
                           ->transform(function ($case) {
                               return [
