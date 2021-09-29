@@ -20,6 +20,20 @@ class ClearOverdue
                           ->get();
 
         $overdue = 0;
+        $overdue += $this->clearCases($cases);
+
+        $cases = ReferCase::with('note')
+                          ->whereNull('admission_id')
+                          ->where('meta->status', 'transit')
+                          ->get();
+
+        $overdue += $this->clearCases($cases);
+        Log::notice("CLEAR CASE : $overdue overdue.");
+    }
+
+    protected function clearCases($cases)
+    {
+        $overdue = 0;
         foreach ($cases as $case) {
             if (today()->diffInDays(Carbon::create($case->note->contents['patient']['date_refer'])) >= 7) {
                 $case->cancel('system', 'overdue');
@@ -27,6 +41,6 @@ class ClearOverdue
             }
         }
 
-        Log::notice("CLEAR CASE : $overdue overdue.");
+        return $overdue;
     }
 }
