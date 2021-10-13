@@ -18,6 +18,8 @@ class OnDemandReportController extends Controller
             abort(403);
         }
 
+        ini_set('memory_limit', '256M');
+
         if ($passcode === '731-2564') { // ambu 731/2564
             $rows = collect([]);
             ReferCase::with(['patient', 'note', 'admission'])
@@ -25,13 +27,16 @@ class OnDemandReportController extends Controller
                      ->whereHas('admission', function ($query) {
                          $query->whereBetween('encountered_at', ['2021-06-30', '2022-01-01']);
                      })
-                     ->filter(['status' => 'discharged'], Session::get('center')->id)
                      ->orderBy(
                          Admission::select('an')
                         ->whereColumn('admissions.id', 'refer_cases.admission_id')
                      )
                      ->chunk(500, function ($cases) use ($rows) {
+                         $statuses = collect(['admitted', 'discharged']);
                          foreach ($cases as $case) {
+                             if (! $statuses->contains($case->status)) {
+                                 continue;
+                             }
                              $contents = $case->note->contents;
                              $rows->push([
                                 'hn' => $case->hn,
