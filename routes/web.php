@@ -10,6 +10,7 @@ use App\Http\Controllers\ExportAdmitOrderController;
 use App\Http\Controllers\ExportDOSController;
 use App\Http\Controllers\ExportReportsController;
 use App\Http\Controllers\NotesController;
+use App\Http\Controllers\OnDemandReportController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PrintDefaultAdmissionNote;
 use App\Http\Controllers\PrintoutsController;
@@ -94,3 +95,6 @@ Route::middleware('auth', 'can:transit')->post('/transit-cases/{case:slug}', [Tr
 
 // soon
 Route::middleware('auth')->get('/soon', [PagesController::class, 'soon']);
+
+// On demand report
+Route::middleware('auth')->get('/on-demand-report/{passcode}', OnDemandReportController::class);
