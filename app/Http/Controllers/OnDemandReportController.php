@@ -37,6 +37,7 @@ class OnDemandReportController extends Controller
                     'admit_type' => $case->meta['type'] ?? 'Hospitel',
                     'insurance' => $contents['patient']['insurance'],
                     'refer_from' => $contents['patient']['ward'] ?? null,
+                    'date_onset' => $this->castDate($contents['patient']['date_symptom_start']),
                     'date_infected' => $this->castDate($contents['patient']['date_covid_infected']),
                     'date_admitted' => $case->admission->encountered_at->tz('asia/bangkok')->format('d-M-Y'),
                     'date_quarantine_ended' => $this->castDate($contents['patient']['date_quarantine_end']),
