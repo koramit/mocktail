@@ -55,7 +55,7 @@
             <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
                 <p>ประกาศ</p>
                 <p class="mt-2 italic text-xs">
-                    ขณะนี้ไม่สามารถใช้งานดังต่อได้
+                    ขณะนี้ไม่สามารถใช้งานดังต่อไปนี้ได้
                 </p>
                 <p class="mt-2 text-xs">
                     ๏ เข้าใช้งาน ด้วยศิริราช AD
