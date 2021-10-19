@@ -163,7 +163,7 @@ class SmuggleAPI implements PatientAPI, AuthenticationAPI
             'found' => true,
             'alive' => true,
             'hn' => $hn,
-            'an' => $data['hn'],
+            'an' => $data['an'],
             'dob' => $data['dob'],
             'gender' => $data['gender'] ? 'male' : 'female',
             'patient_name' => $data['patient_name'],
