@@ -29,16 +29,16 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        // $schedule->call(new PokeHannah)->everyMinute();
-        // $schedule->call(new DischargeCases)->hourlyAt(0);
-        // $schedule->call(new AdmitCases)->hourlyAt(7);
-        // $schedule->call(new DischargeCases)->hourlyAt(15);
-        // $schedule->call(new AdmitCases)->hourlyAt(22);
-        // $schedule->call(new DischargeCases)->hourlyAt(30);
-        // $schedule->call(new AdmitCases)->hourlyAt(37);
-        // $schedule->call(new DischargeCases)->hourlyAt(45);
-        // $schedule->call(new AdmitCases)->hourlyAt(52);
-        // $schedule->call(new ClearOverdue)->dailyAt('01:11');
+        $schedule->call(new PokeHannah)->everyMinute();
+        $schedule->call(new DischargeCases)->hourlyAt(0);
+        $schedule->call(new AdmitCases)->hourlyAt(7);
+        $schedule->call(new DischargeCases)->hourlyAt(15);
+        $schedule->call(new AdmitCases)->hourlyAt(22);
+        $schedule->call(new DischargeCases)->hourlyAt(30);
+        $schedule->call(new AdmitCases)->hourlyAt(37);
+        $schedule->call(new DischargeCases)->hourlyAt(45);
+        $schedule->call(new AdmitCases)->hourlyAt(52);
+        $schedule->call(new ClearOverdue)->dailyAt('01:11');
     }
 
     /**

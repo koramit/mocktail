@@ -12,8 +12,8 @@
             </div>
         </div>
         <div class="mt-4 px-4 py-8 w-80 bg-white rounded shadow transform -translate-y-20">
-            <!--  🧙‍♀️ 🧙‍♂️-->
-            <span class="block font-semibold text-xl text-thick-theme-light mt-12 text-center">👩‍🚒 Ad hoc Ward 🧑‍🚒</span>
+            <!-- 👩‍🚒  🧙‍♀️ 🧙‍♂️ 🧑‍🚒-->
+            <span class="block font-semibold text-xl text-thick-theme-light mt-12 text-center">🧙‍♀️ Ad hoc Ward 🧙‍♂️</span>
             <form-input
                 class="mt-4"
                 label="ชื่อบัญชี"
@@ -56,7 +56,7 @@
             <div class="mt-4 rounded-lg shadow p-4 bg-thick-theme-light text-white font-semibold">
                 <p>ประกาศ</p>
                 <!-- ขณะนี้ไม่สามารถใช้งานดังต่อไปนี้ได้ -->
-                <p class="mt-2 italic text-xs">
+                <!-- <p class="mt-2 italic text-xs">
                     เนื่องจากปัญหาทางระบบเครือข่าย ทำให้ท่านอาจใช้งานอย่างขัดข้องในบางขณะ ขออภัยในความไม่สะดวก 🙏🙏🙏
                 </p>
                 <p class="mt-2 text-xs">
@@ -67,7 +67,7 @@
                 </p>
                 <p class="mt-2 text-xs">
                     ๏ เริ่มเขียน Discharge Summary นานกว่าปรกติ
-                </p>
+                </p> -->
                 <!-- <p class="mt-2 text-xs">
                     ๏ เข้าใช้งาน ด้วยศิริราช AD
                 </p>
