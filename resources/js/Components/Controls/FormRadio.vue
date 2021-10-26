@@ -52,6 +52,15 @@ export default {
     setup(props, context) {
         const selected = ref(props.modelValue);
 
+        watch(
+            () => props.modelValue,
+            (val) => {
+                if (!val) {
+                    selected.value = val;
+                }
+            }
+        );
+
         watch (
             () => selected.value,
             (val) => {
