@@ -465,7 +465,7 @@ class DischargeSummaryManager extends NoteManager
                 if (! $diagnosis['date_pneumonia']) {
                     $errors['date_pneumonia'] = 'จำเป็นต้องลง วันที่เริ่มมีอาการ PNEUMONIA';
                 } elseif ( // date_pneumonia MUST >= date_symptom_start
-                    ! Carbon::create($diagnosis['date_uri'])->greaterThanOrEqualTo(Carbon::create($patient['date_symptom_start']))
+                    ! Carbon::create($diagnosis['date_pneumonia'])->greaterThanOrEqualTo(Carbon::create($patient['date_symptom_start']))
                 ) {
                     $errors['date_pneumonia'] = 'ข้อมูลไม่สอดคล้องกับ วันแรกที่มีอาการ';
                 }
