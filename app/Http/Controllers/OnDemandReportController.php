@@ -28,10 +28,11 @@ class OnDemandReportController extends Controller
 
             function casesGenerator()
             {
-                $query = ReferCase::with(['patient', 'note', 'admission'])
+                $query = ReferCase::with(['patient', 'note', 'admission.notes'])
                                 ->whereNotNull('admission_id')
                                 ->whereHas('admission', function ($query) {
-                                    $query->whereBetween('encountered_at', ['2021-06-30', '2022-01-01']);
+                                    $query->whereBetween('encountered_at', ['2021-06-30', '2022-01-01'])
+                                          ->whereNotNull('dismissed_at');
                                 })
                                 ->orderBy(Admission::select('an')->whereColumn('admissions.id', 'refer_cases.admission_id'));
 
@@ -39,14 +40,15 @@ class OnDemandReportController extends Controller
                 $chunk = 500;
                 $round = ceil($count / $chunk);
 
-                $statuses = collect(['admitted', 'discharged']);
+                // $statuses = collect(['admitted', 'discharged']);
                 for ($i = 0; $i < $round; $i++) {
                     $cases = $query->skip($i * $chunk)->take($chunk)->get();
                     foreach ($cases as $case) {
-                        if (! $statuses->contains($case->status)) {
+                        if (! $dcNote = $case->admission->notes->where('type', 'discharge summary')->first()) {
                             continue;
                         }
                         $contents = $case->note->contents;
+                        $dcContents = $dcNote->contents;
                         yield [
                             'hn' => $case->hn,
                             'name' => $case->name,
@@ -111,6 +113,44 @@ class OnDemandReportController extends Controller
                             'set B' => (str_contains(strtolower($contents['remark']), 'set b') || str_contains(strtolower($contents['remark']), 'setb')) ? 'Y' : null,
                             'set C' => (str_contains(strtolower($contents['remark']), 'set c') || str_contains(strtolower($contents['remark']), 'setc')) ? 'Y' : null,
                             'Dexa' => str_contains(strtolower($contents['remark']), 'dexa') ? 'Y' : null,
+                            'date_admit' => $case->admission->encountered_at->tz('asia/bangkok')->format('d-M-Y'),
+                            'date_discharge' => $case->admission->dismissed_at->tz('asia/bangkok')->format('d-M-Y'),
+                            'los' => $case->admission->length_of_stay,
+                            'age_at_admit' => $case->admission->patient_age_at_encounter,
+                            'ward' => $case->admission->meta['place_name'],
+                            'discharge_type' => $case->admission->meta['discharge_type'],
+                            'discharge_status' => $case->admission->meta['discharge_status'],
+                            'dc_asymptomatic_diagnosis' => $dcContents['diagnosis']['asymptomatic_diagnosis'] ? 'Y' : 'N',
+                            'dc_uri' => $dcContents['diagnosis']['uri'] ? 'Y' : 'N',
+                            'dc_date_uri' => castDate($dcContents['diagnosis']['date_uri']),
+                            'dc_pneumonia' => $dcContents['diagnosis']['pneumonia'] ? 'Y' : 'N',
+                            'dc_date_pneumonia' => castDate($dcContents['diagnosis']['date_pneumonia']),
+                            'dc_gastroenteritis' => $dcContents['diagnosis']['gastroenteritis'] ? 'Y' : 'N',
+                            'dc_other_diagnosis' => $dcContents['diagnosis']['other_diagnosis']
+                                                    ? str_replace("\n", '', $dcContents['diagnosis']['other_diagnosis'])
+                                                    : null,
+                            'dc_temperature_celsius' => $dcContents['vital_signs']['temperature_celsius'],
+                            'dc_pulse_per_minute' => $dcContents['vital_signs']['pulse_per_minute'],
+                            'dc_respiration_rate_per_minute' => $dcContents['vital_signs']['respiration_rate_per_minute'],
+                            'dc_sbp' => $dcContents['vital_signs']['sbp'],
+                            'dc_dbp' => $dcContents['vital_signs']['dbp'],
+                            'dc_o2_sat' => $dcContents['vital_signs']['o2_sat'],
+                            'dc_asymptomatic_symptom' => $dcContents['symptoms']['asymptomatic_symptom'] ? 'Y' : 'N',
+                            'dc_asymptomatic_detail' => $dcContents['symptoms']['asymptomatic_detail'],
+                            'dc_fever' => $dcContents['symptoms']['fever'] ? 'Y' : 'N',
+                            'dc_cough' => $dcContents['symptoms']['cough'] ? 'Y' : 'N',
+                            'dc_sore_throat' => $dcContents['symptoms']['sore_throat'] ? 'Y' : 'N',
+                            'dc_rhinorrhoea' => $dcContents['symptoms']['rhinorrhoea'] ? 'Y' : 'N',
+                            'dc_sputum' => $dcContents['symptoms']['sputum'] ? 'Y' : 'N',
+                            'dc_fatigue' => $dcContents['symptoms']['fatigue'] ? 'Y' : 'N',
+                            'dc_anosmia' => $dcContents['symptoms']['anosmia'] ? 'Y' : 'N',
+                            'dc_loss_of_taste' => $dcContents['symptoms']['loss_of_taste'] ? 'Y' : 'N',
+                            'dc_myalgia' => $dcContents['symptoms']['myalgia'] ? 'Y' : 'N',
+                            'dc_diarrhea' => $dcContents['symptoms']['diarrhea'] ? 'Y' : 'N',
+                            'dc_other_symptoms' => $dcContents['symptoms']['other_symptoms']
+                                                ? str_replace("\n", '', $dcContents['symptoms']['other_symptoms'])
+                                                : null,
+                            'dc_remark' => $dcContents['remark'] ? str_replace("\n", ' ', $dcContents['remark']) : null,
                         ];
                     }
                 }
