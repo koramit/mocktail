@@ -48,6 +48,7 @@ class OnDemandReportController extends Controller
                         }
                         $contents = $case->note->contents;
                         $dcContents = $dcNote->contents;
+                        $remark = $contents['remark'] ?? '';
                         yield [
                             'hn' => $case->hn,
                             'name' => $case->name,
@@ -107,11 +108,11 @@ class OnDemandReportController extends Controller
                             'favipiravir_by_bw' => $contents['treatments']['due_to_obesity'] ?? null,
                             'date_start_favipiravir' => castDate($contents['treatments']['date_start_favipiravir']),
                             'date_stop_favipiravir' => castDate($contents['treatments']['date_stop_favipiravir']),
-                            'remark' => $contents['remark'] ? str_replace("\n", ' ', $contents['remark']) : null,
-                            'set A' => (str_contains(strtolower($contents['remark']), 'set a') || str_contains(strtolower($contents['remark']), 'seta')) ? 'Y' : null,
-                            'set B' => (str_contains(strtolower($contents['remark']), 'set b') || str_contains(strtolower($contents['remark']), 'setb')) ? 'Y' : null,
-                            'set C' => (str_contains(strtolower($contents['remark']), 'set c') || str_contains(strtolower($contents['remark']), 'setc')) ? 'Y' : null,
-                            'Dexa' => str_contains(strtolower($contents['remark']), 'dexa') ? 'Y' : null,
+                            'remark' => $remark ? str_replace("\n", ' ', $remark) : null,
+                            'set A' => (str_contains(strtolower($remark), 'set a') || str_contains(strtolower($remark), 'seta')) ? 'Y' : null,
+                            'set B' => (str_contains(strtolower($remark), 'set b') || str_contains(strtolower($remark), 'setb')) ? 'Y' : null,
+                            'set C' => (str_contains(strtolower($remark), 'set c') || str_contains(strtolower($remark), 'setc')) ? 'Y' : null,
+                            'Dexa' => str_contains(strtolower($remark), 'dexa') ? 'Y' : null,
                             'date_admit' => $case->admission->encountered_at->tz('asia/bangkok')->format('d-M-Y'),
                             'date_discharge' => $case->admission->dismissed_at->tz('asia/bangkok')->format('d-M-Y'),
                             'los' => $case->admission->length_of_stay,
