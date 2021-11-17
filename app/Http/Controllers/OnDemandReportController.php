@@ -31,13 +31,12 @@ class OnDemandReportController extends Controller
                 $query = ReferCase::with(['patient', 'note', 'admission.notes'])
                                 ->whereNotNull('admission_id')
                                 ->whereHas('admission', function ($query) {
-                                    $query->whereBetween('encountered_at', ['2021-06-30', '2022-01-01'])
-                                          ->whereNotNull('dismissed_at');
+                                    $query->whereNotNull('dismissed_at');
                                 })
                                 ->orderBy(Admission::select('an')->whereColumn('admissions.id', 'refer_cases.admission_id'));
 
                 $count = ReferCase::count();
-                $chunk = 500;
+                $chunk = 750;
                 $round = ceil($count / $chunk);
 
                 // $statuses = collect(['admitted', 'discharged']);
