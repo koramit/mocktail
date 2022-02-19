@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->call(new PokeHannah)->everyMinute();
+        // $schedule->call(new PokeHannah)->everyMinute();
         $schedule->call(new DischargeCases)->hourlyAt(0);
         $schedule->call(new AdmitCases)->hourlyAt(7);
         $schedule->call(new DischargeCases)->hourlyAt(15);

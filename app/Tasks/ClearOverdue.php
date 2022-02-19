@@ -28,7 +28,7 @@ class ClearOverdue
                           ->get();
 
         $overdue += $this->clearCases($cases);
-        Log::notice("CLEAR CASE : $overdue overdue.");
+        // Log::notice("CLEAR CASE : $overdue overdue.");
     }
 
     protected function clearCases($cases)
