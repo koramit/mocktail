@@ -25,11 +25,14 @@ class CreateCentersTable extends Migration
         });
 
         $datetime = now();
+
+        /**
         Center::insert([
             ['name' => 'ศิริราช', 'name_short' => 'SI', 'created_at' => $datetime, 'updated_at' => $datetime],
             ['name' => 'ปิยมหาราชการุณย์', 'name_short' => 'SiPH', 'created_at' => $datetime, 'updated_at' => $datetime],
             ['name' => 'ศูนย์การแพทย์กาญจนาภิเษก', 'name_short' => 'GJ', 'created_at' => $datetime, 'updated_at' => $datetime],
         ]);
+         */
     }
 
     /**

@@ -246,5 +246,6 @@ return [
     'main_center' => 'ศิริราช',
 
     'dump_data_token' => env('DUMP_DATA_TOKEN'),
+    'dump_data_url' => env('DUMP_DATA_URL'),
 
 ];

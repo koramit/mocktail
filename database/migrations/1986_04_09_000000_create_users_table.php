@@ -56,6 +56,7 @@ class CreateUsersTable extends Migration
         });
 
         $datetime = ['created_at' => now(), 'updated_at' => now()];
+        /**
         Ability::insert([
             ['name' => 'refer_case'] + $datetime, // on behalf of center
             ['name' => 'create_note'] + $datetime, // md:[admit, DC], nurse:[nurse]
@@ -93,6 +94,8 @@ class CreateUsersTable extends Migration
                 $theRole->allowTo($abilitie);
             }
         }
+
+         */
     }
 
     /**
