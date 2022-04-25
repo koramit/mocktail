@@ -42,22 +42,26 @@ Route::middleware('dumpGuard')->group(function () {
         return User::withTrashed()
                     ->where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
     Route::get('abilities', function () {
         return Ability::where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
     Route::get('roles', function () {
         return Role::where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
     Route::get('ability-role', function () {
         return Role::with('abilities')
                     ->where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
     Route::get('role-user', function () {
@@ -65,6 +69,7 @@ Route::middleware('dumpGuard')->group(function () {
                     ->with('roles')
                     ->where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
 
@@ -73,6 +78,7 @@ Route::middleware('dumpGuard')->group(function () {
         return Center::withTrashed()
                     ->where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
 
@@ -81,6 +87,7 @@ Route::middleware('dumpGuard')->group(function () {
         return Patient::withTrashed()
                     ->where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
 
@@ -89,6 +96,7 @@ Route::middleware('dumpGuard')->group(function () {
         return Admission::withTrashed()
                     ->where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
 
@@ -97,6 +105,7 @@ Route::middleware('dumpGuard')->group(function () {
         return Note::withTrashed()
                     ->where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
 
@@ -105,6 +114,7 @@ Route::middleware('dumpGuard')->group(function () {
         return ReferCase::withTrashed()
                     ->where('id', '>=', request()->startId)
                     ->limit(request()->limit)
+                    ->orderBy('id')
                     ->get();
     });
 
