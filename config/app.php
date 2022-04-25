@@ -245,4 +245,6 @@ return [
     'main_center_id' => 1,
     'main_center' => 'ศิริราช',
 
+    'dump_data_token' => env('DUMP_DATA_TOKEN'),
+
 ];
