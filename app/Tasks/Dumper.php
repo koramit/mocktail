@@ -11,6 +11,7 @@ use App\Models\ReferCase;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class Dumper
 {
@@ -33,12 +34,24 @@ class Dumper
 
         echo "\nrole-user\n";
         static::roleUser();
+
+        echo "\npatient\n";
+        static::patients();
+
+        echo "\nadmission\n";
+        static::admissions();
+
+        echo "\nnote\n";
+        static::notes();
+
+        echo "\nreferCase\n";
+        static::referCases();
     }
 
     public static function centers()
     {
-        $startId = 1;
-        $limit = 10;
+        $startId = Center::max('id') ?? 0 + 1;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'centers', ['startId' => $startId, 'limit' => $limit]);
@@ -73,8 +86,8 @@ class Dumper
 
     public static function users()
     {
-        $startId = 1;
-        $limit = 10;
+        $startId = User::max('id') ?? 0 + 1;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'users', ['startId' => $startId, 'limit' => $limit]);
@@ -112,8 +125,8 @@ class Dumper
 
     public static function abilities()
     {
-        $startId = 1;
-        $limit = 10;
+        $startId = Ability::max('id') ?? 0 + 1;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'abilities', ['startId' => $startId, 'limit' => $limit]);
@@ -146,8 +159,8 @@ class Dumper
 
     public static function roles()
     {
-        $startId = 1;
-        $limit = 10;
+        $startId = Role::max('id') ?? 0 + 1;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'roles', ['startId' => $startId, 'limit' => $limit]);
@@ -181,7 +194,7 @@ class Dumper
     public static function abilityRole()
     {
         $startId = 1;
-        $limit = 10;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'ability-role', ['startId' => $startId, 'limit' => $limit]);
@@ -211,7 +224,7 @@ class Dumper
     public static function roleUser()
     {
         $startId = 1;
-        $limit = 10;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'role-user', ['startId' => $startId, 'limit' => $limit]);
@@ -240,8 +253,8 @@ class Dumper
 
     public static function patients()
     {
-        $startId = 1;
-        $limit = 10;
+        $startId = Patient::max('id') ?? 0 + 1;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'patients', ['startId' => $startId, 'limit' => $limit]);
@@ -280,8 +293,8 @@ class Dumper
 
     public static function admissions()
     {
-        $startId = 1;
-        $limit = 10;
+        $startId = Admission::max('id') ?? 0 + 1;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'admissions', ['startId' => $startId, 'limit' => $limit]);
@@ -320,8 +333,8 @@ class Dumper
 
     public static function notes()
     {
-        $startId = 1;
-        $limit = 10;
+        $startId = Note::max('id') ?? 0 + 1;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'notes', ['startId' => $startId, 'limit' => $limit]);
@@ -361,8 +374,8 @@ class Dumper
 
     public static function referCases()
     {
-        $startId = 1;
-        $limit = 10;
+        $startId = ReferCase::max('id') ?? 0 + 1;
+        $limit = 25;
         do {
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
                         ->get(config('app.dump_data_url').'refer-cases', ['startId' => $startId, 'limit' => $limit]);
@@ -402,5 +415,39 @@ class Dumper
 
             $startId = $startId + $limit;
         } while (true);
+    }
+
+    public static function downloadAttachments()
+    {
+        $res = Http::withHeaders(['token' => config('app.dump_data_token')])
+                    ->get(config('app.dump_data_url').'uploaded-files', []);
+
+        if (!$res->ok()) {
+            $status = $res->status();
+            echo "status => {$status}\n";
+            return false;
+        }
+
+        $files = $res->json();
+
+        $errors = [];
+        foreach ($files as $file) {
+            if (Storage::exists($file)) {
+                continue;
+            }
+
+            $url = config('app.dump_data_url').'download-file/'.str_replace("uploads/", '', $file);
+            $res = Http::withHeaders(['token' => config('app.dump_data_token')])
+                        ->withOptions(['sink' => storage_path('app/'.$file)])
+                        ->get($url, []);
+
+            $status = $res->status();
+            if ($status !== 200) {
+                $errors[] = $file;
+            }
+            echo "{$file} => {$status}\n";
+        }
+
+        return true;
     }
 }
