@@ -110,6 +110,9 @@ class Dumper
                     continue;
                 }
                 $model = new User();
+                if (User::whereName($record['name'])->first()) {
+                    $record['name'] = $record['name'] . now()->format('Hi');
+                }
                 $model->name = $record['name'];
                 if (User::whereLogin($record['login'])->first()) {
                     $record['login'] = $record['login'] . now()->format('Hi');
