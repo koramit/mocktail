@@ -10,6 +10,7 @@ use App\Models\Patient;
 use App\Models\ReferCase;
 use App\Models\Role;
 use App\Models\User;
+use GuzzleHttp\Psr7\Utils;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
@@ -105,6 +106,9 @@ class Dumper
             echo "{$startId} => {$count}\n";
 
             foreach ($data as $record) {
+                if (User::find($record['id'])) {
+                    continue;
+                }
                 $model = new User();
                 $model->name = $record['name'];
                 if (User::whereLogin($record['login'])->first()) {
@@ -322,6 +326,8 @@ class Dumper
                 $model->an = $record['an'];
                 $model->patient_id = $record['patient_id'];
                 $model->meta = $record['meta'];
+                $model->encountered_at = $record['encountered_at'];
+                $model->dismissed_at = $record['dismissed_at'];
                 $model->updated_at = $record['updated_at'];
                 $model->created_at = $record['created_at'];
                 $model->save();
@@ -437,10 +443,12 @@ class Dumper
             }
 
             $url = config('app.dump_data_url').'download-file/'.str_replace("uploads/", '', $file);
+            $resource = Utils::tryFopen(storage_path('app/'.$file), 'w');
             $res = Http::withHeaders(['token' => config('app.dump_data_token')])
-                        ->withOptions(['sink' => storage_path('app/'.$file)])
+                        ->withOptions(['sink' => $resource])
                         ->get($url, []);
 
+            fclose($resource);
             $status = $res->status();
             if ($status !== 200) {
                 $errors[] = $file;
@@ -448,6 +456,6 @@ class Dumper
             echo "{$file} => {$status}\n";
         }
 
-        return true;
+        return $errors;
     }
 }
